@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Specific Date</fullName>
+        <default>false</default>
+        <label>Specific Date</label>
+    </customValue>
+    <customValue>
+        <fullName>Specific Date of the year</fullName>
+        <default>false</default>
+        <label>Specific Date of the year</label>
+    </customValue>
+    <masterLabel>Brokerage Payment time</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

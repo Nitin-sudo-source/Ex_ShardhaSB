@@ -1,0 +1,137 @@
+<template>
+    <template if:true={isSpinner}>
+        <div class="spinnerClass">
+            <lightning-spinner alternative-text="Loading" size="small">
+
+            </lightning-spinner>
+        </div>
+    </template>
+    
+    
+    <lightning-card density="comfy" >
+        <template if:true={showRadioButton}>
+            <lightning-card>
+                <div class="title alignClass">
+                    <h1>
+                    Select Property Type
+                </h1>
+
+                </div>
+                
+            <div class ="radio-group-container" style="margin:40px 0px;margin-left:25%;">
+                <template for:each={propertyTypeOptions} for:item ="option">
+                    <div key ={option.value}>
+                        <b>
+                            <label>
+                                <input
+                                type ="radio"
+                                name="options"
+                                value = {option.value}
+                                onchange={handleProperyTypeChange}
+                                />
+                                {option.label}
+    
+                            </label>
+                        </b>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+        </template>
+        <template if:false={showRadioButton}>
+        <div class="slds-m-around_x-small">
+            <lightning-record-edit-form object-api-name="Escalation__c">
+                <div class="title alignClass">
+                    <h1>
+                    Escalations For {selectedPropertyType}
+                </h1>
+
+                </div><br/>
+                <table>
+                    <tr>
+                        <td>Start Date</td>
+                        <td>Months</td>
+                        <td>End Date</td>
+                        <td>Term sheet</td>
+                        <!-- <td>Property Type</td> -->
+                        <td>Configuration</td>
+                        <td>% Escalation</td>
+                        <td>Action</td>
+
+                    </tr>
+                    <template for:each={escallationRecord} for:item="escalltion" for:index="index">
+                        <tr key={escalltion.key}>
+
+                            <td >
+                                <lightning-input data-index={index} type="date" name="Start_Date__c"
+                                    value={escalltion.Start_Date__c} variant="label-hidden" disabled={escalltion.disableStartDate}
+                                    onchange={handleInputChange} ></lightning-input>
+                            </td>
+                            <td >
+                                <lightning-input data-index={index} type="number" name="Months__c"  min="0"
+                                    value={escalltion.Months__c} variant="label-hidden" onchange={handleInputChange}
+                                    ></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input disabled=true  variant="label-hidden" data-index={index} name="End_Date__c"
+                                    field-name="End_Date__c" value={escalltion.End_Date__c} >
+                                </lightning-input>
+                            </td>
+                            <td>
+
+                                <lightning-input-field data-index={index} field-name="Term_Sheet__c" value={recordId}
+                                    variant="label-hidden"></lightning-input-field>
+                            </td>
+                            <!-- <td>
+
+                                <lightning-input-field data-index={index} field-name="Property_Type__c" type="text" name="Property_Type__c"
+                                value={escalltion.Property_Type__c} variant="label-hidden"
+                                onchange={handleInputChange} >
+                            </lightning-input-field>
+                            </td> -->
+                            <td>
+
+                                <lightning-dual-listbox data-index={index} name="Configuration__c" label="Configuration"
+                                    options={escalltion.ConfigurationOptions} value={escalltion.Configuration__c}
+                                    variant="label-hidden" onchange={handleInputChange}>
+
+                                </lightning-dual-listbox>
+                            </td>
+                            <td>
+                                <lightning-input data-index={index} type="number" name="Escalation__c"   min="0" value={escalltion.Escalation__c}
+                                    onchange={handleInputChange}>></lightning-input>
+                            </td>
+
+                            <td>
+                                <lightning-icon icon-name="action:new" access-key={index} id={index}
+                                alternative-text="Add Row" size="small" title="Add Row" onclick={onAddRow} disabled={escalltion.disableAddRow}></lightning-icon>
+                                <template if:false={escalltion.disableRemoveRow}>
+                                <lightning-icon icon-name="action:delete" data-index={index} access-key={index} id={index}
+                                alternative-text="Delete Row" size="small" title="Delete Row" onclick={removeRow} disabled={escalltion.disableRemoveRow}> </lightning-icon>
+                            </template>
+                                <!-- <lightning-button label="add Row" onclick={onAddRow} disabled={escalltion.disableAddRow}></lightning-button>
+
+                                <lightning-button label="Remove Row" data-index={index}   onclick={removeRow} disabled={escalltion.disableRemoveRow}></lightning-button> -->
+                            </td>
+                        </tr>
+                        
+                    </template>
+
+
+                </table> <br />
+                <div class="alignClass"><lightning-button label="Save" variant="brand"
+                        onclick={handleSave}></lightning-button></div>
+
+
+
+
+            </lightning-record-edit-form>
+
+
+
+        </div>
+    </template>
+      
+    </lightning-card>
+
+</template>

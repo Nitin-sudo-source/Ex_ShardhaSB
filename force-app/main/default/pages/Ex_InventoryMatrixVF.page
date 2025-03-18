@@ -1,0 +1,31 @@
+<apex:page showHeader="false" sidebar="false"  docType="html-5.0" lightningStylesheets="false" standardStylesheets="false">
+    <head>
+        <apex:includeLightning />  
+        <style>
+            *{
+                margin :0px;
+                padding: 0px;
+                box-sizing: border-box; 
+            }
+        </style>
+    </head>
+    <body>
+        <div style="background: white !important;" id="LightningComponentid" />    
+        <script>
+        $Lightning.use("c:Ex_InventoryMatrixAura", function()
+                    {
+                        $Lightning.createComponent("c:ex_InventoryMatrix",
+                                                    { 
+                                                        recordId: '{!$CurrentPage.parameters.recordId}'
+                                                        
+                                                    },
+                                                    "LightningComponentid",
+                                                    function(cmp) {
+                                                        
+                                                        // console.log('LWC Componenet added in VF page'+ 'oppId:'+ oppId  +'uId:'+uId);
+                                                        
+                                                    });
+                    });
+        </script>
+    </body>
+</apex:page>

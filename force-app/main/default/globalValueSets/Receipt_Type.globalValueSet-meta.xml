@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>AV</fullName>
+        <default>false</default>
+        <label>AV</label>
+    </customValue>
+    <customValue>
+        <fullName>Other Charges</fullName>
+        <default>false</default>
+        <label>Other Charges</label>
+    </customValue>
+    <customValue>
+        <fullName>Registration Charges</fullName>
+        <default>false</default>
+        <label>Registration Charges</label>
+    </customValue>
+    <customValue>
+        <fullName>Stamp Duty</fullName>
+        <default>false</default>
+        <label>Stamp Duty</label>
+    </customValue>
+    <customValue>
+        <fullName>GST AV</fullName>
+        <default>false</default>
+        <label>GST AV</label>
+    </customValue>
+    <customValue>
+        <fullName>TDS</fullName>
+        <default>false</default>
+        <label>TDS</label>
+    </customValue>
+    <customValue>
+        <fullName>Flat Cost</fullName>
+        <default>false</default>
+        <label>Flat Cost</label>
+    </customValue>
+    <customValue>
+        <fullName>Flat Cost + GST</fullName>
+        <default>false</default>
+        <label>Flat Cost + GST</label>
+    </customValue>
+    <customValue>
+        <fullName>GST</fullName>
+        <default>false</default>
+        <label>GST</label>
+    </customValue>
+    <customValue>
+        <fullName>TDS Challan</fullName>
+        <default>false</default>
+        <label>TDS Challan</label>
+    </customValue>
+    <customValue>
+        <fullName>SDR Challan</fullName>
+        <default>false</default>
+        <label>SDR Challan</label>
+    </customValue>
+    <customValue>
+        <fullName>Interest</fullName>
+        <default>false</default>
+        <label>Interest</label>
+    </customValue>
+    <customValue>
+        <fullName>Interest GST</fullName>
+        <default>false</default>
+        <label>Interest GST</label>
+    </customValue>
+    <masterLabel>Receipt Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

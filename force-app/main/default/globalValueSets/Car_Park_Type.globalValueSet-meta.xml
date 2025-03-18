@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Podium Parking</fullName>
+        <default>false</default>
+        <label>Podium Parking</label>
+    </customValue>
+    <customValue>
+        <fullName>Open Parking</fullName>
+        <default>false</default>
+        <label>Open Parking</label>
+    </customValue>
+    <customValue>
+        <fullName>Stack Upper Parking</fullName>
+        <default>false</default>
+        <label>Stack Upper Parking</label>
+    </customValue>
+    <customValue>
+        <fullName>Stack Lower Parking</fullName>
+        <default>false</default>
+        <label>Stack Lower Parking</label>
+    </customValue>
+    <customValue>
+        <fullName>Stilt covered parking</fullName>
+        <default>false</default>
+        <label>Stilt covered parking</label>
+    </customValue>
+    <masterLabel>Car Park Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

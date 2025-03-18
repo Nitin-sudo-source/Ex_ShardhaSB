@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>All Good Expected Closure</fullName>
+        <default>false</default>
+        <label>All Good Expected Closure</label>
+    </customValue>
+    <customValue>
+        <fullName>All Good Expected Revisit Planned</fullName>
+        <default>false</default>
+        <label>All Good Expected Revisit Planned</label>
+    </customValue>
+    <customValue>
+        <fullName>All Good Revisit Planned but Date Not Confirmed</fullName>
+        <default>false</default>
+        <label>All Good Revisit Planned but Date Not Confirmed</label>
+    </customValue>
+    <customValue>
+        <fullName>Expected Revisit with Family/Relatives/Friend etc.Project liked</fullName>
+        <default>false</default>
+        <label>Expected Revisit with Family/Relatives/Friend etc.Project liked</label>
+    </customValue>
+    <customValue>
+        <fullName>Will check finances / Loan Eligibility. To call again</fullName>
+        <default>false</default>
+        <label>Will check finances / Loan Eligibility. To call again</label>
+    </customValue>
+    <customValue>
+        <fullName>Project liked. But no commitment. To follow-up</fullName>
+        <default>false</default>
+        <label>Project liked. But no commitment. To follow-up</label>
+    </customValue>
+    <customValue>
+        <fullName>General Enquiry</fullName>
+        <default>false</default>
+        <label>General Enquiry</label>
+    </customValue>
+    <customValue>
+        <fullName>Will get back if interested</fullName>
+        <default>false</default>
+        <label>Will get back if interested</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking at other options</fullName>
+        <default>false</default>
+        <label>Looking at other options</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking for Smaller configuration/area</fullName>
+        <default>false</default>
+        <label>Looking for Smaller configuration/area</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking for bigger configuration/area</fullName>
+        <default>false</default>
+        <label>Looking for bigger configuration/area</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking for RTMI</fullName>
+        <default>false</default>
+        <label>Looking for RTMI</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking for early possession</fullName>
+        <default>false</default>
+        <label>Looking for early possession</label>
+    </customValue>
+    <customValue>
+        <fullName>Sale of existing property</fullName>
+        <default>false</default>
+        <label>Sale of existing property</label>
+    </customValue>
+    <masterLabel>Opportunity Sub Stage Reason</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

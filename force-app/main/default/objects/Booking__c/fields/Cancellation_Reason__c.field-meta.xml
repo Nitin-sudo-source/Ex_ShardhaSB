@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cancellation_Reason__c</fullName>
+    <label>Cancellation Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Booked Elsewhere</fullName>
+                <default>false</default>
+                <label>Booked Elsewhere</label>
+            </value>
+            <value>
+                <fullName>Budget &amp; Finance Issue</fullName>
+                <default>false</default>
+                <label>Budget &amp; Finance Issue</label>
+            </value>
+            <value>
+                <fullName>Carpet area mismatched</fullName>
+                <default>false</default>
+                <label>Carpet area mismatched</label>
+            </value>
+            <value>
+                <fullName>Children not agreed due to old age</fullName>
+                <default>false</default>
+                <label>Children not agreed due to old age</label>
+            </value>
+            <value>
+                <fullName>CIBIL Issue</fullName>
+                <default>false</default>
+                <label>CIBIL Issue</label>
+            </value>
+            <value>
+                <fullName>Client Not Responding</fullName>
+                <default>false</default>
+                <label>Client Not Responding</label>
+            </value>
+            <value>
+                <fullName>Cp Negative</fullName>
+                <default>false</default>
+                <label>Cp Negative</label>
+            </value>
+            <value>
+                <fullName>Critical issue with Home Exchange</fullName>
+                <default>false</default>
+                <label>Critical issue with Home Exchange</label>
+            </value>
+            <value>
+                <fullName>CSOP case got cancelled</fullName>
+                <default>false</default>
+                <label>CSOP case got cancelled</label>
+            </value>
+            <value>
+                <fullName>Delayed from our end</fullName>
+                <default>false</default>
+                <label>Delayed from our end</label>
+            </value>
+            <value>
+                <fullName>Family Dispute / Isuue</fullName>
+                <default>false</default>
+                <label>Family Dispute / Isuue</label>
+            </value>
+            <value>
+                <fullName>Financial Issue</fullName>
+                <default>false</default>
+                <label>Financial Issue</label>
+            </value>
+            <value>
+                <fullName>Health Issue of Parents</fullName>
+                <default>false</default>
+                <label>Health Issue of Parents</label>
+            </value>
+            <value>
+                <fullName>Job Transferred</fullName>
+                <default>false</default>
+                <label>Job Transferred</label>
+            </value>
+            <value>
+                <fullName>Land Dispute at native between family members</fullName>
+                <default>false</default>
+                <label>Land Dispute at native between family members</label>
+            </value>
+            <value>
+                <fullName>Loan Eligibility Issue</fullName>
+                <default>false</default>
+                <label>Loan Eligibility Issue</label>
+            </value>
+            <value>
+                <fullName>Location issue</fullName>
+                <default>false</default>
+                <label>Location issue</label>
+            </value>
+            <value>
+                <fullName>Medical Emergency</fullName>
+                <default>false</default>
+                <label>Medical Emergency</label>
+            </value>
+            <value>
+                <fullName>Misunderstanding of area</fullName>
+                <default>false</default>
+                <label>Misunderstanding of area</label>
+            </value>
+            <value>
+                <fullName>Negative by someone</fullName>
+                <default>false</default>
+                <label>Negative by someone</label>
+            </value>
+            <value>
+                <fullName>Not responding</fullName>
+                <default>false</default>
+                <label>Not responding</label>
+            </value>
+            <value>
+                <fullName>Personal Reason</fullName>
+                <default>false</default>
+                <label>Personal Reason</label>
+            </value>
+            <value>
+                <fullName>Plan Change - Bought another asset</fullName>
+                <default>false</default>
+                <label>Plan Change - Bought another asset</label>
+            </value>
+            <value>
+                <fullName>Planning To Shift In New Tower</fullName>
+                <default>false</default>
+                <label>Planning To Shift In New Tower</label>
+            </value>
+            <value>
+                <fullName>Possession time period is long</fullName>
+                <default>false</default>
+                <label>Possession time period is long</label>
+            </value>
+            <value>
+                <fullName>RTMI</fullName>
+                <default>false</default>
+                <label>RTMI</label>
+            </value>
+            <value>
+                <fullName>Schemes Not Applicable (eg Bajaj 3999 )</fullName>
+                <default>false</default>
+                <label>Schemes Not Applicable (eg Bajaj 3999 )</label>
+            </value>
+            <value>
+                <fullName>Shifting Outside Country</fullName>
+                <default>false</default>
+                <label>Shifting Outside Country</label>
+            </value>
+            <value>
+                <fullName>Smaller Carpet Area</fullName>
+                <default>false</default>
+                <label>Smaller Carpet Area</label>
+            </value>
+            <value>
+                <fullName>Want to invest in land</fullName>
+                <default>false</default>
+                <label>Want to invest in land</label>
+            </value>
+            <value>
+                <fullName>Looking only for free hold or outright purchase land.</fullName>
+                <default>false</default>
+                <label>Looking only for free hold or outright purchase land.</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

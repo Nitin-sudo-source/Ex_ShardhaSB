@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Processing Fees</fullName>
+        <default>false</default>
+        <label>Processing Fees</label>
+    </customValue>
+    <customValue>
+        <fullName>Share Money</fullName>
+        <default>false</default>
+        <label>Share Money</label>
+    </customValue>
+    <customValue>
+        <fullName>Development Charge</fullName>
+        <default>false</default>
+        <label>Development Charge</label>
+    </customValue>
+    <customValue>
+        <fullName>MSEB &amp; Water Charge</fullName>
+        <default>false</default>
+        <label>MSEB &amp; Water Charge</label>
+    </customValue>
+    <customValue>
+        <fullName>Legal Charge</fullName>
+        <default>false</default>
+        <label>Legal Charge</label>
+    </customValue>
+    <masterLabel>Other Charge Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

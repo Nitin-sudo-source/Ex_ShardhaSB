@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Percentage</fullName>
+        <default>false</default>
+        <label>Percentage</label>
+    </customValue>
+    <customValue>
+        <fullName>Amount</fullName>
+        <default>false</default>
+        <label>Amount</label>
+    </customValue>
+    <masterLabel>Charge Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

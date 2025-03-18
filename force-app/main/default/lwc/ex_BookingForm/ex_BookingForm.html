@@ -1,0 +1,836 @@
+<template>
+    <lightning-card>
+    <div if:true={isSpinner} class="spinner-container">
+        <div class="loader"></div>
+        <div class="wait-text">Please wait...</div>
+    </div>
+    <div class="custom-toast-container">
+        <template if:true={showToast}>
+            <section aria-describedby="dialog-body-id-111" aria-labelledby="dialog-heading-id-5"
+                class="slds-popover slds-popover_prompt slds-popover_prompt_top slds-popover_brand slds-popover_brand-bottom"
+                role="dialog">
+                <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close"
+                title="Close dialog">
+                <lightning-icon 
+                icon-name="utility:close"
+                alternative-text="Close"
+                size="x-small"
+                onclick={closeToast}
+            ></lightning-icon>
+                <span class="slds-assistive-text">Close dialog</span>
+            </button>
+                <div class="slds-popover__body" id="dialog-body-id-111">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <div class="slds-media">
+                                <div class="slds-media__figure">
+                                    <span class="slds-icon_container">
+                                    <lightning-icon icon-name={iconName} alternative-text={toastVariant} size="x-small"
+                                        variant={toastTextColor} title={toastVariant}></lightning-icon>
+                                    <span class="slds-assistive-text"></span>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 id="dialog-heading-id-5" class="slds-popover_prompt__heading"> {toastMessage}
+                                    </h2>
+                                    <!-- <p>
+                                    {toastMessage}
+                                </p> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </template>
+    </div>
+    <div class="container">
+        <!-- Unit Details Start -->
+        <div class="box3">
+            <div class="mains">
+                <header class="header" style="margin: 20px 0px;">
+                    <div class="main">
+                        <center>
+                            <lightning-icon size="medium" icon-name="custom:custom107"></lightning-icon>
+                            <label class="head" style="font-size:16px"> Booking Form</label>
+                        </center>
+                    </div>
+                </header>
+
+                <!-- Basic Booking Details -->
+                 <section class="section-booking-details">
+                    <div class="booking-details-wrapper">
+                        <lightning-record-edit-form density="compact" object-api-name="Booking__c">
+
+                        <!-- Booking Details  -->
+                         <table>
+                            
+                            <tr>
+                                <th colspan="4" class="table-header text-center">Booking Details</th>
+                            </tr>
+
+                            <template if:false={getBookingDetails.isEmpty}>
+                                <tr>
+                                    <td>Opportunity Name</td>
+                                    <td>{getBookingDetails.data.opportunityName}</td>
+                                    <td>Project Name</td>
+                                    <td>{getBookingDetails.data.projectName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tower Name</td>
+                                    <td>{getBookingDetails.data.towerName}</td>
+                                    <td>Unit Name</td>
+                                    <td>{getBookingDetails.data.unitName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Floor </td>
+                                    <td>{getBookingDetails.data.floorNo}</td>
+                                    <td>Total Carpet Area</td>
+                                    <td>{getBookingDetails.data.totalCarpetArea}</td>
+                                </tr>
+                                <tr>
+                                    <td>Booking Date<span style="color: red;">*</span></td>
+                                    <td>
+                                        <lightning-input data-field-name="bookingDate" type="date" name="bookingDate" value={getBookingDetails.data.bookingDate}
+                                                         onchange={handleBookingDetailsChange} variant="label-hidden">
+                                        </lightning-input>
+                                    </td>
+                                    <td>Mode of Funding
+                                        <span style="color: red;">*</span>
+                                    </td>
+                                    <td>
+                                         <lightning-input-field data-field-name="modeOfFunding" field-name="Mode_Of_Funding__c" variant="label-hidden"
+                                                                onchange={handleBookingDetailsChange} value={getBookingDetails.data.modeOfFunding}>
+                                        </lightning-input-field>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">Is Member Booking</td>
+                                    <td colspan="3">
+                                        <lightning-input type="checkbox" variant="label-hidden" data-field-name="isMemberBooking" name="isMemberBooking" label-hidden=true
+                                                            onchange={handleBookingDetailsChange} checked={getBookingDetails.data.isMemberBooking}>
+                                        </lightning-input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">Remarks 
+                                        <span style="color: red;">*</span>
+                                    </td>
+                                    <td colspan="3">
+                                        <lightning-textarea variant="label-hidden" data-field-name="remarks" name="remarks" label-hidden=true
+                                                            onchange={handleBookingDetailsChange} value={getBookingDetails.data.remarks}>
+                                        </lightning-textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">Other Channel Partners</td>
+                                    <td colspan="3">
+                                        <lightning-textarea variant="label-hidden" data-field-name="otherChannelPartners" name="otherChannelPartners" label-hidden=true
+                                                            onchange={handleBookingDetailsChange} value={getBookingDetails.data.otherChannelPartners}>
+                                        </lightning-textarea>
+                                    </td>
+                                </tr>
+                            </template>
+                            
+                            <template if:true={getBookingDetails.isEmpty}>
+                                <div> No Booking Details found ! </div>
+                            </template>
+
+                         </table>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                 </section>
+
+
+                 <!-- Home Loan Assessment Section -->
+                <template if:true={isModeOfFundingLoanRelated}>
+                    <section class="section-home-loan-assessment">
+                        <div class="home-loan-assessment-wrapper">
+                            <lightning-record-edit-form density="compact" object-api-name="Booking__c">
+                            <table>
+                                <tr>
+                                    <th colspan="4" class="text-center table-header">Home Loan Assessement Details</th>
+                                </tr>
+                                <tr>
+                                    <td> Sanctioned </td>     
+                                    <td> 
+                                        <lightning-input-field data-field-name="isLoanSanctioned" field-name="Is_Loan_Sanctioned__c" variant="label-hidden"
+                                            onchange={handleBookingDetailsChange} value={getBookingDetails.data.isLoanSanctioned}>
+                                        </lightning-input-field>
+                                    </td>     
+                                </tr>
+                                <template if:true={isLoanSantionedStatusYes}>
+                                        <tr>
+                                            <td> Name of Bank </td>     
+                                            <td> 
+                                                <lightning-input type="text" variant="label-hidden" data-field-name="loanSanctionedBankName" name="loanSanctionedBankName" label-hidden=true
+                                                onchange={handleBookingDetailsChange} checked={getBookingDetails.data.loanSanctionedBankName}>
+                                                </lightning-input>
+                                            </td>    
+                                        </tr>
+
+                                        <tr>
+                                            <td> Sanctioned Amount</td>     
+                                            <td> 
+                                                <lightning-input type="number" variant="label-hidden" data-field-name="sanctionedAmount" name="sanctionedAmount" label-hidden=true
+                                                onchange={handleBookingDetailsChange} checked={getBookingDetails.data.sanctionedAmount}>
+                                                </lightning-input>
+                                            </td>     
+                                        </tr>                                    
+                                </template>
+                                <template if:true={isLoanSantionedStatusNo}>
+                                    <tr>
+                                        <td> Name of Preferred Bank </td>     
+                                        <td> 
+                                            <lightning-input type="text" variant="label-hidden" data-field-name="loanSactionedPreferredBankName" name="loanSactionedPreferredBankName" label-hidden=true
+                                            onchange={handleBookingDetailsChange} checked={getBookingDetails.data.loanSactionedPreferredBankName}>
+                                            </lightning-input>
+                                        </td>     
+                                    </tr>
+                                </template>
+                            </table>
+                            </lightning-record-edit-form>
+                        </div>
+                    </section>
+                </template>
+
+                <!-- Legal Entity  Details -->
+                <section class="section-legal-entity-details">
+                    <div class="legal-entity-details-wrapper">
+
+                        <!-- Legal Entity Details  -->
+                        <table>
+                            <tr>
+                                <th colspan="4" class="text-center table-header">Legal Entity Details</th>
+                            </tr>
+                            <template if:false={getLegalEntityData.isEmpty}>
+                                <tr>
+                                    <td> Account Name (Flat Cost) </td>     
+                                    <td> {getLegalEntityData.data.Account_Name_Flat_Cost__c}</td>     
+                                    <td> Account Name (Tax) </td>     
+                                    <td> {getLegalEntityData.data.Account_Name_Tax__c}</td>     
+                                </tr>  
+                                <tr>
+                                    <td> Account Number (Flat Cost) </td>     
+                                    <td> {getLegalEntityData.data.Account_Number_Flat_Cost__c} </td>     
+                                    <td> Account Number (Tax) </td>     
+                                    <td> {getLegalEntityData.data.Account_Number_Tax__c} </td>     
+                                </tr>
+                                <tr>
+                                    <td> Bank Name (Flat Cost) </td>     
+                                    <td> {getLegalEntityData.data.Bank_Name_Flat_Cost__c} </td>     
+                                    <td> Bank Name (Tax) </td>     
+                                    <td> {getLegalEntityData.data.Bank_Name_Tax__c} </td>     
+                                </tr>
+                                <tr>
+                                    <td> Branch Name (Flat Cost) </td>     
+                                    <td> {getLegalEntityData.data.Branch_Name_Flat_Cost__c} </td>     
+                                    <td> Branch Name (Tax) </td>     
+                                    <td> {getLegalEntityData.data.Branch_Name_Tax__c} </td>     
+                                </tr>
+                                <tr>
+                                    <td> IFSC Code (Flat Cost) </td>     
+                                    <td> {getLegalEntityData.data.IFSC_Code_Flat_Cost__c} </td>
+                                    <td> IFSC Code (Tax) </td>     
+                                    <td> {getLegalEntityData.data.IFSC_Code_Tax__c} </td>
+                                </tr>
+
+                            </template>
+                        </table>
+                        
+                        <template if:true={getLegalEntityData.isEmpty}>
+                            <div class="text-center">No legal entity data found !</div>
+                        </template>
+
+                    </div>
+                </section>
+                
+
+                <table class="Table1Css">
+                    <tr>
+                        <th colspan="4">
+                            <div class="main">
+                                <center>
+                                    <lightning-icon style="margin-left: 10px;margin-right: 10px;" size="small"
+                                        icon-name="standard:groups">
+                                    </lightning-icon>
+                                    <label class="head" style="font-size:16px"> Applicant Details &nbsp;</label>
+                                    <lightning-button label="Add Applicant" slot="actions" icon-name="utility:add"
+                                        onclick={addApplicant}></lightning-button>
+                                </center>
+                            </div>
+                        </th>
+                    </tr>
+                </table>
+                <lightning-tabset aria-live="polite">
+                    <template for:each={getApplicantData} for:item="applicant" for:index="index">
+                        <lightning-tab key={applicant.key} data-sss={applicant.key} label={applicant.key}
+                            icon-name="standard:client">
+                            <div style="float: right;padding:10px;">
+                                <lightning-button data-tabvalue={applicant.key} data-index={index} label={applicant.key}
+                                    variant="destructive" icon-name="utility:delete" class="slds-tabs_default"
+                                    onclick={removeTab}>
+                                </lightning-button>
+                            </div>
+                            <br /> <br />
+                            <lightning-record-edit-form object-api-name="Applicant__c">
+                                <table class="Table1Css" style="font-size:12px;">
+                                    <tr>
+                                        <th style="text-align:left;">Salutation<span style="color: red;">*</span></th>
+                                        <td style="text-align:left;">
+                                            <lightning-input-field type="picklist" variant="label-hidden"
+                                                field-name="Applicant_Title__c" data-key={applicant.key}
+                                                data-index={index} name="Applicant_Title__c"
+                                                value={applicant.ap.Applicant_Title__c} onchange={handleApplicant}
+                                                required="true"></lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Applicant Number :<span
+                                                style="color: red;">*</span>
+                                        </th>
+                                        <td style="text-align:left;">
+                                            <lightning-input-field data-key={applicant.key} name="Applicant_Number__c"
+                                                variant="label-hidden" value={applicant.ap.Applicant_Number__c}
+                                                field-name="Applicant_Number__c" data-id='Controlling Picklist Type'
+                                                onchange={handleApplicant} required="true"></lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Name<span style="color: red;">*</span>
+                                        </th>
+                                        <td colspan="3" style="text-align:left;">
+                                            <lightning-input-field type="text" name="Name" data-key={applicant.key}
+                                                data-index={index} variant="label-hidden" field-name="Name"
+                                                value={applicant.ap.Name} onchange={handleApplicant} required="true">
+                                            </lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="main">
+                                                <center>
+                                                    <lightning-icon size="medium" icon-name="standard:avatar">
+                                                    </lightning-icon>
+                                                    <label class="head" style="font-size:16px"> Personal Details Section
+                                                        &nbsp;</label>
+                                                </center>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Country Code<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field style="width: 280px;" name="Country_Code__c"
+                                                data-id="Country_Code__c" data-key={applicant.key}
+                                                value={applicant.ap.Country_Code__c} field-name="Country_Code__c"
+                                                variant="label-hidden" onchange={handleApplicant} type="number">
+                                            </lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Mobile Number<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field style="width: 280px;" name="Primary_Mobile__c"
+                                                data-id="Primary_Mobile__c" data-key={applicant.key}
+                                                value={applicant.ap.Primary_Mobile__c} field-name="Primary_Mobile__c"
+                                                variant="label-hidden" onchange={handleApplicant} type="number">
+                                            </lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Email<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Primary_Email__c" data-id="Primary_Email__c"
+                                                field-name="Primary_Email__c" value={applicant.ap.Primary_Email__c}
+                                                data-key={applicant.key} variant="label-hidden"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Company Name
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Company_Name__c" data-id="Company_Name__c"
+                                                data-key={applicant.key} value={applicant.ap.Company_Name__c}
+                                                field-name="Company_Name__c" variant="label-hidden"
+                                                onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Designation
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Designation__c" data-id="Designation__c"
+                                                field-name="Designation__c" data-key={applicant.key}
+                                                value={applicant.ap.Designation__c} variant="label-hidden"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Date of Birth<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="DOB__c" data-id="DOB__c" field-name="DOB__c"
+                                                data-key={applicant.key} value={applicant.ap.DOB__c}
+                                                variant="label-hidden" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Anniversary Date </th>
+                                        <td style="text-align:left;">
+                                            <lightning-input-field data-key={applicant.key} name="Anniversary_Date__c"
+                                                variant="label-hidden" value={applicant.ap.Anniversary_Date__c}
+                                                field-name="Anniversary_Date__c" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;">Aadhar Card No<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Aadhar_Number__c" data-id="Aadhar_Number__c"
+                                                value={applicant.ap.Aadhar_Number__c} data-key={applicant.key}
+                                                variant="label-hidden" field-name="Aadhar_Number__c"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                            <div if:true={showError} class="slds-text-color_error">
+                                                {showMsg}
+                                            </div>
+                                        </td>
+
+                                        <th style="text-align:left;">PAN Number<span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="PAN_Number__c" data-id="PAN_Number__c"
+                                                value={applicant.ap.PAN_Number__c} data-key={applicant.key}
+                                                variant="label-hidden" field-name="PAN_Number__c"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                            <div if:true={showErrorPan} class="slds-text-color_error">
+                                                {showMsg}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;"> Type of Applicant :<span
+                                                style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <lightning-input-field data-key={applicant.key} name="Type_Of_Applicant__c"
+                                                variant="label-hidden" value={applicant.ap.Type_Of_Applicant__c}
+                                                field-name="Type_Of_Applicant__c" data-id='Controlling Picklist Type'
+                                                onchange={handleApplicant}></lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Nationality
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Nationality__c" data-id="Nationality__c"
+                                                value={applicant.ap.Nationality__c} data-key={applicant.key}
+                                                field-name="Nationality__c" variant="label-hidden"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">
+
+                                            <div class="main">
+                                                <center>
+                                                    <lightning-icon size="medium" icon-name="custom:custom107">
+                                                    </lightning-icon>
+                                                    <label class="head" style="font-size:16px"> Documents Details
+                                                        &nbsp;</label>
+                                                </center>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2" style="text-align:left;">Document Upload
+                                            Required<span style="color: red;">*</span>
+                                        </th>
+                                        <td colspan="2">
+                                            <lightning-input-field name="Document_Upload_Required__c"
+                                                data-id="Document_Upload_Required__c"
+                                                value={applicant.ap.Document_Upload_Required__c}
+                                                data-key={applicant.key} field-name="Document_Upload_Required__c"
+                                                variant="label-hidden" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <template if:true={isdocumentRequired}>
+                                        <template if:true={applicant.documents}>
+                                            <template for:each={applicant.documents} for:item="document">
+                                                <tr key={document.Id}>
+                                                    <th colspan="2">
+                                                        {document.Name}
+                                                    </th>
+                                                    <td colspan="2">
+                                                        <lightning-input name="fileUploader" data-id={document.index}
+                                                            data-index={index} data-applicantkey={document.key}
+                                                            onchange={openfileUpload} type="file"
+                                                            accept=".png, .doc, .docx, .pdf, .jpeg, .jpg"
+                                                            value={document.fileUploader}>
+                                                        </lightning-input>
+                                                        <p if:true={document.filename}>{document.filename}</p>
+                                                        <!-- <p  style="color:red !important;" if:true={document.filesize}>{document.filesize}</p> -->
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </template>
+                                    </template>
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="main">
+                                                <center>
+                                                    <lightning-icon size="medium" icon-name="standard:address">
+                                                    </lightning-icon>
+                                                    <label class="head" style="font-size:16px"> Address Details
+                                                        Section</label>
+                                                </center>
+                                            </div>
+
+                                        </th>
+                                    </tr>
+                                   
+                                    <th>
+                                        Permanent Address
+                                    </th>
+                                    <td colspan="7">
+                                        <lightning-input-field name="Permanent_Address__c"
+                                            data-id="Permanent_Address__c" data-key={applicant.key}
+                                            value={applicant.ap.Permanent_Address__c} field-name="Permanent_Address__c"
+                                            variant="label-hidden" onchange={handleApplicant}>
+                                        </lightning-input-field>
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Country
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Permanent_Country__c" data-id="Permanent_Country__c"
+                                                data-key={applicant.key} value={applicant.ap.Permanent_Country__c}
+                                                field-name="Permanent_Country__c" variant="label-hidden"
+                                                onchange={handleApplicant}></lightning-input-field>
+                                        </td>
+                                        <th>
+                                            State
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Permanent_State__c" data-id="Permanent_State__c"
+                                                data-key={applicant.key} value={applicant.ap.Permanent_State__c}
+                                                field-name="Permanent_State__c" variant="label-hidden" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            City
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Permanent_City__c" data-id="Permanent_City__c"
+                                                data-key={applicant.key} value={applicant.ap.Permanent_City__c}
+                                                field-name="Permanent_City__c" variant="label-hidden" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                        <th>
+                                            PIN Code
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Permanent_Pin_Code__c" data-id="Permanent_Pin_Code__c"
+                                                data-key={applicant.key} value={applicant.ap.Permanent_Pin_Code__c} field-name="Permanent_Pin_Code__c"
+                                                variant="label-hidden" onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                            <div if:true={showErrorPIN} class="slds-text-color_error">
+                                                {showPINMsg}
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th style="text-align:left;"> Mailing address Same as Permanent address</th>
+                                        <td colspan="7">
+                                            <lightning-input-field name="Mailing_Address_Same_as_PermanentAddress__c"
+                                                data-id="Mailing_Address_Same_as_PermanentAddress__c"
+                                                data-key={applicant.key} variant="label-hidden"
+                                                field-name="Mailing_Address_Same_as_PermanentAddress__c"
+                                                value={applicant.ap.Mailing_Address_Same_as_PermanentAddress__c}
+                                                onchange={handleApplicant} type="checkbox"></lightning-input-field>
+                                        </td>
+                                    </tr>
+                                    <template if:false={applicant.ap.Mailing_Address_Same_as_PermanentAddress__c}>
+                                        <tr>
+                                            <th style="text-align:left;">Mailing Address
+                                            </th>
+                                            <td colspan="7">
+                                                <lightning-textarea name="Mailing_Address__c"
+                                                    data-id="Mailing_Address__c" data-key={applicant.key}
+                                                    variant="label-hidden" field-name="Mailing_Address__c"
+                                                    value={applicant.ap.Mailing_Address__c} onchange={handleApplicant}>
+                                                </lightning-textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:left;">Mailing Country
+                                            </th>
+                                            <td>
+                                                <lightning-input-field name="Mailing_Country__c"
+                                                    data-id="Mailing_Country__c" data-key={applicant.key}
+                                                    variant="label-hidden" field-name="Mailing_Country__c"
+                                                    value={applicant.ap.Mailing_Country__c} onchange={handleApplicant}
+                                                    type="picklist">
+                                                </lightning-input-field>
+                                            </td>
+                                            <th style="text-align:left;">Mailing State
+                                            </th>
+                                            <td>
+                                                <lightning-input-field name="Mailing_State__c"
+                                                    data-id="Mailing_State__c" data-key={applicant.key}
+                                                    variant="label-hidden" field-name="Mailing_State__c"
+                                                    value={applicant.ap.Mailing_State__c} onchange={handleApplicant}
+                                                    type="picklist">
+                                                </lightning-input-field>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:left;">Mailing City</th>
+                                            <td>
+                                                <lightning-input-field name="Mailing_City__c" data-id="Mailing_City__c"
+                                                    data-key={applicant.key} variant="label-hidden"
+                                                    field-name="Mailing_City__c" value={applicant.ap.Mailing_City__c}
+                                                    onchange={handleApplicant} type="picklist">
+                                                </lightning-input-field>
+                                            </td>
+                                            <th style="text-align:left;">Mailing PIN Code
+                                            </th>
+                                            <td>
+                                                <lightning-input-field name="Mailing_Pincode__c"
+                                                    data-id="Mailing_Pincode__c" data-key={applicant.key}
+                                                    variant="label-hidden" field-name="Mailing_Pincode__c"
+                                                    value={applicant.ap.Mailing_Pincode__c} onchange={handleApplicant}>
+                                                </lightning-input-field>
+                                                <div if:true={showErrorMailingPIN} class="slds-text-color_error">
+                                                    {showMailingPINMsg}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </table>
+                            </lightning-record-edit-form>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </div>
+
+                <table class="Table1Css" style="font-size:12px;">
+                    <tr>
+                        <th>
+                            <div class="main">
+                                <center>
+                                    <lightning-icon icon-name="standard:contract_payment" size="xx-large"
+                                        variant="inverse">
+                                    </lightning-icon>
+                                    <label class="head" style="font-size:16px">Receipt Details &nbsp;</label>
+                                    <lightning-button label="Add Receipt" slot="actions" icon-name="utility:add"
+                                        onclick={addReceipt}></lightning-button>
+                                </center>
+                            </div>
+                        </th>
+                    </tr>
+                </table>
+                <lightning-tabset aria-live="polite">
+                    <template for:each={getReceiptData} for:item="receipt" for:index="index">
+                        <lightning-tab key={receipt.key} class="slds-tabs_default" label={receipt.key}
+                            icon-name="standard:contract_payment">
+                            <div style="float: right;padding:10px;">
+                                <lightning-button data-tabvalue={receipt.key} data-index={index} label={receipt.key}
+                                    variant="destructive" icon-name="utility:delete" class="slds-tabs_default"
+                                    onclick={removeTabReceipt}>
+                                </lightning-button>
+                            </div>
+                            <br />
+
+
+                            <lightning-record-edit-form object-api-name="Receipt__c">
+
+                            <!-- <lightning-tab class="slds-tabs_default" label="Receipt" icon-name="standard:contract_payment"> -->
+                            <table class="Table1Css" style="font-size:12px;">
+                                <tr>
+                                    <th colspan="4" style="background-color: white !important;">
+                                        <div class="main">
+                                            <center>
+                                                <lightning-icon icon-name="custom:custom17" size="xx-large"
+                                                    variant="inverse">
+                                                </lightning-icon>
+                                                <label class="head" style="font-size:16px"> Payment Details</label>
+                                            </center>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:left;">Payment Mode
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Mode_Of_Payment__c" data-id="Mode_Of_Payment__c"
+                                            variant="label-hidden" field-name="Mode_Of_Payment__c"
+                                            data-key={receipt.key} value={receipt.rc.Mode_Of_Payment__c}
+                                            onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                    <th style="text-align:left;">Is Token Amount</th>
+                                    <td>
+                                        <lightning-input-field name="Is_Token_Amount_Received__c" data-key={receipt.key}
+                                            data-id="Is_Token_Amount_Received__c" variant="label-hidden"
+                                            field-name="Is_Token_Amount_Received__c"
+                                            value={receipt.rc.Is_Token_Amount_Received__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:left;">Payment Type
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Payment_Type__c" data-id="Payment_Type__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Payment_Type__c"
+                                            value={receipt.rc.Payment_Type__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                    <th style="text-align:left;">Receipt Type
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Receipt_Type__c" data-id="Receipt_Type__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Receipt_Type__c"
+                                            value={receipt.rc.Receipt_Type__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:left;">Payment Status
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Payment_Status__c" data-id="Payment_Status__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Payment_Status__c"
+                                            value={receipt.rc.Payment_Status__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                    <th style="text-align:left;">Bank Name</th>
+                                    <td>
+                                        <lightning-input-field name="Bank_Name__c" data-id="Bank_Name__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Bank_Name__c"
+                                            value={receipt.rc.Bank_Name__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:left;">Receipt Date
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Receipt_Date__c" data-id="Receipt_Date__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Receipt_Date__c"
+                                            value={receipt.rc.Receipt_Date__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                    <th style="text-align:left;">Instrument Date</th>
+                                    <td>
+                                        <lightning-input-field name="Instrument_Date__c" data-id="Instrument_Date__c"
+                                            data-key={receipt.key} variant="label-hidden"
+                                            field-name="Instrument_Date__c" value={receipt.rc.Instrument_Date__c}
+                                            onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align:left;">Transaction Id
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Transaction_ID__c" data-id="Transaction_ID__c"
+                                            data-key={receipt.key} variant="label-hidden" field-name="Transaction_ID__c"
+                                            value={receipt.rc.Transaction_ID__c} onchange={handleReceiptInfo}>
+                                        </lightning-input-field>
+                                    </td>
+                                    <th style="text-align:left;">Amount
+                                        <!-- <span style="color: red;">*</span> -->
+                                    </th>
+                                    <td>
+                                        <lightning-input-field name="Amount__c" data-id="Amount__c"
+                                            variant="label-hidden" data-key={receipt.key} field-name="Amount__c"
+                                            value={receipt.rc.Amount__c} format-style="currency" currency-code="INR"
+                                            onchange={handleReceiptInfo}></lightning-input-field>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            </lightning-record-edit-form><br />
+
+                        </lightning-tab>
+                    </template>
+
+                    <!-- </lightning-tab> -->
+
+
+                </lightning-tabset>
+
+            
+            <!-- Other Booking Documents -->
+            <section class="section-otherBookingDocuments">
+                <div class="otherBookingDocuments-wrapper">
+
+                    <!-- Booking Details  -->
+                    <table>
+                        
+                        <tr>
+                            <th colspan="4" class="table-header text-center">Other Booking Documents</th>
+                        </tr>
+                    </table>
+
+
+                    <template if:false={getBookingDocumentNamesData.isEmpty}>
+                        <div class="grid-container">
+                            <template for:each={getBookingDocumentNamesData.data} for:item="bookingDocument">
+                                <div class="flex" key={bookingDocument.bookingDocumentName} style="font-size: 12px; font-weight:600;">
+                                    <div style="width:40%;padding: 10px 5px;">
+                                        {bookingDocument.bookingDocumentName} <br>
+                                        <span style="font-size:10px; font-weight:500;">{bookingDocument.uploadedFileName}</span>
+                                    </div>
+                                    <div colspan="3" style="width:60%;">
+                                        <lightning-input
+                                            type="file"
+                                            density="compact"
+                                            variant="label-hidden"
+                                            data-document-type={bookingDocument.bookingDocumentName}
+                                            onchange={handleOtherDocumentFileUpload}
+                                        ></lightning-input>
+
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    
+                    <template if:true={getBookingDetails.isEmpty}>
+                        <div> No Other Booking Documents found ! </div>
+                    </template>
+
+                </div>
+
+            </section>
+
+
+            <!-- <template if:false={isError}> -->
+            <div class="slds-align_absolute-center" style="font-size: 20px; padding:10px 0px;">
+                <lightning-button variant="success" label="Save" onclick={handleSave}></lightning-button>
+            </div><br />
+            <!-- </template> -->
+        </div>
+    </div>
+    <div>
+        {getApplicantDetails}
+    </div>
+</lightning-card>
+
+    
+</template>

@@ -1,0 +1,883 @@
+<template>
+	<div if:true={isSpinner} class="spinner-container">
+		<div class="loader"></div>
+		<div class="wait-text">Please wait...</div>
+	</div>
+	<div class="section1">
+
+	<div class="container">
+		<template if:true={showToast}>
+			<div class="custom-toast-container">
+				<div class={getToastClass} role="alert">
+					<span class="slds-assistive-text">{toastVariant}</span>
+					<div class="slds-notify__content">
+						<h2 class="slds-text-heading_small">{toastTitle}</h2>
+						<h2 class="slds-text-heading_small">{toastMessage}</h2>
+					</div>
+					<!-- <button style="margin-left: 228px !important;" title="Close" onclick={closeToast}>
+                            <lightning-icon icon-name="action:close" alternative-text="icon" styleclass="slds-icon slds-icon_small" variant="inverse" size="x-small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                    </button> -->
+				</div>
+			</div>
+		</template>
+
+
+
+		<div class="mains" style="width: 100% !important;">
+			<header class="header">
+				<div class="main">
+					<center>
+						<lightning-icon size="medium" icon-name="standard:store_group"></lightning-icon>
+						<label class="head" style="font-size:16px"> Create Quotation </label>
+					</center>
+				</div>
+			</header>
+
+			<!-- Payment Scheme and Pricing Plan Selection --> 
+			<div class="scheme-plan-wrapper flex-around flex-gap-10 mt-30">
+				<div class="flex-center flex-gap-15">
+					<label>Select Payment Scheme </label>
+					<lightning-combobox style="width: max-content;" name="paymentScheme" placeholder="Select Payment Scheme" disabled={editPaymentScheduleMode}
+						options={paymentSchemeList} value={selectedPaymentScheme} onchange={handlePaymentSchemeChange}>
+					</lightning-combobox>
+				</div>
+				
+				<div class="flex-center flex-gap-15">
+					<label>Select Pricing Plan </label>
+					<lightning-combobox style="width: max-content;" name="pricingPlan" placeholder="Select Pricing Plan" disabled={editPaymentScheduleMode}
+						options={pricingPlanOptions} value={selectedPricingPlan} onchange={handlePricingPlanChange}>
+					</lightning-combobox>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<template if:true={showTable}>
+		<div class="container">
+			<!-- Unit Details Start -->
+			<div class="box2">
+				<div class="mains">
+					<header class="header">
+						<div class="main" style="padding: 0px;">
+							<div class="flex-center" style="padding: 0px;">
+								<lightning-icon size="small" icon-name="custom:custom107"></lightning-icon>
+								<label class="head" style="font-size:16px"> Unit Details</label>
+							</div>
+						</div>
+					</header>
+					<template if:true={unit}>
+						<table if:true={fetchOpp} style="font-size: 11.5px;">
+							<tr>
+								<th>Opportunity Name</th>
+								<td>{fetchOpp.Name}</td>
+							</tr>
+							<tr>
+								<th>Project Name</th>
+								<td>{fetchOpp.Project__r.Name}</td>
+							</tr>
+							<tr>
+								<th>Tower Name</th>
+								<td if:true={unit.Tower__r.Name}>{unit.Tower__r.Name}</td>
+							</tr>
+							<tr>
+								<th>Unit Name</th>
+								<td if:true={unit.Name}>{unit.Name}</td>
+							</tr>
+							<tr>
+								<th>Unit Configuration</th>
+								<td if:true={unit.Configuration_Type__c}>{unit.Configuration_Type__c}</td>
+							</tr>
+							<tr>
+								<th>Unit Carpet Area (Sqft)</th>
+								<td if:true={unit.Total_carpet_Sq_Ft__c}>{unit.Total_carpet_Sq_Ft__c}</td>
+							</tr>
+							<tr>
+								<th>Unit Floor</th>
+								<td if:true={unit.Floor__c}>{unit.Floor__c}</td>
+							</tr>
+							<tr>
+								<th>Sales Status</th>
+								<td if:true={unit.Sales_Status__c}>{unit.Sale_Status__c}</td>
+							</tr>
+							<tr>
+    	                        <th>PSF Amount</th>
+                            	<td if:true={unit.PSF__c}>₹ {getPSFAmount}</td> 
+	                        </tr>
+						</table>
+					</template>
+				</div>
+			</div>
+			<!-- Unit Details End -->
+
+			<!-- charge Details Start  -->
+			<div class="box2">
+				<div class="mains">
+					<header class="header">
+						<div class="main" style="padding: 0px;">
+							<div class="flex-center" style="padding: 0;">
+								<lightning-icon size="medium" icon-name="standard:store_group"></lightning-icon>
+								<label class="head" style="font-size:16px"> Charges Details</label>
+							</div>
+						</div>
+					</header>
+					<template if:true={QuotationWrapper.q}>
+					<table style="font-size: 11.5px;">
+						<tr>
+							<th>
+								<template if:true={isBoxPlan}>
+									All Price In
+								</template>
+								<template if:true={isStandardPlan}>
+									Agreement Value
+								</template>
+							</th>
+							<td>
+								<template if:true={isBoxPlan}>
+									<lightning-input field-name="All_in_Price__c" variant="label-hidden"
+										value={getChargeDetailsData.allInPrice} data-charge-name="allInPrice" type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+										formatter="currency" onchange={handleChargeDetailsChange}>
+									</lightning-input>
+								</template>
+								<template if:true={isStandardPlan}>
+									<lightning-input variant="label-hidden"
+										value={getChargeDetailsData.agreementValue} data-charge-name="agreementValue" type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+										formatter="currency" onchange={handleChargeDetailsChange}>
+									</lightning-input>
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								Total Other Charges
+							</th>
+							<td>
+								<lightning-input field-name="Total_Other_Charges__c" variant="label-hidden" type="number" step="0.01" min="0"
+									formatter="currency" disabled=true
+									value={getChargeDetailsData.otherChargesIncludingTax} data-charge-name="otherChargesIncludingTax" onchange={handleChargeDetailsChange}>
+								</lightning-input>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								Registration Charges
+							</th>
+							<td>
+								<lightning-input field-name="Registration_Charges__c" variant="label-hidden" type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+									formatter="currency"
+									value={getChargeDetailsData.registrationCharges} data-charge-name="registrationCharges"
+									onchange={handleChargeDetailsChange}>
+								</lightning-input>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								Stamp Duty Percentage
+							</th>
+							<td>
+								<lightning-input field-name="Stamp_Duty_Percentage__c" variant="label-hidden" 
+								type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+									formatter="percentage"
+									value={getChargeDetailsData.stampDutyPercentage} data-charge-name="stampDutyPercentage"
+									onchange={handleChargeDetailsChange}>
+								</lightning-input>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								GST Percentage
+							</th>
+							<td>
+								<lightning-input field-name="GST__c" variant="label-hidden"
+								type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+									formatter="percentage"
+									value={getChargeDetailsData.GSTPercentage} data-charge-name="GSTPercentage" onchange={handleChargeDetailsChange}>
+								</lightning-input>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								Applied Discount
+							</th>
+							<td>
+								<lightning-input field-name="Applied_Discount__c" variant="label-hidden" type="number" step="0.01" min="0" disabled={editPaymentScheduleMode}
+									formatter="currency" value={appliedDiscount}
+									name="appliedDiscount"
+									onchange={handleAppliedDiscount}>
+								</lightning-input>
+							</td>
+						</tr>
+
+					</table>
+				</template>
+				</div>
+			</div>
+			<!-- Charge Details End -->
+
+			<!-- Parking Details Start -->
+			<div class="box2">
+				<div class="mains">
+					<header class="header">
+						<div class="main" style="padding: 0px;">
+							<div class="flex-center" style="padding: 0px;">
+								<lightning-icon size="medium" icon-name="custom:custom31"></lightning-icon>
+								<label class="head" style="font-size:16px"> Car Parking Details</label>
+							</div>
+						</div>
+					</header>
+					<table style="font-size: 11.5px;">
+
+					<tr>
+						<th>Type</th>
+						<th>Amount</th>
+						<th>Required Count</th>
+					</tr>
+					<tbody>
+						<template for:each={carParkList} for:item="cp" for:index="index">
+							<tr key={cp.carParkType}>
+								<td>{cp.carParkType}</td>
+								<td class="align-right">
+										<lightning-input type="number" value={cp.carParkAmount} disabled={editPaymentScheduleMode}
+											data-index={index} name="carParkAmount" onchange={handleChange}>
+										</lightning-input>
+
+								</td>
+								<td style="padding-top: 2px;padding-bottom: 2px;text-align:left;">
+										<lightning-input type="number" value={cp.carParkRequiredCount} disabled={editPaymentScheduleMode}
+											data-index={index} name="carParkRequiredCount" onchange={handleChange}>
+										</lightning-input>
+								</td>
+							</tr>
+						</template>
+						<tr>
+							<td style="background: #f0f0f0; padding:8px;" colspan="2" class="total-cell"><b>Total Car Park Amount</b></td>
+							<td style="background: #f0f0f0; padding:8px;" colspan="2" class="align-right"><b>{totalCarParkAmountString}</b></td>
+						</tr>
+					</tbody>
+
+				</table>
+
+				</div>
+				
+
+			</div>
+			<!-- Parking Details End -->
+		</div>
+
+		<div style="margin: 0px 15px; display:flex;">
+			<div style="width:100%;">
+				<header class="header">
+					<div class="main" style="padding: 0px;">
+						<div class="flex-center">
+							<lightning-icon size="small" icon-name="custom:custom17"></lightning-icon>
+							<label class="head" style="font-size:16px"> Other Charges</label>
+						</div>
+					</div>
+				</header>
+		
+
+				<template if:false={otherChargesList.isEmpty}>
+					<table class="other-charges-table">
+						<thead>
+							<th>Sr.No</th>
+							<th style="width: 300px;">Other Charge Type</th>
+							<th>Amount</th>
+							<th>GST %</th>
+							<th>Other Charge Including GST</th>
+							<th>Action</th>
+						</thead>
+						<tbody>
+						<template for:each={otherChargesList.data} for:item="otherCharge">
+							
+							<tr key={otherCharge.id}>
+
+								<td style="text-align: center; font-size:11.5px">
+									{otherCharge.sequenceNo}
+								</td>
+
+								<td class="flex-center">
+									<lightning-combobox
+										class="lwc-combo"
+										name="progress"
+										value={otherCharge.chargeName}
+										placeholder="Select Progress"
+										variant="label-hidden"
+										data-input-type="chargeName"
+										disabled={editPaymentScheduleMode}
+										data-charge-type={otherCharge.chargeName}
+										options={otherCharge.availableOtherChargeTypes}
+										onchange={handleChange} >
+									</lightning-combobox>
+								</td>
+
+								<td>
+									<lightning-input 
+										type="number"
+										step="0.01" min="0"
+										formatter="currency"
+										variant="label-hidden"
+										disabled={editPaymentScheduleMode}
+										onchange={handleOtherChargeDetailChange}
+										data-input-type="chargeAmount"
+										data-charge-type={otherCharge.chargeName}
+										value={otherCharge.chargeAmount}>
+									</lightning-input>
+								</td>
+
+								<td>
+									<lightning-input 
+										type="number"
+										step="0.01" min="0" max="100"
+										variant="label-hidden"
+										disabled={editPaymentScheduleMode}
+										onchange={handleOtherChargeDetailChange}
+										data-input-type="GSTPercentage"
+										data-charge-type={otherCharge.chargeName}
+										value={otherCharge.GSTPercentage}
+									></lightning-input>
+								</td>
+
+								<td>
+									<lightning-input 
+										type="number"
+										step="0.01" min="0"
+										formatter="currency"
+										variant="label-hidden"
+										disabled=true
+										data-input-type="chargeAmountIncludingGST"
+										data-charge-type={otherCharge.chargeName}
+										value={otherCharge.chargeAmountIncludingGST}>
+									</lightning-input>
+								</td>
+
+								<td class="flex-center">
+									<lightning-button 
+										disabled={editPaymentScheduleMode}
+										variant="destructive"
+										label="Remove" 
+										icon-name="utility:delete"
+										data-charge-type={otherCharge.chargeName}
+										onclick={handleOtherChargeRemoveButtonClick}>
+									</lightning-button>
+								</td>
+						</tr>
+						</template>	
+						</tbody>
+					</table>
+				</template>
+				<template if:true={otherChargesList.isEmpty}>
+					<div style="padding: 15px 25px; text-align:center;">No Other Charge found/exists. Please click <b>"Add Other Charge"</b> button to add charge detail.</div>	
+				</template>
+
+				<!-- Button To Add  -->
+				<div style="width: 100%; padding:10px;" class="flex-center">
+					<lightning-button 
+					disabled={editPaymentScheduleMode}
+					variant="brand"
+					label="Add Other Charge" 
+					onclick={handleOtherChargeAddButtonClick}>
+					</lightning-button>
+				</div>
+				
+			</div>
+		</div>
+
+	</template>
+
+
+	<template if:true={showCalculate}>
+		<div class="calculate-button">
+			<lightning-button icon-name="utility:sync"  label="Calculate"
+					onclick={handlecalculateValues} variant="brand">
+				</lightning-button>
+		</div>
+	</template>
+
+	<div class="container2">
+
+		<template if:true={showTable}>
+		<div class="box2">
+				<div class="mains">
+		
+			<table>
+				<tr>
+					<th style="background:#cae4ff; font-size:13px;">Charge Name</th>
+					<th style="background:#cae4ff; font-size:13px;">Original Value</th>
+					<th style="background:#cae4ff; font-size:13px;">Modified Value</th>
+				</tr>
+				<tr>
+					<th>
+						Agreement Value
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.agreementValue}
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.agreementValue}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Registration Charges
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.registrationCharges}
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.registrationCharges}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Total Other Charges
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.otherChargesIncludingTax}
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.otherChargesIncludingTax}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Stamp Duty
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.stampDutyCharges}
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.stampDutyCharges}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						GST
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.GSTCharges}
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.GSTCharges}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						All In Value (Total)
+					</th>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getOriginalChargeDetailsDataFormatted.allInPrice}
+
+					</td>
+					<td style="text-align:right; font-size: 11.5px;">
+						{getChargeDetailsDataFormatted.allInPrice}
+					</td>
+				</tr>
+
+			</table>
+		
+				</div>
+		</div>
+		</template>
+	</div><br/>
+	</div>
+
+
+	<template if:true={showTable}>
+		<div class="container2">
+			<div class="box3">
+				<div class="mains">
+					<header class="header">
+						<div class="main">
+							<center>
+								<lightning-icon size="medium" icon-name="standard:store_group"></lightning-icon>
+								<label class="head" style="font-size:16px"> Payment Schedule : {selectedPaymentSchemeName} </label>
+							</center>
+						</div>
+					</header>
+				</div>
+				<div class="container2">
+					<div class="box3 box3-internal">
+						<template if:true={showPaymentScheduleData}>
+							<div class="table-container" style="border: 1px solid #ddd;">
+								<div class="mains">
+
+									<div class="main">
+										<lightning-icon size="medium" icon-name="standard:form"></lightning-icon>
+										<label class="head" style="font-size:14px !important;"> {selectedPaymentSchemeName} - Payment Schedule ({selectedPricingPlan})</label>
+										<template if:true={isPaymentScheduleEnable}>
+											<lightning-button icon-name="utility:breadcrumbs"
+												if:false={editPaymentScheduleMode} style="float: right;"
+												label="Edit Schedule" onclick={editPaymentSchedule} variant="brand">
+											</lightning-button>
+											<template if:false={showConfirm}>
+												<lightning-button icon-name="utility:breadcrumbs"
+													if:true={editPaymentScheduleMode} style="float: right;"
+													label="Update Schedule" onclick={updatePaymentSchedule} variant="brand">
+												</lightning-button>&nbsp;&nbsp;
+											</template>
+										<template if:true={showConfirm}>
+											<lightning-button icon-name="utility:breadcrumbs"
+												if:true={editPaymentScheduleMode} style="float: right;"
+												label="Confirm Schedule" onclick={confirmPaymentSchedule}
+												variant="brand"></lightning-button>&nbsp;&nbsp;
+												</template>
+												
+												
+											<lightning-button icon-name="utility:breadcrumbs"
+												if:true={editPaymentScheduleMode} style="float: right; padding: 0px 5px;"
+												label="Cancel Schedule" onclick={cancelPaymentSchedule} variant="brand">
+											</lightning-button>
+											
+											</template>
+										
+									</div>
+
+									<div class="panel-collapse collapse in" style="overflow-x:auto;">
+										<div class="panel-body table-responsive">
+											<table class="table table-bordered table-hover">
+												<template if:false={editPaymentScheduleMode}>
+													<thead>
+														<tr>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Milestone Name
+															</th>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Percentage
+															</th>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Due Date
+															</th>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Amount
+															</th>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Tax
+															</th>
+															<th
+																style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Total Amount
+															</th>
+
+														</tr>
+													</thead>
+
+													<tbody>
+														<template for:each={paymentMilestoneWrapperList} for:item="pmw">
+															<tr key={pmw}>
+
+
+																<td style="text-align:left; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.milestoneName}>
+																	</lightning-formatted-text>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text
+																		value={pmw.percentageString}>
+																	</lightning-formatted-text>
+																</td>
+
+
+																<td style="text-align:right; font-size: 10px;">
+																	<template if:true={pmw.pm}>
+																		<lightning-formatted-date-time year="numeric"
+																			month="numeric" day="numeric"
+																			value={pmw.pm.Due_Date__c}
+																			variant="label-hidden">
+																		</lightning-formatted-date-time>
+																	</template>
+																	<template if:false={pmw.pm}>
+																		<p></p>
+																	</template>
+																</td>
+
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.amountString}>
+																	</lightning-formatted-text>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.taxString}>
+																	</lightning-formatted-text>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.totalString}>
+																	</lightning-formatted-text>
+																</td>
+															</tr>
+														</template>
+													</tbody>
+
+
+												</template>
+
+												<template if:true={editPaymentScheduleMode}>
+													<thead>
+														<tr>
+															<th
+																style="text-align:center; width: 30% !important;  padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Milestone Name
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																No. Of Days
+															</th>
+															<th
+																style="text-align:center; width: 6%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Milestone Type
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Construction Stage
+															</th>
+															<th
+																style="text-align:center; width: 6%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Amount Type
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Milestone Percentage
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Milestone Amount
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Due Date
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Amount
+															</th>
+
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Tax
+															</th>
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Total
+															</th>
+															<!-- <th
+													style="text-align:center; width: 5%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+													TDS
+												</th>  -->
+															<th
+																style="text-align:center; width: 8%; padding-top: 3px; padding-bottom: 3px; background-color: #ddd; color: black; font-size: 10px;">
+																Actions
+															</th>
+														</tr>
+													</thead>
+
+													<tbody>
+														<template for:each={paymentMilestoneWrapperList} for:item="pmw"
+															for:index="index">
+															<tr key={pmw} if:false={pmw.isTotal}>
+																<td style="text-align:left; font-size: 10px;">
+																	<lightning-input type="text" data-index={index}
+																		value={pmw.milestoneName} name="milestoneName"
+																		onchange={handleChange}></lightning-input>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-input type="number" data-index={index}
+																		value={pmw.pm.Number_of_Days__c}
+																		name="Number_of_Days__c"
+																		onchange={handleChange}>
+																	</lightning-input>
+
+																</td>
+																<td style="text-align:left; font-size: 10px;">
+																	<lightning-combobox data-index={index}
+																		class="custom-combobox"
+																		value={pmw.pm.Milestone_Type__c}
+																		name="Milestone_Type__c"
+																		options={pmw.milestoneType}
+																		onchange={handleChange}>
+																	</lightning-combobox>
+																</td>
+																<td style="text-align:left; font-size: 10px;">
+																	<template if:true={pmw.isConStructionLinked}>
+																		<lightning-combobox data-index={index}
+																			class="custom-combobox"
+																			value={pmw.pm.Construction_Stage__c}
+																			name="Construction_Stage__c"
+																			options={pmw.csListDisplay}
+																			onchange={handleChange}>
+																		</lightning-combobox>
+																	</template>
+																	<template if:false={pmw.isConStructionLinked}>
+																		<p></p>
+																	</template>
+																</td>
+																<td style="text-align:left; font-size: 10px;">
+																	<lightning-combobox data-index={index}
+																		class="custom-combobox"
+																		value={pmw.psm.Charge_Bucket_1_Type__c}
+																		name="Charge_Bucket_1_Type__c"
+																		options={pmw.amountType}
+																		onchange={handleChange}></lightning-combobox>
+																</td>
+																<!-- <td style="text-align:right; font-size: 10px;">
+														<template if:true={pmw.isPercentage}>
+															<lightning-input type="number" step="0.25"
+																data-index={index}
+																value={pmw.pm.Charge_Bucket_1_Percentage__c}
+																name="Charge_Bucket_1_Percentage__c"
+																onchange={handleChange}></lightning-input>
+														</template>
+														<template if:false={pmw.isPercentage}>
+															<lightning-formatted-number steps="0.25"
+																value={pmw.pm.Charge_Bucket_1_Percentage__c}>
+															</lightning-formatted-number>
+														</template>
+													</td> -->
+																<td style="text-align:right; font-size: 10px;">
+																	<template if:true={pmw.isPercentage}>
+																		<lightning-input type="number" step="0.01"
+																			data-index={index}
+																			value={pmw.pm.Charge_Bucket_1_Percentage__c}
+																			name="Charge_Bucket_1_Percentage__c"
+																			onchange={handleChange}></lightning-input>
+																	</template>
+																	<template if:false={pmw.isPercentage}>
+																		<lightning-formatted-number steps="0.01"
+																			value={pmw.pm.Charge_Bucket_1_Percentage__c}>
+																		</lightning-formatted-number>
+																	</template>
+																</td>
+
+																<td style="text-align:right; font-size: 10px;">
+																	<template if:true={pmw.isAmount}>
+																		<lightning-input type="number" step="0.01"
+																			data-index={index}
+																			value={pmw.pm.Charge_Bucket_1_Amount__c}
+																			name="Charge_Bucket_1_Amount__c"
+																			onchange={handleChange}></lightning-input>
+																	</template>
+																	<template if:false={pmw.isAmount}>
+																		<lightning-formatted-number steps="0.01"
+																			value={pmw.pm.Charge_Bucket_1_Amount__c}>
+																		</lightning-formatted-number>
+																	</template>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<template if:true={pmw.pm}>
+																		<lightning-formatted-date-time year="numeric"
+																			month="numeric" day="numeric"
+																			value={pmw.pm.Due_Date__c}
+																			variant="label-hidden">
+																		</lightning-formatted-date-time>
+																	</template>
+																	<template if:false={pmw.pm}>
+																		<p></p>
+																	</template>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.amountString}>
+																	</lightning-formatted-text>
+																</td>
+
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.taxString}>
+																	</lightning-formatted-text>
+																</td>
+																<td style="text-align:right; font-size: 10px;">
+																	<lightning-formatted-text value={pmw.totalString}>
+																	</lightning-formatted-text>
+																</td>
+																<!-- <td style="text-align:right; font-size: 10px;">
+														<template if:true={pmw.isTDSVisible}>
+															<lightning-formatted-text
+																value={pmw.isTDSAmountString}>
+															</lightning-formatted-text>
+														</template>
+														<template if:false={pmw.isTDSVisible}>
+															
+														</template>
+													</td>  -->
+																<td>
+																	<a href="#" name="add" onclick={handleChange}
+																		data-index={index}
+																		style="font-size:16px !important;"> + </a>
+																	&nbsp;
+																	<a href="#" name="remove" onclick={handleChange}
+																		data-index={index}
+																		style="font-size:16px !important;"> - </a>
+																</td>
+															</tr>
+														</template>
+													</tbody>
+
+													<!-- <thead>
+											<tr>
+												<th colspan="4"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Original NPV: <lightning-formatted-number
+														minimum-fraction-digits="3" value={originalNPV}>
+													</lightning-formatted-number>
+												</th>
+												<th colspan="4"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Modified NPV: <lightning-formatted-number
+														minimum-fraction-digits="3" value={updatedNPV}>
+													</lightning-formatted-number>
+												</th>
+												<th colspan="5"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Discount: <lightning-formatted-number
+														minimum-fraction-digits="3" value={discountNPV}>
+													</lightning-formatted-number> &nbsp;
+													
+
+												</th>
+											</tr>
+											<tr>
+												<th colspan="4"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Original NPV PSF: <lightning-formatted-number
+														minimum-fraction-digits="3" value={originalNPVPSF}>
+													</lightning-formatted-number>
+												</th>
+												<th colspan="4"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Modified NPV PSF: <lightning-formatted-number
+														minimum-fraction-digits="3" value={updatedNPVPSF}>
+													</lightning-formatted-number>
+												</th>
+												<th colspan="5"
+													style="padding-top: 3px; padding-bottom: 3px;">
+													Discount PSF: <lightning-formatted-number
+														minimum-fraction-digits="3" value={discountNPVPSF}>
+													</lightning-formatted-number>
+												</th>
+											</tr>
+										</thead> -->
+												</template>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div style="text-align: center;">
+			<template if:true={showPaymentScheduleData}>
+				<lightning-button icon-name="utility:save" if:false={isValidationError} label="Create Quotation"
+					onclick={saveQuotation} variant="brand">
+				</lightning-button><br/>
+			</template>
+		</div><br/>
+	</template>
+
+
+</template>

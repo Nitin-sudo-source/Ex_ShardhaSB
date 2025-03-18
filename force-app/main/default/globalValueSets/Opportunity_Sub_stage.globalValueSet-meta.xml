@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Hot</fullName>
+        <default>false</default>
+        <label>Hot</label>
+    </customValue>
+    <customValue>
+        <fullName>Warm</fullName>
+        <default>false</default>
+        <label>Warm</label>
+    </customValue>
+    <customValue>
+        <fullName>Cold</fullName>
+        <default>false</default>
+        <label>Cold</label>
+    </customValue>
+    <customValue>
+        <fullName>Spot Booking</fullName>
+        <default>false</default>
+        <label>Spot Booking</label>
+    </customValue>
+    <customValue>
+        <fullName>Revisit Booking</fullName>
+        <default>false</default>
+        <label>Revisit Booking</label>
+    </customValue>
+    <customValue>
+        <fullName>Before Registration</fullName>
+        <default>false</default>
+        <label>Before Registration</label>
+    </customValue>
+    <customValue>
+        <fullName>After Registration</fullName>
+        <default>false</default>
+        <label>After Registration</label>
+    </customValue>
+    <customValue>
+        <fullName>Did not like layout of the flat</fullName>
+        <default>false</default>
+        <label>Did not like layout of the flat</label>
+    </customValue>
+    <customValue>
+        <fullName>Location Mismatch</fullName>
+        <default>false</default>
+        <label>Location Mismatch</label>
+    </customValue>
+    <customValue>
+        <fullName>Booked in other project</fullName>
+        <default>false</default>
+        <label>Booked in other project</label>
+    </customValue>
+    <customValue>
+        <fullName>Booked in resale</fullName>
+        <default>false</default>
+        <label>Booked in resale</label>
+    </customValue>
+    <customValue>
+        <fullName>Plan to buy home is Postponed / cancelled</fullName>
+        <default>false</default>
+        <label>Plan to buy home is Postponed / cancelled</label>
+    </customValue>
+    <customValue>
+        <fullName>Not Answering. Pre-sales to follow-up</fullName>
+        <default>false</default>
+        <label>Not Answering. Pre-sales to follow-up</label>
+    </customValue>
+    <customValue>
+        <fullName>Not Vastu compliant</fullName>
+        <default>false</default>
+        <label>Not Vastu compliant</label>
+    </customValue>
+    <customValue>
+        <fullName>Table Lost</fullName>
+        <default>false</default>
+        <label>Table Lost</label>
+    </customValue>
+    <customValue>
+        <fullName>Area/Configuration Mismatch</fullName>
+        <default>false</default>
+        <label>Area/Configuration Mismatch</label>
+    </customValue>
+    <customValue>
+        <fullName>Possession does not match</fullName>
+        <default>false</default>
+        <label>Possession does not match</label>
+    </customValue>
+    <customValue>
+        <fullName>General Enquiry</fullName>
+        <default>false</default>
+        <label>General Enquiry</label>
+    </customValue>
+    <customValue>
+        <fullName>Loan Issues</fullName>
+        <default>false</default>
+        <label>Loan Issues</label>
+    </customValue>
+    <customValue>
+        <fullName>Negotiation</fullName>
+        <default>false</default>
+        <label>Negotiation</label>
+    </customValue>
+    <customValue>
+        <fullName>Conditional sale</fullName>
+        <default>false</default>
+        <label>Conditional sale</label>
+    </customValue>
+    <customValue>
+        <fullName>Booked Elsewhere</fullName>
+        <default>false</default>
+        <label>Booked Elsewhere</label>
+    </customValue>
+    <customValue>
+        <fullName>CA Discussion pending</fullName>
+        <default>false</default>
+        <label>CA Discussion pending</label>
+    </customValue>
+    <customValue>
+        <fullName>Choice of Unit</fullName>
+        <default>false</default>
+        <label>Choice of Unit</label>
+    </customValue>
+    <customValue>
+        <fullName>CIBIL issue</fullName>
+        <default>false</default>
+        <label>CIBIL issue</label>
+    </customValue>
+    <customValue>
+        <fullName>Commercial Property Enquiry</fullName>
+        <default>false</default>
+        <label>Commercial Property Enquiry</label>
+    </customValue>
+    <customValue>
+        <fullName>Decision Maker Absent</fullName>
+        <default>false</default>
+        <label>Decision Maker Absent</label>
+    </customValue>
+    <customValue>
+        <fullName>Early Possession</fullName>
+        <default>false</default>
+        <label>Early Possession</label>
+    </customValue>
+    <customValue>
+        <fullName>Family Decision Pending</fullName>
+        <default>false</default>
+        <label>Family Decision Pending</label>
+    </customValue>
+    <customValue>
+        <fullName>Financial Planning mismatch</fullName>
+        <default>false</default>
+        <label>Financial Planning mismatch</label>
+    </customValue>
+    <customValue>
+        <fullName>Invalid numbers</fullName>
+        <default>false</default>
+        <label>Invalid numbers</label>
+    </customValue>
+    <customValue>
+        <fullName>Unit/Floor Not available</fullName>
+        <default>false</default>
+        <label>Unit/Floor Not available</label>
+    </customValue>
+    <customValue>
+        <fullName>ITR pending</fullName>
+        <default>false</default>
+        <label>ITR pending</label>
+    </customValue>
+    <customValue>
+        <fullName>Job Loss</fullName>
+        <default>false</default>
+        <label>Job Loss</label>
+    </customValue>
+    <customValue>
+        <fullName>Job Transfer</fullName>
+        <default>false</default>
+        <label>Job Transfer</label>
+    </customValue>
+    <customValue>
+        <fullName>Loan Eligibility Not met</fullName>
+        <default>false</default>
+        <label>Loan Eligibility Not met</label>
+    </customValue>
+    <customValue>
+        <fullName>Looking for Subvension plan</fullName>
+        <default>false</default>
+        <label>Looking for Subvension plan</label>
+    </customValue>
+    <customValue>
+        <fullName>Lost to competition</fullName>
+        <default>false</default>
+        <label>Lost to competition</label>
+    </customValue>
+    <customValue>
+        <fullName>Low Budget Client</fullName>
+        <default>false</default>
+        <label>Low Budget Client</label>
+    </customValue>
+    <customValue>
+        <fullName>Not discussed with family</fullName>
+        <default>false</default>
+        <label>Not discussed with family</label>
+    </customValue>
+    <customValue>
+        <fullName>Not Interested At All</fullName>
+        <default>false</default>
+        <label>Not Interested At All</label>
+    </customValue>
+    <customValue>
+        <fullName>Not responding</fullName>
+        <default>false</default>
+        <label>Not responding</label>
+    </customValue>
+    <customValue>
+        <fullName>OCR issue</fullName>
+        <default>false</default>
+        <label>OCR issue</label>
+    </customValue>
+    <customValue>
+        <fullName>Out of Country</fullName>
+        <default>false</default>
+        <label>Out of Country</label>
+    </customValue>
+    <customValue>
+        <fullName>Out Of Station</fullName>
+        <default>false</default>
+        <label>Out Of Station</label>
+    </customValue>
+    <customValue>
+        <fullName>Permanently Switched off</fullName>
+        <default>false</default>
+        <label>Permanently Switched off</label>
+    </customValue>
+    <customValue>
+        <fullName>Personal Emergency/issue</fullName>
+        <default>false</default>
+        <label>Personal Emergency/issue</label>
+    </customValue>
+    <customValue>
+        <fullName>Price High</fullName>
+        <default>false</default>
+        <label>Price High</label>
+    </customValue>
+    <customValue>
+        <fullName>Room Size</fullName>
+        <default>false</default>
+        <label>Room Size</label>
+    </customValue>
+    <customValue>
+        <fullName>RTMI</fullName>
+        <default>false</default>
+        <label>RTMI</label>
+    </customValue>
+    <customValue>
+        <fullName>Scouting</fullName>
+        <default>false</default>
+        <label>Scouting</label>
+    </customValue>
+    <customValue>
+        <fullName>Serial VDNB client</fullName>
+        <default>false</default>
+        <label>Serial VDNB client</label>
+    </customValue>
+    <customValue>
+        <fullName>Staff Loan not happened</fullName>
+        <default>false</default>
+        <label>Staff Loan not happened</label>
+    </customValue>
+    <customValue>
+        <fullName>Wrong Number</fullName>
+        <default>false</default>
+        <label>Wrong Number</label>
+    </customValue>
+    <customValue>
+        <fullName>Expired</fullName>
+        <default>false</default>
+        <label>Expired</label>
+    </customValue>
+    <masterLabel>Opportunity Sub-stage</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

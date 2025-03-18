@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Document_Type__c</fullName>
+    <label>Document Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pan Card</fullName>
+                <default>false</default>
+                <label>Pan Card</label>
+            </value>
+            <value>
+                <fullName>RERA Competency Certificate</fullName>
+                <default>false</default>
+                <label>RERA Competency Certificate</label>
+            </value>
+            <value>
+                <fullName>GST Certificate</fullName>
+                <default>false</default>
+                <label>GST Certificate</label>
+            </value>
+            <value>
+                <fullName>RERA Certificate</fullName>
+                <default>false</default>
+                <label>RERA Certificate</label>
+            </value>
+            <value>
+                <fullName>Aadhar Card</fullName>
+                <default>false</default>
+                <label>Aadhar Card</label>
+            </value>
+            <value>
+                <fullName>Passport</fullName>
+                <default>false</default>
+                <label>Passport</label>
+            </value>
+            <value>
+                <fullName>Loan Sanction Letter</fullName>
+                <default>false</default>
+                <label>Loan Sanction Letter</label>
+            </value>
+            <value>
+                <fullName>Resolution</fullName>
+                <default>false</default>
+                <label>Resolution</label>
+            </value>
+            <value>
+                <fullName>MOA &amp; AOA</fullName>
+                <default>false</default>
+                <label>MOA &amp; AOA</label>
+            </value>
+            <value>
+                <fullName>Partnership Deed</fullName>
+                <default>false</default>
+                <label>Partnership Deed</label>
+            </value>
+            <value>
+                <fullName>Power of Attorney</fullName>
+                <default>false</default>
+                <label>Power of Attorney</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

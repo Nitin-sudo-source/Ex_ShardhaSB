@@ -1,0 +1,493 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('/resource/Inter_Jakarta_Fonts/Inter_Jakarta_Fonts/Inter/static/Inter_18pt-Medium.ttf') format("TrueType");
+}
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url('/resource/Inter_Jakarta_Fonts/Inter_Jakarta_Fonts/Plus_Jakarta_Sans/static/PlusJakartaSans-Bold.ttf') format("TrueType");
+}
+
+*{
+    font-family: 'Inter' !important;
+}
+:host{
+    --sds-c-input-radius-border: 18px;
+    --option-border-radius: 18px;
+}
+
+body{
+    margin: 0px;
+    padding: 0px;
+    background: white;
+}
+span {
+    box-sizing: border-box;
+}
+
+.legend { 
+    list-style: none; 
+}
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend li { 
+    float: left; 
+    margin-right: 10px; 
+}
+.legend label{
+    padding: 5px 10px;
+}
+
+.legend span { 
+    border: 1px solid #ccc; 
+    float: left; 
+    width: 15px; 
+    height: 15px; 
+    margin: 2px; 
+}
+
+.legend .Available { 
+    background-color: #DDFFBB; 
+    /* border-radius: 15px;  */
+}
+.legend .Booked { 
+    background-color:#ECDDD0;
+    /* border: 1px;
+    border-radius: 15px; */
+}
+.legend .Blocked { 
+    background-color:#E6E6FA;
+}
+
+.legend .BookingInProcess { 
+    background-color:  #acd1e9;
+}
+.legend .Refuge { 
+    background-color:  #b7afa3;
+}
+.legend .Reserved { 
+    background-color:  #c3932b;
+}
+.legend .NotForSale{
+    background-color:  red;
+}
+
+.unit-container-scrollable {
+    max-height: 150px; 
+    overflow-y: auto;
+    height: auto;
+}
+
+.unit-info {
+    min-width: 150px; 
+    width: auto;
+    display: inline-block;
+    font-size: 10px;
+}
+
+.floor-header {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 5px;
+    margin-top:16px;
+    background-color: rgb(240, 240, 240);
+    font-weight: bold;
+    border-radius: 4px;
+    color: black;
+    margin-right: 20px;
+}
+
+.unit-container {
+    white-space: nowrap;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.unit-row {
+    display: inline-flex;
+    /* display: flex;
+    float: left; */
+    
+}
+
+.unit-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    margin: 10px;
+    font-size: 11px;
+    position: relative;
+    color: #333333;
+    text-align: center;
+    min-width:  150px;
+    width: auto;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    border-radius: 15px;
+    min-height: 80px;
+    height: auto;   
+  }
+  .unit-box:hover{
+    transform: scale(1.1);
+    transition: 0.3s;
+  }
+
+  
+  .unit-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    color: #000000;
+  }
+  .unit-Booked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    color: #000000;
+}
+.unit-box .unit-text {
+    /* Define styles for the text within .unit-box */
+    color: #FF0000; /* For example, change the text color to red */
+    font-weight: bold;
+}
+  .unit-block-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0px;
+    color: #000000;
+}
+.unit-buttons button {
+    margin-right: 5px;
+    /* display:none; */
+    display:inline-block;
+  }
+.unit-box[data-unit-status="Available"] .unit-buttons button {
+    display: inline-block;
+}
+.unit-box[data-unit-status="Sale Hold with Money"] .unit-buttons button {
+    display: inline-block;
+}
+
+.unit-box[data-unit-status="Blocked"] .unit-block-buttons button {
+    display: inline-block;
+}
+.unit-block-buttons button {
+    margin-right: 5px;
+    display:none;
+  }
+.chip[data-sales-status="All"], .chip[data-configuration-type="All"] {
+    background-color: #acd1e9 !important;
+    font-weight: 700;
+}
+.chip[data-sales-status="Booked"], .unit-box[data-unit-status="Booked"] {
+    background-color: #FF0000 !important;
+}
+.chip[data-sales-status="Vacant"], .unit-box[data-unit-status="Vacant"]{
+    background-color: #00FF00 !important;
+}
+.chip[data-sales-status="Refuge"], .unit-box[data-unit-status="Refuge"] {
+    /* background-color: #9d66e5 !important; */
+    background-color: #E2DFD2	 !important;
+}
+.chip[data-sales-status="Tenants Inventory"], .unit-box[data-unit-status="Tenants Inventory"] {
+    background-color: #658bfc !important;
+}
+.chip[data-sales-status="Project Affected People"], .unit-box[data-unit-status="Project Affected People"] {
+    /* background-color: #ff4abc !important; */
+    background-color: #9d66e5 !important;
+}
+.chip[data-sales-status="Booking In-Process"], .unit-box[data-unit-status="Booking In-Process"] {
+    background-color: #FFA500 !important;
+}
+.chip[data-sales-status="Management Inventory"], .unit-box[data-unit-status="Management Inventory"] {
+    background-color: #3f3f3f !important;
+}
+.chip[data-sales-status="Blocked"], .unit-box[data-unit-status="Blocked"] {
+    background-color: #a0a0a0 !important;
+}
+/* .chip[data-sales-status="Management Block"], .unit-box[data-unit-status="Management Block"] {
+    background-color: #FFFF00 !important;
+} */
+
+.icon{
+    background-color:white;
+    color: black;
+    border: 1px solid black;
+}
+.combo-box-container {
+    display: flex; /* Use flexbox to center align horizontally */
+    justify-content: center; /* Center align horizontally */
+    margin: 5px;
+}
+
+.combo-box {
+    margin-right: 10px;
+} /* Add some spacing between combo boxes */
+
+
+lightning-combobox{
+    font-size: small;
+    width: 250px;
+    color: solid black;
+}
+
+.combo-box-label {
+    margin-right: 10px; /* Add spacing between the label and combo box */
+    flex: 1; /* Allow the label to grow and occupy available space */
+    min-width: 150px; /* Set a minimum width for the label */
+}
+
+.checkbox-container {
+    /* display: flex; */
+    flex-wrap: wrap;
+    padding: 5px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: solid black;
+}
+
+.button1 {
+    display: inline-block;
+    margin-left: 50px;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #000000;
+    border: none;
+    border-radius: 15px;
+    font-size: 12px;
+  }
+
+  .checkbox-label {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    background-color: #ccc;
+    padding: 5px 7px;
+    border-radius: 15px;
+}
+input{
+    margin-right: 5px;
+}
+
+.box3 {
+    flex: 0 1 99%; /* Adjust width as needed */
+    /* height: auto; */
+    /* Always show scroll bars */
+    /* overflow: none; */
+
+    /* padding: 5px;
+    margin: 10px; */
+     /* border: 2px solid #c2c2c2; */
+}
+
+.main {
+    /* background-color: #57a3fd63 ; */
+    /* border: 2px solid #c2c2c2; */
+    padding: 8px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    /* color: whitesmoke; */
+}
+.main label{
+    font-family: 'Plus Jakarta Sans' !important;
+}
+.main img{
+    width: 40px;
+    height: 40px;
+}
+
+.mains {
+    /* border: 1px solid #c2c2c2; */
+    border-radius: var(--lwc-borderRadiusMedium, 0.25rem);
+}
+
+.head {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: var(--lwc-fontFamily, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol');
+    margin: 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    color: #000000;
+}
+
+
+
+.spinner-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(5px); 
+    z-index: 9999; 
+    
+    }
+    .loader {
+    border: 4px solid #f3f3f3; 
+    border-top: 4px solid #c53226;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite; 
+    }
+    
+    .wait-text {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #fff;
+    }
+    
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+    }
+
+    
+  @media (min-width: 768px) {
+    .mainDiv {
+       /* Adjust width as needed */
+        margin: 0 auto !important;
+        width: 100%;
+        padding: 5px;
+
+    }
+}
+
+/* Media query for mobile devices */
+@media (max-width: 767px) {
+    .mainDiv {
+        padding: 0; /* Reset padding for smaller screens */
+        width: 100%; 
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* Change Scrollbar Style */
+
+/* Width */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+   
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #c8c8c8; 
+    width: 3px;
+    border-radius: 5px;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0; 
+}
+
+.scroll-shadow {
+    background: 
+      /* Shadow on the right side */
+      linear-gradient(to left, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%) right,
+      /* Shadow on the left side */
+      linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%) left;
+    background-size: 48px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local;
+  }
+
+.legend-wrapper{
+    width: 100%;
+    height: auto;
+    padding: 0px 10%;
+    margin: 20px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.legend-wrapper .legend{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.unit-configuration-chip{
+    background-color: #a0a0a0b6;
+    color: #000000;
+    border-radius: 15px;
+
+}
+.chips{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.chips .chip{
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.configuration-chips .chip{
+    background-color: #a0a0a0;
+}
+.chips .chip label{
+    font-size: 12.8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    cursor: pointer;
+}
+.chips .chip span{
+    margin-left: -8px ;
+}
+.input-no-border {
+    --lwc-shadowButtonFocus: 0;
+    --lwc-borderWidthThin: 0;
+    --slds-c-input-shadow-focus: 0;
+    --sds-c-input-shadow-focus: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.combo-box-input{
+    border-radius: 15px;
+}
+.inventory-action-button{
+    margin: 2px 3px;
+    border-radius: 18px;
+    padding: 3px 6px;
+    border: 1px solid gray;
+}
+.inventory-action-button-wrapper{
+    margin-top: 5px;
+}
+.box3{
+    background-color: white !important;
+}

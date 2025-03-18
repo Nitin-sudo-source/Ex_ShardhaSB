@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Google</fullName>
+        <default>false</default>
+        <label>Google</label>
+    </customValue>
+    <customValue>
+        <fullName>Facebook</fullName>
+        <default>false</default>
+        <label>Facebook</label>
+    </customValue>
+    <customValue>
+        <fullName>Aggregators</fullName>
+        <default>false</default>
+        <label>Aggregators</label>
+    </customValue>
+    <customValue>
+        <fullName>Organic</fullName>
+        <default>false</default>
+        <label>Organic</label>
+    </customValue>
+    <customValue>
+        <fullName>Newspaper</fullName>
+        <default>false</default>
+        <label>Newspaper</label>
+    </customValue>
+    <customValue>
+        <fullName>Radio</fullName>
+        <default>false</default>
+        <label>Radio</label>
+    </customValue>
+    <customValue>
+        <fullName>Television</fullName>
+        <default>false</default>
+        <label>Television</label>
+    </customValue>
+    <customValue>
+        <fullName>Hoarding</fullName>
+        <default>false</default>
+        <label>Hoarding</label>
+    </customValue>
+    <customValue>
+        <fullName>SMS</fullName>
+        <default>false</default>
+        <label>SMS</label>
+    </customValue>
+    <customValue>
+        <fullName>WhatsApp</fullName>
+        <default>false</default>
+        <label>WhatsApp</label>
+    </customValue>
+    <customValue>
+        <fullName>Events</fullName>
+        <default>false</default>
+        <label>Events</label>
+    </customValue>
+    <customValue>
+        <fullName>Channel Partner</fullName>
+        <default>false</default>
+        <label>Channel Partner</label>
+    </customValue>
+    <customValue>
+        <fullName>Direct</fullName>
+        <default>false</default>
+        <label>Direct</label>
+    </customValue>
+    <customValue>
+        <fullName>Reference</fullName>
+        <default>false</default>
+        <label>Reference</label>
+    </customValue>
+    <customValue>
+        <fullName>VDNB</fullName>
+        <default>false</default>
+        <label>VDNB</label>
+    </customValue>
+    <customValue>
+        <fullName>Cold Calling</fullName>
+        <default>false</default>
+        <label>Cold Calling</label>
+    </customValue>
+    <customValue>
+        <fullName>Landing Page</fullName>
+        <default>false</default>
+        <label>Landing Page</label>
+    </customValue>
+    <customValue>
+        <fullName>MCube</fullName>
+        <default>false</default>
+        <label>MCube</label>
+    </customValue>
+    <customValue>
+        <fullName>Website</fullName>
+        <default>false</default>
+        <label>Website</label>
+    </customValue>
+    <masterLabel>Lead Source</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

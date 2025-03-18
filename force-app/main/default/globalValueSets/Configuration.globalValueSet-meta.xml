@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>1 BHK</fullName>
+        <default>false</default>
+        <label>1 BHK</label>
+    </customValue>
+    <customValue>
+        <fullName>2 BHK</fullName>
+        <default>false</default>
+        <label>2 BHK</label>
+    </customValue>
+    <customValue>
+        <fullName>3 BHK</fullName>
+        <default>false</default>
+        <label>3 BHK</label>
+    </customValue>
+    <customValue>
+        <fullName>4 BHK</fullName>
+        <default>false</default>
+        <label>4 BHK</label>
+    </customValue>
+    <customValue>
+        <fullName>1.5 BHK</fullName>
+        <default>false</default>
+        <label>1.5 BHK</label>
+    </customValue>
+    <customValue>
+        <fullName>Office</fullName>
+        <default>false</default>
+        <label>Office</label>
+    </customValue>
+    <masterLabel>Configuration</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -1,0 +1,116 @@
+<template>
+    <template if:false={unitTrue}>
+        <lightning-card>
+            <div style="padding: 20px;">
+
+                <div class="slds-var-m-around_medium ">
+                    <table style="width:100%" class="Table1Css">
+                        <tr>
+                            <th colspan="4" style="background-color: #CCEDF3;">
+                                <p class="my-heading"><u>Blocking Details</u></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Unit</th>
+                            <td>{untNm}</td>
+                            <th>Project Name</th>
+                            <td>{projectName}</td>
+                        </tr>
+                        <tr>
+                            <th>Tower Name</th>
+                            <td>{towerName}</td>
+                            <th>Opportunity Name</th>
+                            <td>{oppName}</td>
+                        </tr>
+                        <tr>
+                            <th>Blocked with token</th>
+                            <td><lightning-input type="checkbox" onchange={BlockWithTokenHandler}
+                                    value={blockWithTokenCheckbox1}></lightning-input>
+                            </td>
+                            <th><span style="color: red;">*</span> Blocking Comment</th>
+                            <td><lightning-input type="text" onchange={commentHandler} value={blockComment}
+                                    class="slds-var-m-bottom_small"></lightning-input></td>
+                        </tr>
+                        <template if:true={blockWithTokenCheckbox1}>
+                        <tr>
+                            <th>Mode of Payment</th>
+                            <td><lightning-combobox placeholder="Select Mode of Payment" options={MOPpicklist}
+                                    value={MOPpicklistValue} onchange={handleMOPChange}></lightning-combobox>
+                            </td>
+                            <th>Transaction ID</th>
+                            <td><lightning-input type="text" onchange={chequeNoHandler}
+                                    value={chequeNo}></lightning-input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Amount</th>
+                            <td><lightning-input type="number" onchange={amountHandler} value={blockAmount1}
+                                    formatter="currency"></lightning-input>
+                            </td>
+                        </tr>
+                    </template>
+                    </table>
+                </div>
+                <center><button onclick={BlockingHandler}>{clickBtn}</button></center>
+            </div>
+        </lightning-card>
+
+    </template>
+    <template if:true={unitTrue}>
+        <lightning-card>
+            <div style="padding: 10px;">
+
+                <div class="slds-var-m-around_medium ">
+                    <table style="width:100%" class="Table1Css">
+                        <tr>
+                            <th colspan="4" style="background-color: #CCEDF3;">
+                                <p class="my-heading"><u>Unblocking Details</u></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Unit</th>
+                            <td>
+                                <lightning-formatted-text value={untNm}></lightning-formatted-text>
+                            </td>
+                            <th>Blocked without token</th>
+                            <td>
+                                {blockWithoutTokenCheckbox}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Blocked with token</th>
+                            <td>
+                                <lightning-input disabled="true" if:true={blockWithTokenCheckbox}
+                                    checked={blockWithTokenCheckbox} type="checkbox"></lightning-input>
+                                <lightning-input disabled="true" if:false={blockWithTokenCheckbox}
+                                    value={blockWithTokenCheckbox} type="checkbox"></lightning-input>
+                            </td>
+                            <th>Amount</th>
+                            <td>
+                                <lightning-formatted-number value={blockAmount}></lightning-formatted-number>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <td>
+                                <lightning-formatted-text value={chequeNo}></lightning-formatted-text>
+                            </td>
+                            <th> Blocking Comment</th>
+                            <td>
+                                <lightning-formatted-text value={blockComment}></lightning-formatted-text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th> <span style="color: red;">*</span> Unblocking Comment</th>
+                            <td>
+                                <lightning-input type="text" onchange={UnblockcommentHandler} value={unblockComment}
+                                    class="slds-var-m-bottom_small"></lightning-input>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <center><button onclick={BlockingHandler}>{clickBtn}</button></center>
+            </div>
+        </lightning-card>
+    </template>
+</template>

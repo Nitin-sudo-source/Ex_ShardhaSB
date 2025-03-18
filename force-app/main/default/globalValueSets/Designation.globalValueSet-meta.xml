@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Acountant</fullName>
+        <default>false</default>
+        <label>Acountant</label>
+    </customValue>
+    <customValue>
+        <fullName>Advocate</fullName>
+        <default>false</default>
+        <label>Advocate</label>
+    </customValue>
+    <customValue>
+        <fullName>Air Force</fullName>
+        <default>false</default>
+        <label>Air Force</label>
+    </customValue>
+    <customValue>
+        <fullName>Application Developer</fullName>
+        <default>false</default>
+        <label>Application Developer</label>
+    </customValue>
+    <customValue>
+        <fullName>Application Engineer</fullName>
+        <default>false</default>
+        <label>Application Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Architects</fullName>
+        <default>false</default>
+        <label>Architects</label>
+    </customValue>
+    <customValue>
+        <fullName>Army</fullName>
+        <default>false</default>
+        <label>Army</label>
+    </customValue>
+    <customValue>
+        <fullName>Assistant</fullName>
+        <default>false</default>
+        <label>Assistant</label>
+    </customValue>
+    <customValue>
+        <fullName>Assistant Director</fullName>
+        <default>false</default>
+        <label>Assistant Director</label>
+    </customValue>
+    <customValue>
+        <fullName>Assistant Manager</fullName>
+        <default>false</default>
+        <label>Assistant Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Assistant Proj Manager</fullName>
+        <default>false</default>
+        <label>Assistant Proj Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Assistant Engineer</fullName>
+        <default>false</default>
+        <label>Assistant Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Associate</fullName>
+        <default>false</default>
+        <label>Associate</label>
+    </customValue>
+    <customValue>
+        <fullName>Associate Director</fullName>
+        <default>false</default>
+        <label>Associate Director</label>
+    </customValue>
+    <customValue>
+        <fullName>Associate Vice President</fullName>
+        <default>false</default>
+        <label>Associate Vice President</label>
+    </customValue>
+    <customValue>
+        <fullName>Asst. General Manager</fullName>
+        <default>false</default>
+        <label>Asst. General Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Asst. Manager</fullName>
+        <default>false</default>
+        <label>Asst. Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>CA</fullName>
+        <default>false</default>
+        <label>CA</label>
+    </customValue>
+    <customValue>
+        <fullName>Cardiologist</fullName>
+        <default>false</default>
+        <label>Cardiologist</label>
+    </customValue>
+    <customValue>
+        <fullName>CEO</fullName>
+        <default>false</default>
+        <label>CEO</label>
+    </customValue>
+    <customValue>
+        <fullName>CFO</fullName>
+        <default>false</default>
+        <label>CFO</label>
+    </customValue>
+    <customValue>
+        <fullName>Chairman</fullName>
+        <default>false</default>
+        <label>Chairman</label>
+    </customValue>
+    <customValue>
+        <fullName>Chairman/MD</fullName>
+        <default>false</default>
+        <label>Chairman/MD</label>
+    </customValue>
+    <customValue>
+        <fullName>Chartered Accountant</fullName>
+        <default>false</default>
+        <label>Chartered Accountant</label>
+    </customValue>
+    <customValue>
+        <fullName>CIO</fullName>
+        <default>false</default>
+        <label>CIO</label>
+    </customValue>
+    <customValue>
+        <fullName>CMO</fullName>
+        <default>false</default>
+        <label>CMO</label>
+    </customValue>
+    <customValue>
+        <fullName>Company Secretary</fullName>
+        <default>false</default>
+        <label>Company Secretary</label>
+    </customValue>
+    <customValue>
+        <fullName>Consultant / Sr. Consultant</fullName>
+        <default>false</default>
+        <label>Consultant / Sr. Consultant</label>
+    </customValue>
+    <customValue>
+        <fullName>Contractor</fullName>
+        <default>false</default>
+        <label>Contractor</label>
+    </customValue>
+    <customValue>
+        <fullName>COO</fullName>
+        <default>false</default>
+        <label>COO</label>
+    </customValue>
+    <customValue>
+        <fullName>CS</fullName>
+        <default>false</default>
+        <label>CS</label>
+    </customValue>
+    <customValue>
+        <fullName>CTO</fullName>
+        <default>false</default>
+        <label>CTO</label>
+    </customValue>
+    <customValue>
+        <fullName>Dentist</fullName>
+        <default>false</default>
+        <label>Dentist</label>
+    </customValue>
+    <customValue>
+        <fullName>Deputy General Manager</fullName>
+        <default>false</default>
+        <label>Deputy General Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Deputy Manager</fullName>
+        <default>false</default>
+        <label>Deputy Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Dermatologist</fullName>
+        <default>false</default>
+        <label>Dermatologist</label>
+    </customValue>
+    <customValue>
+        <fullName>Design Engineer</fullName>
+        <default>false</default>
+        <label>Design Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Director</fullName>
+        <default>false</default>
+        <label>Director</label>
+    </customValue>
+    <customValue>
+        <fullName>Doctor</fullName>
+        <default>false</default>
+        <label>Doctor</label>
+    </customValue>
+    <customValue>
+        <fullName>Engineer</fullName>
+        <default>false</default>
+        <label>Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Engineer Softwaer Testing</fullName>
+        <default>false</default>
+        <label>Engineer Softwaer Testing</label>
+    </customValue>
+    <customValue>
+        <fullName>ENT Specialist</fullName>
+        <default>false</default>
+        <label>ENT Specialist</label>
+    </customValue>
+    <customValue>
+        <fullName>Finance Manager</fullName>
+        <default>false</default>
+        <label>Finance Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Financial Controller</fullName>
+        <default>false</default>
+        <label>Financial Controller</label>
+    </customValue>
+    <customValue>
+        <fullName>Founder</fullName>
+        <default>false</default>
+        <label>Founder</label>
+    </customValue>
+    <customValue>
+        <fullName>Free Lancer</fullName>
+        <default>false</default>
+        <label>Free Lancer</label>
+    </customValue>
+    <customValue>
+        <fullName>General Manager</fullName>
+        <default>false</default>
+        <label>General Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Government Service</fullName>
+        <default>false</default>
+        <label>Government Service</label>
+    </customValue>
+    <customValue>
+        <fullName>Gynecologist</fullName>
+        <default>false</default>
+        <label>Gynecologist</label>
+    </customValue>
+    <customValue>
+        <fullName>IT Head</fullName>
+        <default>false</default>
+        <label>IT Head</label>
+    </customValue>
+    <customValue>
+        <fullName>Joint General Manager</fullName>
+        <default>false</default>
+        <label>Joint General Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Joint Manager</fullName>
+        <default>false</default>
+        <label>Joint Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Jr. Associate</fullName>
+        <default>false</default>
+        <label>Jr. Associate</label>
+    </customValue>
+    <customValue>
+        <fullName>Jr. Officer</fullName>
+        <default>false</default>
+        <label>Jr. Officer</label>
+    </customValue>
+    <customValue>
+        <fullName>Junior Engineer</fullName>
+        <default>false</default>
+        <label>Junior Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Lawyer</fullName>
+        <default>false</default>
+        <label>Lawyer</label>
+    </customValue>
+    <customValue>
+        <fullName>Lead Analyst</fullName>
+        <default>false</default>
+        <label>Lead Analyst</label>
+    </customValue>
+    <customValue>
+        <fullName>Manager</fullName>
+        <default>false</default>
+        <label>Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Managing Director</fullName>
+        <default>false</default>
+        <label>Managing Director</label>
+    </customValue>
+    <customValue>
+        <fullName>Navy</fullName>
+        <default>false</default>
+        <label>Navy</label>
+    </customValue>
+    <customValue>
+        <fullName>Neurologist</fullName>
+        <default>false</default>
+        <label>Neurologist</label>
+    </customValue>
+    <customValue>
+        <fullName>Neurosurgeon</fullName>
+        <default>false</default>
+        <label>Neurosurgeon</label>
+    </customValue>
+    <customValue>
+        <fullName>Officer</fullName>
+        <default>false</default>
+        <label>Officer</label>
+    </customValue>
+    <customValue>
+        <fullName>Orthopedic Surgeon</fullName>
+        <default>false</default>
+        <label>Orthopedic Surgeon</label>
+    </customValue>
+    <customValue>
+        <fullName>Others</fullName>
+        <default>false</default>
+        <label>Others</label>
+    </customValue>
+    <customValue>
+        <fullName>Owner</fullName>
+        <default>false</default>
+        <label>Owner</label>
+    </customValue>
+    <customValue>
+        <fullName>Partner</fullName>
+        <default>false</default>
+        <label>Partner</label>
+    </customValue>
+    <customValue>
+        <fullName>Pediatrician</fullName>
+        <default>false</default>
+        <label>Pediatrician</label>
+    </customValue>
+    <customValue>
+        <fullName>Physiologist</fullName>
+        <default>false</default>
+        <label>Physiologist</label>
+    </customValue>
+    <customValue>
+        <fullName>Pilot</fullName>
+        <default>false</default>
+        <label>Pilot</label>
+    </customValue>
+    <customValue>
+        <fullName>Police</fullName>
+        <default>false</default>
+        <label>Police</label>
+    </customValue>
+    <customValue>
+        <fullName>President</fullName>
+        <default>false</default>
+        <label>President</label>
+    </customValue>
+    <customValue>
+        <fullName>Product Engineer</fullName>
+        <default>false</default>
+        <label>Product Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Product Head</fullName>
+        <default>false</default>
+        <label>Product Head</label>
+    </customValue>
+    <customValue>
+        <fullName>Professor</fullName>
+        <default>false</default>
+        <label>Professor</label>
+    </customValue>
+    <customValue>
+        <fullName>Project Manager</fullName>
+        <default>false</default>
+        <label>Project Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Proprietor</fullName>
+        <default>false</default>
+        <label>Proprietor</label>
+    </customValue>
+    <customValue>
+        <fullName>Psychiatrist</fullName>
+        <default>false</default>
+        <label>Psychiatrist</label>
+    </customValue>
+    <customValue>
+        <fullName>Senior Director</fullName>
+        <default>false</default>
+        <label>Senior Director</label>
+    </customValue>
+    <customValue>
+        <fullName>Senior Engineer</fullName>
+        <default>false</default>
+        <label>Senior Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Senior Manager</fullName>
+        <default>false</default>
+        <label>Senior Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Service Head</fullName>
+        <default>false</default>
+        <label>Service Head</label>
+    </customValue>
+    <customValue>
+        <fullName>Social Worker</fullName>
+        <default>false</default>
+        <label>Social Worker</label>
+    </customValue>
+    <customValue>
+        <fullName>Software Architech</fullName>
+        <default>false</default>
+        <label>Software Architech</label>
+    </customValue>
+    <customValue>
+        <fullName>Software Developer</fullName>
+        <default>false</default>
+        <label>Software Developer</label>
+    </customValue>
+    <customValue>
+        <fullName>Software Engineer</fullName>
+        <default>false</default>
+        <label>Software Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sofware Analyst/ Analyst</fullName>
+        <default>false</default>
+        <label>Sofware Analyst/ Analyst</label>
+    </customValue>
+    <customValue>
+        <fullName>Sole Proprietor</fullName>
+        <default>false</default>
+        <label>Sole Proprietor</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Analyst</fullName>
+        <default>false</default>
+        <label>Sr. Analyst</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Application Developer</fullName>
+        <default>false</default>
+        <label>Sr. Application Developer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Application Engineer</fullName>
+        <default>false</default>
+        <label>Sr. Application Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Associate</fullName>
+        <default>false</default>
+        <label>Sr. Associate</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Design Engineer</fullName>
+        <default>false</default>
+        <label>Sr. Design Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Manager</fullName>
+        <default>false</default>
+        <label>Sr. Manager</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Officer</fullName>
+        <default>false</default>
+        <label>Sr. Officer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Product Engineer</fullName>
+        <default>false</default>
+        <label>Sr. Product Engineer</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Software Eng</fullName>
+        <default>false</default>
+        <label>Sr. Software Eng</label>
+    </customValue>
+    <customValue>
+        <fullName>Sr. Vice president</fullName>
+        <default>false</default>
+        <label>Sr. Vice president</label>
+    </customValue>
+    <customValue>
+        <fullName>Surgeon</fullName>
+        <default>false</default>
+        <label>Surgeon</label>
+    </customValue>
+    <customValue>
+        <fullName>Teacher</fullName>
+        <default>false</default>
+        <label>Teacher</label>
+    </customValue>
+    <customValue>
+        <fullName>Team Lead</fullName>
+        <default>false</default>
+        <label>Team Lead</label>
+    </customValue>
+    <customValue>
+        <fullName>Tech Lead</fullName>
+        <default>false</default>
+        <label>Tech Lead</label>
+    </customValue>
+    <customValue>
+        <fullName>Test Lead</fullName>
+        <default>false</default>
+        <label>Test Lead</label>
+    </customValue>
+    <customValue>
+        <fullName>Urologist</fullName>
+        <default>false</default>
+        <label>Urologist</label>
+    </customValue>
+    <customValue>
+        <fullName>Vice Chairman</fullName>
+        <default>false</default>
+        <label>Vice Chairman</label>
+    </customValue>
+    <customValue>
+        <fullName>Vice President</fullName>
+        <default>false</default>
+        <label>Vice President</label>
+    </customValue>
+    <masterLabel>Designation</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

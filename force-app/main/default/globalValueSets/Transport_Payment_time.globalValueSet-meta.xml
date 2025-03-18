@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>At the time of existing unit handover</fullName>
+        <default>false</default>
+        <label>At the time of existing unit handover</label>
+    </customValue>
+    <customValue>
+        <fullName>Specific Date</fullName>
+        <default>false</default>
+        <label>Specific Date</label>
+    </customValue>
+    <customValue>
+        <fullName>Specific date in Month</fullName>
+        <default>false</default>
+        <label>Specific date in Month</label>
+    </customValue>
+    <customValue>
+        <fullName>Start of Month</fullName>
+        <default>false</default>
+        <label>Start of Month</label>
+    </customValue>
+    <customValue>
+        <fullName>Middle of Month</fullName>
+        <default>false</default>
+        <label>Middle of Month</label>
+    </customValue>
+    <customValue>
+        <fullName>End of Month</fullName>
+        <default>false</default>
+        <label>End of Month</label>
+    </customValue>
+    <masterLabel>Transport Payment time</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

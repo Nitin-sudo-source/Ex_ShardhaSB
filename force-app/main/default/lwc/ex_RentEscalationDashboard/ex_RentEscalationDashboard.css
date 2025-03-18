@@ -1,0 +1,115 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/resource/Fonts/Inter_Jakarta_Fonts/Inter/static/Inter_18pt-Medium.ttf') format("TrueType");
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/resource/Fonts/Inter_Jakarta_Fonts/Plus_Jakarta_Sans/static/force-app/main/default/staticresources/Inter_Jakarta_Fonts/Inter_Jakarta_Fonts/Plus_Jakarta_Sans/static/PlusJakartaSans-Regular.ttf') format("TrueType");
+}
+
+*{
+  font-family: 'Inter' !important;
+}
+
+.table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+
+}
+
+
+.alignClass{
+    text-align: center;
+}
+
+
+table {
+    border-collapse: collapse;
+    border:1px solid #ddd;
+    font-size: 12px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  
+  }
+  
+  th,
+  td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    font-size: 12px;
+   
+  }
+  tr:first-child {
+    background-color: #f3f3f3;
+    font-weight: bold;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    
+}
+  
+  td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 14%;
+  
+  }
+  th {
+    
+    background-color: #f4f6f9;
+  
+    /* width: 100%; */
+    color: black;
+    border:1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+    width: 20%;
+    text-align: left;
+   
+  }
+
+  .slds-form-element__control .slds-radio{
+    display:inline;
+    }
+    .radio-group-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-gap: 15px;
+    }
+ 
+
+  .radio-group-container label {
+    display: flex;
+    align-items: center;
+    margin-top: 15px ;
+    font-size: 20px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.radio-group-container input[type="radio"] {
+    margin-right: 5px;
+}
+
+.title{
+  text-align:center;
+  text-transform:capitalize;
+  font-size:26px; 
+  font-family: 'Plus Jakarta Sans';
+  display: grid;
+  font-weight: bold;
+  position: sticky;
+  color: rgb(24, 22, 22);
+  /* text-shadow: 2px 2px 4px rgba(7, 84, 167, 0.5); */
+  background-color: #cae2df; /* Light gray background */
+
+}
+
+.spinnerClass{
+  position: relative;
+  display: inline-block;
+  width : 80px;
+  height: 80px;
+}

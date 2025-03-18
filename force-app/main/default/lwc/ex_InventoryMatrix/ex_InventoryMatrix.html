@@ -1,0 +1,186 @@
+<template>
+    <div if:true={isSpinner} class="spinner-container">
+      <div class="loader"></div>
+      <div class="wait-text">Please wait...</div>
+    </div>
+    <div class="box3">
+      <div class="mains">
+
+        <!-- Header -->
+        <header class="header">
+          <div class="main">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nO2VOw7CMBBEfQDavWE4j7eg4HMOerdxzTFIi+zKKLQoKYiTyOwbaUrLftpZj3MIravToxx8ny4+pqfGXLawH+/q03m8ezGAxnTb6uH65XStATDsCDBUANjr8fnj1QDkGCZd84wDIDKBQoSW6G8jpK1/owpApshsL7EAEJiA7QgpPZBpYts7IAAEJkCEpOUlVoosU2QssbS8xEITByZgO0L6gwEwOYHu/iq1PAfQTZwBACE3qzf3G8c01dig6QAAAABJRU5ErkJggg==" alt="building">              
+            <label class="head" style="font-size: 22.5px">
+                Inventory Matrix
+            </label>
+          </div>
+        </header>
+
+        <!-- Project and Tower Selection -->
+        <div class="combo-box-container">
+          <template if:true={fetchOpp}>
+            <div class="combo-box">
+              <lightning-combobox
+                name="combo-box-4"
+                value={fetchOpp.Project__c}
+                options={projectList}
+                placeholder={fetchOpp.Project__r.Name}
+                onchange={handleProject}
+                disabled={isOppProject}
+                class="combo-box-input"
+              >
+              </lightning-combobox>
+            </div>
+          </template>
+          <div class="combo-box">
+            <lightning-combobox
+              name="combo-box-1"
+              value={selectedTowerId}
+              options={towerList}
+              placeholder="Select Tower"
+              onchange={handleTower}
+              class="combo-box-input"
+            >
+            </lightning-combobox>
+          </div>
+        </div>
+
+        <br/><br/>
+           
+        <!-- Spinner -->
+        <template if:true={showSpinner}>
+          <div>
+            <lightning-spinner
+              alternative-text="Loading"
+              size="large"
+            ></lightning-spinner>
+          </div>
+        </template>
+  
+        <!-- Display the filtered Units -->
+        <template if:true={showpanel}>
+                  <!-- Unit Filtering Option - Sales Status -->
+         <template lwc:if={unitSalesStatusOptions}>
+
+          <div class="legend-wrapper">
+              <div class="chips">
+                <template for:each={unitSalesStatusOptions} for:item="unitSalesStatus">
+                  <div key={unitSalesStatus.salesStatus} class="chip" data-sales-status={unitSalesStatus.salesStatus}>
+                    <label>
+                      <lightning-input
+                        class="button input-no-border"
+                        type="checkbox"
+                        data-name="Unit Status"
+                        data-filter-by={unitSalesStatus.salesStatus}
+                        data-filter-type={unitSalesStatus.filterType}
+                        data-is-all={unitSalesStatus.isAll}
+                        checked={unitSalesStatus.checkBoxStatus}
+                        onchange={handleFilterSelection}
+                      >
+                    </lightning-input>
+                    <span>{unitSalesStatus.salesStatus} : {unitSalesStatus.unitCount}</span>
+                    </label>
+                  </div>
+                </template>
+              </div>
+          </div>
+       </template>
+       <template lwc:else>
+          <span>Unit Sales Status values not found</span>
+       </template>
+      
+      <!-- Unit Filtering Option - Configuration Type -->
+      <template lwc:if={unitConfigurationTypeOptions}>
+
+        <div class="legend-wrapper">
+            <div class="chips configuration-chips">
+              <template for:each={unitConfigurationTypeOptions} for:item="unitSalesStatus">
+                <div key={unitSalesStatus.configurationType} class="chip" data-configuration-type={unitSalesStatus.configurationType}>
+                  <label>
+                    <lightning-input
+                      class="button input-no-border"
+                      type="checkbox"
+                      data-name="Unit Status"
+                      data-filter-type={unitSalesStatus.filterType}
+                      data-filter-by={unitSalesStatus.configurationType}
+                      data-is-all={unitSalesStatus.isAll}
+                      checked={unitSalesStatus.checkBoxStatus}
+                      onchange={handleFilterSelection}
+                    >
+                  </lightning-input>
+                  <span>{unitSalesStatus.configurationType} : {unitSalesStatus.unitCount}</span>
+
+                  </label>
+                </div>
+              </template>
+            </div>
+        </div>
+     </template>
+     <template lwc:else>
+        <span> Unit Configuration Type values not found</span>
+     </template>
+
+        <template lwc:if={unitsFoundWithSelectedFilters}>
+          <div class="row" style="margin: 3px">
+            <template for:each={getFloorWiseAllUnits} for:item="key">
+              <div key={key.key} style="margin: 0px">
+                <div class="floor-header" style="float: left">
+                  <h3 class="no-wrap">{key.key}</h3>
+                </div>
+                <div class="unit-container-scrollable">
+                  <div class="unit-container">
+                    <div class="unit-row">
+                      <template for:each={key.value} for:item="u">
+                        <div
+                          key={u.Id}
+                          class="unit-box"
+                          data-unit-status={u.Sale_Status__c}
+                          data-value={u.Id}
+                        >
+                          <span class="unit-info popup-text"
+                            ><span style="font-size: 11.5px; font-weight:600;">{u.Name}</span><br/>
+                            {u.Configuration_Type__c} | {u.Sale_Status__c} |
+                            {u.Total_carpet_Sq_Ft__c}
+                            <!-- <br>
+                            {u.All_In_Price__c} | {u.Unit_Facing__c} -->
+                          </span>
+
+                          <div class="inventory-action-button-wrapper">
+                            <template if:true={u.isQuotationVisible}>
+                              <button class="inventory-action-button" data-value={u.Id} onclick={handleQuotation}>
+                                Quotation
+                              </button>
+                          </template>
+                          <template if:true={u.isBlockVisible}>
+                              <button class="inventory-action-button" data-value={u.Id} onclick={handleBlock}>
+                                Block
+                              </button>
+                          </template>
+                          <template if:true={u.isUnblockVisible}>
+                              <button class="inventory-action-button" data-value={u.Id} onclick={handleBlock}>
+                                Unblock
+                              </button>
+                          </template>
+  
+  
+                          </div>
+                          
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+        <template lwc:else>
+            <span>No Units are present with provided filtering !</span>
+        </template>
+
+      </template>
+
+
+      </div>
+    </div>
+  </template>
