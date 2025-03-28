@@ -1,3 +1,60 @@
+<!--
+  @description       : 
+  @author            : nitinSFDC@exceller.SFDoc
+  @group             : 
+  @last modified on  : 28-03-2025
+  @last modified by  : nitinSFDC@exceller.SFDoc
+-->
 <template>
-    
+    <!-- Modal Backdrop -->
+    <!-- <div class="modern-modal-backdrop" if:true={isVisible}> -->
+        <!-- Modal Container -->
+        <div class="modern-modal-container" role="dialog" aria-labelledby="modal-heading">
+            <!-- Header with dynamic icon -->
+            <div class="modern-modal-header">
+                <div class="header-content">
+                    <lightning-icon class="header-icon" icon-name={headerIcon} size="medium"></lightning-icon>
+                    <h2 id="modal-heading" class="modern-modal-title">{modalTitle}</h2>
+                </div>
+                <!-- <button class="modern-close-button" onclick={handleClose} aria-label="Close modal">
+                    <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                </button> -->
+            </div>
+            
+            <!-- Content Area -->
+            <div class="modern-modal-content">
+                <slot>
+                    {getResPonse}
+                </slot>
+                <slot>
+                    Are You Sure You Want To Send Welcome Call Email ?
+                </slot>
+            </div>
+            
+            <!-- Footer with Animated Buttons -->
+            <div class="modern-modal-footer">
+                <button class="modern-button neutral" onclick={handleNo}>
+                    <span class="button-content">{noButtonLabel}</span>
+                    <span class="button-effect"></span>
+                </button>
+                <button class="modern-button brand" onclick={handleYes}>
+                    <span class="button-content">{yesButtonLabel}</span>
+                    <span class="button-effect"></span>
+                </button>
+            </div>
+        </div>
+    <!-- </div> -->
+
+    <!-- Dynamic Toast Notification -->
+    <template if:true={showToast}>
+        <div class="modern-toast {toastVariant}" role="alert">
+            <div class="toast-content">
+                <lightning-icon icon-name={toastIcon} size="small"></lightning-icon>
+                <span>{toastMessage}</span>
+            </div>
+            <button class="toast-close" onclick={hideToast} aria-label="Close toast">
+                <lightning-icon icon-name="utility:close" size="xx-small"></lightning-icon>
+            </button>
+        </div>
+    </template>
 </template>

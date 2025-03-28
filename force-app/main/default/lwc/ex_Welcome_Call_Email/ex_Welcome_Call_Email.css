@@ -1,0 +1,200 @@
+/* Modern Modal Styles */
+.modern-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.modern-modal-container {
+    /* background: white; */
+    border-radius: 16px;
+    /* width: 90%; */
+    /* max-width: 500px; */
+    /* max-height: 90vh; */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    animation: slideUp 0.3s ease forwards;
+    overflow: hidden;
+}
+
+.modern-modal-header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-icon {
+    --slds-c-icon-color-foreground-default: #4a6cf7;
+}
+
+.modern-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.modern-close-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modern-close-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.modern-modal-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.modern-modal-footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Modern Button Styles */
+.modern-button {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.modern-button.neutral {
+    background: #f0f2f5;
+    color: #4a5568;
+}
+
+.modern-button.brand {
+    background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
+    color: white;
+}
+
+.modern-button .button-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(100%);
+    transition: transform 0.3s;
+}
+
+.modern-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modern-button:hover .button-effect {
+    transform: translateY(0);
+}
+
+/* Toast Notification Styles */
+.modern-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 350px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    animation: toastIn 0.3s ease forwards;
+    background: whitesmoke;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.toast-close {
+    /* background: transparent; */
+    border: none;
+    margin-left: 1rem;
+    cursor: pointer;
+    /* opacity: 0.7; */
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* Toast Variants */
+.modern-toast.success {
+    background: #48bb78;
+    color: white;
+}
+
+.modern-toast.warning {
+    background: #ed8936;
+    color: white;
+}
+
+.modern-toast.error {
+    background: #f56565;
+    color: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 1; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes toastIn {
+    from { 
+        transform: translateX(100%); 
+        /* opacity: 1; */
+    }
+    to { 
+        transform: translateX(0); 
+        /* opacity: 1; */
+    }
+}
