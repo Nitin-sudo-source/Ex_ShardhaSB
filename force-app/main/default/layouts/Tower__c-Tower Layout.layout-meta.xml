@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
@@ -94,14 +93,32 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Total_carpet_Sq_Ft__c</fields>
+        <fields>Final_committed_Area_sqft__c</fields>
+        <fields>Agreement_Value__c</fields>
+        <fields>Total_Other_Charges_Including_Tax__c</fields>
+        <fields>All_In_Price__c</fields>
         <relatedList>Unit__c.Tower__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
+        <fields>Sequence_Number__c</fields>
+        <fields>Project__c</fields>
+        <fields>Milestone_Status__c</fields>
+        <fields>Unit_Wise_Milestone__c</fields>
+        <fields>Actual_Completion_Date__c</fields>
+        <fields>Is_Completed__c</fields>
+        <fields>Expected_Completion_Date__c</fields>
         <relatedList>Construction_Stage__c.Tower__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Car_Park_Max_Amount__c</fields>
+        <fields>Car_Park_Type__c</fields>
+        <fields>Status__c</fields>
+        <fields>Amount__c</fields>
         <relatedList>Car_Park__c.Tower__c</relatedList>
     </relatedLists>
     <relatedLists>

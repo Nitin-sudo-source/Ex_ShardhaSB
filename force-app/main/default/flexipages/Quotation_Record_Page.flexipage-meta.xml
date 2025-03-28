@@ -7,16 +7,10 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Quotation__c.Create_Booking</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Submit</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

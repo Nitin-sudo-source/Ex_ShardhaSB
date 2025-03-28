@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Registration_Status__c</fullName>
+    <label>Registration Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>AFS Draft submitted to Customer</fullName>
+                <default>false</default>
+                <label>AFS Draft submitted to Customer</label>
+            </value>
+            <value>
+                <fullName>AFS Draft approved by Customer</fullName>
+                <default>false</default>
+                <label>AFS Draft approved by Customer</label>
+            </value>
+            <value>
+                <fullName>AFS Draft submitted to Legal</fullName>
+                <default>false</default>
+                <label>AFS Draft submitted to Legal</label>
+            </value>
+            <value>
+                <fullName>AFS Draft approved by Legal</fullName>
+                <default>false</default>
+                <label>AFS Draft approved by Legal</label>
+            </value>
+            <value>
+                <fullName>AFS Draft submitted to Promoter</fullName>
+                <default>false</default>
+                <label>AFS Draft submitted to Promoter</label>
+            </value>
+            <value>
+                <fullName>AFS Draft signed by Promoter</fullName>
+                <default>false</default>
+                <label>AFS Draft signed by Promoter</label>
+            </value>
+            <value>
+                <fullName>Registration Scheduled</fullName>
+                <default>false</default>
+                <label>Registration Scheduled</label>
+            </value>
+            <value>
+                <fullName>Registration Completed</fullName>
+                <default>false</default>
+                <label>Registration Completed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

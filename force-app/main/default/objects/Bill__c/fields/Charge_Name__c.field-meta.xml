@@ -55,6 +55,11 @@
                 <default>false</default>
                 <label>Misc/Other</label>
             </value>
+            <value>
+                <fullName>Excess Carpet Area</fullName>
+                <default>false</default>
+                <label>Excess Carpet Area</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

@@ -132,6 +132,7 @@ priceListGroupMap.get('Agreement Value').add('Parking Charges');
                         
                         if(priceListMap.containsKey(priceList)) {
                             PriceWrapper currentPriceWrapper = priceListMap.get(priceList);
+                            System.debug('currentPriceWrapper: '+currentPriceWrapper);
                             
                             if(currentPriceWrapper.chargeName.equalsIgnoreCase('Parking Charges')) {
                                 amount = carParkPrice;
@@ -382,20 +383,24 @@ priceListGroupMap.get('Agreement Value').add('Parking Charges');
                         Date completionDate = null;
                         Boolean IsMilestoneAchieved = false;
                         Construction_Stage__c cStage = cStageMap.get(psm.Construction_Stage__c);
-                        
-                        if(cStage.Actual_Completion_Date__c != null && cStage.Actual_Completion_Date__c > System.today()) {
-                            completionDate = cStage.Actual_Completion_Date__c;
-                        } else if(cStage.Actual_Completion_Date__c != null && cStage.Actual_Completion_Date__c <= System.today()) {
-                            completionDate = system.today().addDays(60);
-                            IsMilestoneAchieved = True;
-                        } else if(cStage.Expected_Completion_Date__c != null && cStage.Expected_Completion_Date__c > System.today()) {
-                            completionDate = cStage.Expected_Completion_Date__c;
-                        } else if(cStage.Expected_Completion_Date__c != null && cStage.Expected_Completion_Date__c <= System.today()) {
-                            completionDate = system.today();
-                        }   
+                        System.debug('cStage: '+cStage);
+                        if(cStage != null){
+                            if(cStage.Actual_Completion_Date__c != null && cStage.Actual_Completion_Date__c > System.today()) {
+                                completionDate = cStage.Actual_Completion_Date__c;
+                            } else if(cStage.Actual_Completion_Date__c != null && cStage.Actual_Completion_Date__c <= System.today()) {
+                                completionDate = system.today().addDays(60);
+                                IsMilestoneAchieved = True;
+                            } else if(cStage.Expected_Completion_Date__c != null && cStage.Expected_Completion_Date__c > System.today()) {
+                                completionDate = cStage.Expected_Completion_Date__c;
+                            } else if(cStage.Expected_Completion_Date__c != null && cStage.Expected_Completion_Date__c <= System.today()) {
+                                completionDate = system.today();
+                            }
+                        }
+                           
                         if(completionDate == null) {
                             completionDate = system.today().addDays(365);
                         }
+                        
                         pm.Due_Date__c = completionDate.addDays(Integer.valueOf(psm.Number_of_Days__c));
                         
                         if(IsMilestoneAchieved) {
@@ -483,7 +488,7 @@ priceListGroupMap.get('Agreement Value').add('Parking Charges');
                                 Decimal totalTaxOther = 0;
                                 
                                 pm.put('Charge_Bucket_'+i+'_Percentage__c', (Decimal)psm.get('Charge_Bucket_'+i+'_Percentage__c'));
-                                if(!Test.isRunningTest())
+                                //if(!Test.isRunningTest())
                                     //     amountOther = (((Decimal)psm.get('Charge_Bucket_'+i+'_Percentage__c') * allPriceInfoMap.get((String)psm.get('Charge_Bucket_'+i+'__c'))) / 100);
                                     // pm.put('Charge_Bucket_'+i+'_Amount__c', amountOther);
                                     

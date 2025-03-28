@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Paid_Receipt_Threshold_Amount__c</fullName>
+    <label>Paid Receipt Threshold Amount</label>
+    <summarizedField>Threshold_Receipt__c.Amount__c</summarizedField>
+    <summaryFilterItems>
+        <field>Threshold_Receipt__c.Payment_Status__c</field>
+        <operation>equals</operation>
+        <value>Completed</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Threshold_Receipt__c.Booking__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

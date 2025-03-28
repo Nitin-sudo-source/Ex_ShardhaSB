@@ -343,6 +343,7 @@ public class Ex_DraftBillController {
                     transportDraftBill.Charge_Name__c= 'Transport charges';
                     transportDraftBill.Tenant__c = acc.id;
                     transportDraftBill.Term_Sheet__c = termsheetId;
+                    transportDraftBill.Due_Date__c = transportDraftBill.Bill_Date__c.addDays(ThresholdMap.get('Transport Threshold'));
                     transportDraftBill.Bill_Stage__c = 'Draft';
                     if(transportDraftBill.Bill_Date__c<=System.Today())
                         transportDraftBill.Bill_Stage__c = 'Actual';
@@ -746,6 +747,25 @@ public class Ex_DraftBillController {
         
         
     }
+
+    // Create Draft Bill "Excess Carpet Area"
+    public static void createBillForExcessCarpetArea(Id tenandId, Date billDate, Decimal amount){
+
+        String CHARGE_NAME = 'Excess Carpet Area';
+        Integer THRESHOLD_DAYS = 7;
+
+        Bill__c excessCarpetAreaBill = new Bill__c();
+
+        excessCarpetAreaBill.Charge_Name__c = CHARGE_NAME;
+        excessCarpetAreaBill.Amount__c = amount;
+        excessCarpetAreaBill.Bill_Date__c = billDate;
+        excessCarpetAreaBill.Tenant__c = tenandId;
+        excessCarpetAreaBill.Bill_Stage__c = 'Draft';
+        excessCarpetAreaBill.Due_Date__c = billDate.addDays(THRESHOLD_DAYS);
+
+        INSERT excessCarpetAreaBill;
+    }
+
     
     //Method to retunr No of Months
     public static Integer getNumberOfMonths(Date StartDate , Date EndDate, String paymentType){

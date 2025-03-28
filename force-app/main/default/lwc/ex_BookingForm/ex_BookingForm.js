@@ -7,6 +7,8 @@ import ApplicantdocumentDetails from '@salesforce/apex/Ex_BookingFormController.
 import createBookingRecord from '@salesforce/apex/Ex_BookingFormController.createBookingRecord';
 import createBookingDocuments from '@salesforce/apex/Ex_BookingFormController.createBookingDocuments';
 import getReceipts from '@salesforce/apex/Ex_BookingFormController.getReceipts';
+import getQuotationType from '@salesforce/apex/Ex_BookingFormController.getQuotationType';
+import getTenantAccount from '@salesforce/apex/Ex_BookingFormController.getTenantAccount';
 
 import getLegalEntity from '@salesforce/apex/Ex_BookingFormController.getLegalEntity';
 import getBookingDetails from '@salesforce/apex/Ex_BookingFormController.getBookingDetails';
@@ -57,6 +59,8 @@ export default class Ex_BookingForm extends LightningElement {
     @track legalEntity = null;
     @track bookingDetails = null;
     @track applicantDetails = null;
+    @track quotationType = null;
+    @track tenantAccount = null;
 
 
     connectedCallback() {
@@ -64,6 +68,8 @@ export default class Ex_BookingForm extends LightningElement {
         this.qId = urlSearchParams.get("recordId");
         console.log('this.qId is::'+this.qId);
         
+        this.retriveQuotationType();
+        this.retrieveTenantAccount();
         this.getQuotationDetailsCall();
         this.getApplicantDoc();
         this.getReceiptWrapperMethod();
@@ -124,6 +130,8 @@ export default class Ex_BookingForm extends LightningElement {
             isEmpty : this.bookingDetails == null || this.bookingDetails == undefined,
             data : this.bookingDetails
         }
+        console.log('getBookingDetails : ' + JSON.stringify(response));
+        
         return response;
    }
    
@@ -138,21 +146,32 @@ export default class Ex_BookingForm extends LightningElement {
         return this.bookingDetails?.modeOfFunding === 'Loan' || this.bookingDetails?.modeOfFunding === 'Partial Funding';
    }
 
+   get isTenantBasedQuotation(){
+        return this.quotationType == 'Tenant Based';
+   }
+   get isOpportunityBasedQuotation(){
+        return this.quotationType == 'Opportunity Based';
+   }
 
    initializeBookingDetails(){
+
+        console.log('Quotation Type : ' + this.quotationType);
+        console.log('Tenant Account : ' + JSON.stringify(this.tenantAccount));
+            
+
         this.bookingDetails = {
             ...this.bookingDetails,
-            'opportunityName' : this.quote.Opportunity__r.Name,
+            'opportunityName' : this.quote.Opportunity__r?.Name || this.quote.Tenant_Account__r?.Name,
             'projectName' : this.quote.Project__r.Name,
             'towerName' : this.quote.Tower__r.Name,
             'unitName' : this.quote.Unit__r.Name,
             'floorNo' : this.quote.Unit__r.Floor__c,
             'totalCarpetArea' : this.quote.Unit__r.Total_carpet_Sq_Ft__c,
             'remarks' : '',
-            'otherChannelPartners' : '',
             'isLoanSanctioned' : '',
             'modeOfFunding' : ''
         }
+        
    }
 
    handleBookingDetailsChange(event){
@@ -175,6 +194,29 @@ export default class Ex_BookingForm extends LightningElement {
         console.log('this.bookingDetails : ' + JSON.stringify(this.bookingDetails));
    }
    
+
+    // Get Quotation Type : Tenant | Opportunity Based
+    retriveQuotationType(){
+        getQuotationType({quotationID : this.qId})
+        .then(data =>{
+            this.quotationType = data;
+        })
+        .catch(error => {
+            console.log('Error in getting quotation type ' + JSON.stringify(error));
+        })
+    }
+
+
+    // Get Tenant Account Details 
+    retrieveTenantAccount(){
+        getTenantAccount({quotationID : this.qId})
+        .then(data =>{
+            this.tenantAccount = data;
+        })
+        .catch(error => {
+            console.log('Error in getting tenant account ' + JSON.stringify(error));
+        })
+    }
 
 
     /*

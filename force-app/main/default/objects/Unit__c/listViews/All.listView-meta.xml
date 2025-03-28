@@ -5,6 +5,8 @@
     <columns>Floor__c</columns>
     <columns>Sale_Status__c</columns>
     <columns>Tower__c</columns>
+    <columns>Agreement_Value__c</columns>
+    <columns>Total_Other_Charges_Including_Tax__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

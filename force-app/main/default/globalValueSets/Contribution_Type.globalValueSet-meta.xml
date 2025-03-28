@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Own Contribution</fullName>
+        <default>false</default>
+        <label>Own Contribution</label>
+    </customValue>
+    <customValue>
+        <fullName>Bank Loan</fullName>
+        <default>false</default>
+        <label>Bank Loan</label>
+    </customValue>
+    <masterLabel>Contribution Type</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

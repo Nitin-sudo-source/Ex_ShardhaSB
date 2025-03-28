@@ -19,7 +19,12 @@ public class Ex_InventoryMatrix {
     @AuraEnabled(cacheable=false)
     public static List<Project__c> getProjectList() {
         try {
-            List<Project__c> pList = [SELECT Id, Name FROM Project__c];
+            
+            // As per Shraddha Project requirement, we will be showing only project
+            // which has Inventory.
+            // (Property_Type__c with value 'Old Property' is a demolished building so
+            // there is no inventory data on it.)
+            List<Project__c> pList = [SELECT Id, Name FROM Project__c ];
             System.debug('Project List .: ' + pList);
             if (!pList.isEmpty()) {
                 return pList;
@@ -42,11 +47,11 @@ public class Ex_InventoryMatrix {
             if (!tList.isEmpty()) {
                 return tList;
             } else {
-                return null;
+                return new List<Tower__c>();
             }
         } catch (Exception e) {
             System.debug('An error occurred: ' + e.getMessage());
-            return null;
+            return new List<Tower__c>();
         }
     }
     
@@ -54,7 +59,7 @@ public class Ex_InventoryMatrix {
     public static List<Unit__c> getUnit(string towerId) {
         try {
             System.debug('Tower Id: ' + towerId);
-            List<Unit__c> uList = [SELECT Name, Configuration_Type__c, Sale_Status__c, Opportunity__c FROM Unit__c 
+            List<Unit__c> uList = [SELECT Name, Configuration_Type__c, Sale_Status__c, Opportunity__c, Carpet_Area__c, Total_carpet_Sq_Ft__c, Final_committed_Area_sqft__c FROM Unit__c 
                                    WHERE Tower__c = :towerId];
             System.debug('Unit List .:' +uList);
             if (uList != null && !uList.isEmpty()) {

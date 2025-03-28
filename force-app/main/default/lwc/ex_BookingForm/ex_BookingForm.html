@@ -70,8 +70,14 @@
                             </tr>
 
                             <template if:false={getBookingDetails.isEmpty}>
-                                <tr>
+                                <tr if:true={isOpportunityBasedQuotation}>
                                     <td>Opportunity Name</td>
+                                    <td>{getBookingDetails.data.opportunityName}</td>
+                                    <td>Project Name</td>
+                                    <td>{getBookingDetails.data.projectName}</td>
+                                </tr>
+                                <tr if:true={isTenantBasedQuotation}>
+                                    <td>Tenant Name</td>
                                     <td>{getBookingDetails.data.opportunityName}</td>
                                     <td>Project Name</td>
                                     <td>{getBookingDetails.data.projectName}</td>
@@ -104,14 +110,14 @@
                                         </lightning-input-field>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="1">Is Member Booking</td>
                                     <td colspan="3">
                                         <lightning-input type="checkbox" variant="label-hidden" data-field-name="isMemberBooking" name="isMemberBooking" label-hidden=true
                                                             onchange={handleBookingDetailsChange} checked={getBookingDetails.data.isMemberBooking}>
                                         </lightning-input>
                                     </td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td colspan="1">Remarks 
                                         <span style="color: red;">*</span>
@@ -122,14 +128,14 @@
                                         </lightning-textarea>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="1">Other Channel Partners</td>
                                     <td colspan="3">
                                         <lightning-textarea variant="label-hidden" data-field-name="otherChannelPartners" name="otherChannelPartners" label-hidden=true
                                                             onchange={handleBookingDetailsChange} value={getBookingDetails.data.otherChannelPartners}>
                                         </lightning-textarea>
                                     </td>
-                                </tr>
+                                </tr> -->
                             </template>
                             
                             <template if:true={getBookingDetails.isEmpty}>
@@ -317,17 +323,6 @@
                                                 </center>
                                             </div>
                                         </th>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align:left;">Country Code<span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <lightning-input-field style="width: 280px;" name="Country_Code__c"
-                                                data-id="Country_Code__c" data-key={applicant.key}
-                                                value={applicant.ap.Country_Code__c} field-name="Country_Code__c"
-                                                variant="label-hidden" onchange={handleApplicant} type="number">
-                                            </lightning-input-field>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <th style="text-align:left;">Mobile Number<span style="color: red;">*</span>
@@ -620,159 +615,6 @@
                 </lightning-tabset>
             </div>
 
-                <table class="Table1Css" style="font-size:12px;">
-                    <tr>
-                        <th>
-                            <div class="main">
-                                <center>
-                                    <lightning-icon icon-name="standard:contract_payment" size="xx-large"
-                                        variant="inverse">
-                                    </lightning-icon>
-                                    <label class="head" style="font-size:16px">Receipt Details &nbsp;</label>
-                                    <lightning-button label="Add Receipt" slot="actions" icon-name="utility:add"
-                                        onclick={addReceipt}></lightning-button>
-                                </center>
-                            </div>
-                        </th>
-                    </tr>
-                </table>
-                <lightning-tabset aria-live="polite">
-                    <template for:each={getReceiptData} for:item="receipt" for:index="index">
-                        <lightning-tab key={receipt.key} class="slds-tabs_default" label={receipt.key}
-                            icon-name="standard:contract_payment">
-                            <div style="float: right;padding:10px;">
-                                <lightning-button data-tabvalue={receipt.key} data-index={index} label={receipt.key}
-                                    variant="destructive" icon-name="utility:delete" class="slds-tabs_default"
-                                    onclick={removeTabReceipt}>
-                                </lightning-button>
-                            </div>
-                            <br />
-
-
-                            <lightning-record-edit-form object-api-name="Receipt__c">
-
-                            <!-- <lightning-tab class="slds-tabs_default" label="Receipt" icon-name="standard:contract_payment"> -->
-                            <table class="Table1Css" style="font-size:12px;">
-                                <tr>
-                                    <th colspan="4" style="background-color: white !important;">
-                                        <div class="main">
-                                            <center>
-                                                <lightning-icon icon-name="custom:custom17" size="xx-large"
-                                                    variant="inverse">
-                                                </lightning-icon>
-                                                <label class="head" style="font-size:16px"> Payment Details</label>
-                                            </center>
-                                        </div>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th style="text-align:left;">Payment Mode
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Mode_Of_Payment__c" data-id="Mode_Of_Payment__c"
-                                            variant="label-hidden" field-name="Mode_Of_Payment__c"
-                                            data-key={receipt.key} value={receipt.rc.Mode_Of_Payment__c}
-                                            onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                    <th style="text-align:left;">Is Token Amount</th>
-                                    <td>
-                                        <lightning-input-field name="Is_Token_Amount_Received__c" data-key={receipt.key}
-                                            data-id="Is_Token_Amount_Received__c" variant="label-hidden"
-                                            field-name="Is_Token_Amount_Received__c"
-                                            value={receipt.rc.Is_Token_Amount_Received__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align:left;">Payment Type
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Payment_Type__c" data-id="Payment_Type__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Payment_Type__c"
-                                            value={receipt.rc.Payment_Type__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                    <th style="text-align:left;">Receipt Type
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Receipt_Type__c" data-id="Receipt_Type__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Receipt_Type__c"
-                                            value={receipt.rc.Receipt_Type__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align:left;">Payment Status
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Payment_Status__c" data-id="Payment_Status__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Payment_Status__c"
-                                            value={receipt.rc.Payment_Status__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                    <th style="text-align:left;">Bank Name</th>
-                                    <td>
-                                        <lightning-input-field name="Bank_Name__c" data-id="Bank_Name__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Bank_Name__c"
-                                            value={receipt.rc.Bank_Name__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align:left;">Receipt Date
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Receipt_Date__c" data-id="Receipt_Date__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Receipt_Date__c"
-                                            value={receipt.rc.Receipt_Date__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                    <th style="text-align:left;">Instrument Date</th>
-                                    <td>
-                                        <lightning-input-field name="Instrument_Date__c" data-id="Instrument_Date__c"
-                                            data-key={receipt.key} variant="label-hidden"
-                                            field-name="Instrument_Date__c" value={receipt.rc.Instrument_Date__c}
-                                            onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align:left;">Transaction Id
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Transaction_ID__c" data-id="Transaction_ID__c"
-                                            data-key={receipt.key} variant="label-hidden" field-name="Transaction_ID__c"
-                                            value={receipt.rc.Transaction_ID__c} onchange={handleReceiptInfo}>
-                                        </lightning-input-field>
-                                    </td>
-                                    <th style="text-align:left;">Amount
-                                        <!-- <span style="color: red;">*</span> -->
-                                    </th>
-                                    <td>
-                                        <lightning-input-field name="Amount__c" data-id="Amount__c"
-                                            variant="label-hidden" data-key={receipt.key} field-name="Amount__c"
-                                            value={receipt.rc.Amount__c} format-style="currency" currency-code="INR"
-                                            onchange={handleReceiptInfo}></lightning-input-field>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            </lightning-record-edit-form><br />
-
-                        </lightning-tab>
-                    </template>
-
-                    <!-- </lightning-tab> -->
-
-
-                </lightning-tabset>
 
             
             <!-- Other Booking Documents -->

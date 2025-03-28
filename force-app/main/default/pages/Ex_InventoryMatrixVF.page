@@ -16,7 +16,8 @@
                     {
                         $Lightning.createComponent("c:ex_InventoryMatrix",
                                                     { 
-                                                        recordId: '{!$CurrentPage.parameters.recordId}'
+                                                        recordId: '{!$CurrentPage.parameters.recordId}',
+                                                        qtype: '{!$CurrentPage.parameters.qtype}'
                                                         
                                                     },
                                                     "LightningComponentid",

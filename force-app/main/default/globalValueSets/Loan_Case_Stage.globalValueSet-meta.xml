@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Documents Pending</fullName>
+        <default>false</default>
+        <label>Documents Pending</label>
+    </customValue>
+    <customValue>
+        <fullName>Documents Collected</fullName>
+        <default>false</default>
+        <label>Documents Collected</label>
+    </customValue>
+    <customValue>
+        <fullName>Case Logged-in</fullName>
+        <default>false</default>
+        <label>Case Logged-in</label>
+    </customValue>
+    <customValue>
+        <fullName>Condition Sanctioned</fullName>
+        <default>false</default>
+        <label>Condition Sanctioned</label>
+    </customValue>
+    <customValue>
+        <fullName>Confirmed Sanctioned</fullName>
+        <default>false</default>
+        <label>Confirmed Sanctioned</label>
+    </customValue>
+    <customValue>
+        <fullName>1st Disbursement Received</fullName>
+        <default>false</default>
+        <label>1st Disbursement Received</label>
+    </customValue>
+    <customValue>
+        <fullName>Loan Rejected</fullName>
+        <default>false</default>
+        <label>Loan Rejected</label>
+    </customValue>
+    <customValue>
+        <fullName>Case Canceled</fullName>
+        <default>false</default>
+        <label>Case Canceled</label>
+    </customValue>
+    <masterLabel>Loan Case Stage</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

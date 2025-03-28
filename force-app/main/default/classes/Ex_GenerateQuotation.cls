@@ -1,5 +1,5 @@
 public class Ex_GenerateQuotation {
-
+    
     public class ChargeDetails{
         @AuraEnabled
         public Decimal allInPrice {get; set;}
@@ -26,6 +26,39 @@ public class Ex_GenerateQuotation {
     }
 
 
+    @AuraEnabled
+    public static Account getAccountInfo(Id accId) {
+        List<Account> accList = new List<Account>();
+        String[] types = new String[]{'Account'};
+            string queryFields = '';
+        Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
+        
+        for(Schema.DescribeSobjectResult res : results) {
+            string sObjectname = res.getName();
+            Map <String, Schema.SObjectField> fieldMap = res.fields.getMap();
+            
+            for(Schema.SObjectField sfield : fieldMap.Values()) { 
+                schema.describefieldresult dfield = sfield.getDescribe();
+                String fieldLabel = dfield.getLabel();
+                
+                if(queryFields == null || queryFields == '') {
+                    queryFields = dField.getName();
+                } else {
+                    queryFields = queryFields + ', ' + dField.getName();
+                }
+            }
+        }
+        String soqlQuery = 'Select ' + queryFields  + ' ,  Society__r.Project__c, Society__r.Project__r.Name,  Tower__r.Name from Account Where Id = \''+accId+'\''; 
+        system.debug(soqlQuery);
+        accList = Database.query(soqlQuery);
+        if (accList.size() > 0) {
+            return accList[0];
+        } else {
+            return null;
+        }
+    }
+    
+
     /* 
      * Returns the charge details from Unit/Tower
      * TODO :
@@ -33,6 +66,7 @@ public class Ex_GenerateQuotation {
      *     on Unit then you can't mandatory All_In_Price/Agreement_Value__c.
      *     (still not sure on this, recheck this)
     */
+    
     
     @AuraEnabled
     public static ChargeDetails getChargeDetails(String unitID){
@@ -79,9 +113,8 @@ public class Ex_GenerateQuotation {
 
     }
 
-    /*
-     * Returns the sum of all other charges
-    */
+    
+    // Returns the sum of all other charges
     private static Decimal getTotalOtherChargeIncGST(List<Other_Charges__c> otherCharges){
         Decimal totalOtherChargeIncGST = 0;
         if(otherCharges != null && !otherCharges.isEmpty()){
@@ -106,9 +139,7 @@ public class Ex_GenerateQuotation {
         return totalOtherChargeIncGST;
     }
 
-    /*
-     * Returns the all Other Charges maintained against Unit
-    */
+    // Returns the all Other Charges maintained against Unit
     @AuraEnabled(cacheable=true)
     public static List<Other_Charges__c> getOtherCharges(String unitID){
         
@@ -179,9 +210,9 @@ public class Ex_GenerateQuotation {
        public static Unit__c getUnitDetails(String unitId){
            List<Unit__c> uList = new List<Unit__c>(); 
            uList = [Select Id, Name, Floor__c, Sale_Status__c, Configuration_Type__c, Total_carpet_Sq_Ft__c, Tower__c, Tower__r.Name,
-                    Tower__r.Stamp_Duty_Percentage__c, Tower__r.Registration_Charges__c, All_in_Price__c, Tower__r.GST_Percentage__c, Project__c,
+                    Tower__r.Stamp_Duty_Percentage__c, Tower__r.Registration_Charges__c, All_in_Price__c, Tower__r.GST_Percentage__c, Project__c, PSF_Rate__c,
                     Tower__r.Project__c, Threshold_Amount__c, PSF__c, Threshold_Percentage__c
-                      /*,Tower__r.Total_Other_Charges__c*/ FROM Unit__c WHERE Id =: unitId];
+                     FROM Unit__c WHERE Id =: unitId];
            system.debug('uList: '+uList);
            if(!uList.isEmpty() && uList != null){
                return uList[0];
@@ -308,11 +339,14 @@ public class Ex_GenerateQuotation {
        @AuraEnabled
        public static Id saveQuotationDetails(Unit__c u, Id oppId, Id selectedSchemeId, List<Ex_InventoryPriceManagementServices.CarParkWrapper> carParkList,
                                              List<Ex_InventoryPriceManagementServices.PaymentMilestoneWrapper> paymentMilestoneWrapperList, QuotationWrapper qWrapper,
-                                             List<Map<String, Object>> otherCharges) {
+                                             List<Map<String, Object>> otherCharges, Boolean isTenantAccount, Date diDate, Decimal BillAmount) {
+                                                 
            try {
                Quotation__c q = new Quotation__c();
                System.debug('qWrapper: '+qWrapper);
                System.debug('otherCharges: '+otherCharges);
+               System.debug('isTenantAccount: '+isTenantAccount+ 'qWrapper.q.Differential_Carpet_Area__c: '+qWrapper.q.Differential_Carpet_Area__c);
+               System.debug('diDate: '+diDate+ 'BillAmount: '+BillAmount);
                if(qWrapper.q.All_in_Price__c != null){
                    q.All_in_Price__c = qWrapper.q.All_in_Price__c;
                }
@@ -346,6 +380,9 @@ public class Ex_GenerateQuotation {
                if(qWrapper.q.Car_Park_Amount__c != null){
                    q.Car_Park_Amount__c = qWrapper.q.Car_Park_Amount__c;
                }
+               if(qWrapper.q.Car_Park_Required_Count__c != null){
+                   q.Car_Park_Required_Count__c = qWrapper.q.Car_Park_Required_Count__c;
+               }
                if(qWrapper.q.Modified_GST__c != null){
                    q.Modified_GST__c = qWrapper.q.Modified_GST__c;
                }
@@ -363,6 +400,14 @@ public class Ex_GenerateQuotation {
                     q.Modified_GST_Charges__c = qWrapper.q.Modified_GST_Charges__c;
                }
 
+               //  Final Committed Area details
+               if(qWrapper.q.Original_Final_Committed_Area__c != null){
+                q.Original_Final_Committed_Area__c = qWrapper.q.Original_Final_Committed_Area__c;
+               }
+               if(qWrapper.q.Modified_Final_Committed_Area__c != null){
+                       q.Modified_Final_Committed_Area__c = qWrapper.q.Modified_Final_Committed_Area__c;
+               }
+
                // Stamp Duty Charges
                if(qWrapper.q.Stamp_Duty_Charges__c != null){
                     q.Stamp_Duty_Charges__c = qWrapper.q.Stamp_Duty_Charges__c;
@@ -375,15 +420,58 @@ public class Ex_GenerateQuotation {
                if(qWrapper.q.Applied_Discount__c != null) {
                     q.Applied_Discount__c = qWrapper.q.Applied_Discount__c;
                }
-
-               
+               if(isTenantAccount){
+                   if(qWrapper.q.Original_PSF_Rate__c != null) {
+                       q.Original_PSF_Rate__c = qWrapper.q.Original_PSF_Rate__c;
+                   }
+                   if(qWrapper.q.Modified_PSF_Rate__c != null) {
+                       q.Modified_PSF_Rate__c = qWrapper.q.Modified_PSF_Rate__c;
+                   }
+                   if(qWrapper.q.Differential_Carpet_Area__c != null) {
+                       q.Differential_Carpet_Area__c = qWrapper.q.Differential_Carpet_Area__c;
+                   }
+               }
               
                // q.Referal_Discount__c = qWrapper.q.Referal_Discount__c;
                q.Unit__c = u.Id;
                q.Project__c = u.Tower__r.Project__c;
                q.Tower__c = u.Tower__c;
-               q.Opportunity__c = oppId;
-               q.Payment_Scheme__c = selectedSchemeId;            
+               q.Payment_Scheme__c = selectedSchemeId;    
+               if(!isTenantAccount){
+                   q.Opportunity__c = oppId;
+               }
+               if(isTenantAccount && Integer.valueof(qWrapper.q.Differential_Carpet_Area__c) > 0){
+                   q.Tenant_Account__c = oppId; 
+               }
+               if(isTenantAccount && Integer.valueof(qWrapper.q.Differential_Carpet_Area__c) < 0){
+                   List<Bill__c> insertBill = new List<Bill__c>();
+                   List<Account> updateTenant = new List<Account>();
+                   q.Tenant_Account__c = oppId;
+
+                   //  Create Excess Carpet Area Bill
+                   Ex_DraftBillController.createBillForExcessCarpetArea(oppId, diDate, BillAmount);
+                   
+                   Account ac = new Account();
+                   ac.Differential_Payment_Type__c = 'Lumpsum';
+                   ac.Differential_Specific_Date__c = diDate;
+                   ac.Differential_Amount__c = BillAmount;
+                   ac.Differential_Carpet_Area_Eligibility__c = 'Yes';
+                   ac.Differential_Frequency__c = 'One Time Payment';
+                   ac.Id = oppId;
+                   updateTenant.add(ac);
+                   System.debug('updateTenantBefore: '+updateTenant);
+                   if(updateTenant != null && !updateTenant.isEmpty()){
+                       update updateTenant;
+                   }
+                    System.debug('updateTenantAfter: '+updateTenant);
+                    System.debug('insertBillBefore: '+insertBill);
+                   if(insertBill != null && !insertBill.isEmpty()){
+                       insert insertBill;
+                   }
+                    System.debug('insertBillAfter: '+insertBill);
+               }
+               
+                      
                
                Id qId = null;
                Database.saveResult sr = Database.insert(q);
@@ -404,24 +492,46 @@ public class Ex_GenerateQuotation {
                        }
                    }
                    
-                   if(paymentMilestoneWrapperList != null && !paymentMilestoneWrapperList.isEmpty()) {
-                        system.debug('paymentMilestoneWrapperList:'+ paymentMilestoneWrapperList);
-                       Integer i = 1;
-                       for(Ex_InventoryPriceManagementServices.PaymentMilestoneWrapper pmw: paymentMilestoneWrapperList) {
-                           if(pmw.pm != null) {
-                               pmw.pm.Sequence_Number__c = i;
-                               pmw.pm.Quotation__c = qId;
-                               paymentMilestoneList.add(pmw.pm);
-                               i++;
+                   if(isTenantAccount && q.Modified_AV_Value__c > 0){
+                       if(paymentMilestoneWrapperList != null && !paymentMilestoneWrapperList.isEmpty()) {
+                           system.debug('paymentMilestoneWrapperList:'+ paymentMilestoneWrapperList);
+                           Integer i = 1;
+                           for(Ex_InventoryPriceManagementServices.PaymentMilestoneWrapper pmw: paymentMilestoneWrapperList) {
+                               if(pmw.pm != null) {
+                                   pmw.pm.Sequence_Number__c = i;
+                                   pmw.pm.Quotation__c = qId;
+                                   paymentMilestoneList.add(pmw.pm);
+                                   i++;
+                               }
+                           }
+                       }
+                   }
+                   if(!isTenantAccount){
+                       if(paymentMilestoneWrapperList != null && !paymentMilestoneWrapperList.isEmpty()) {
+                           system.debug('paymentMilestoneWrapperList:'+ paymentMilestoneWrapperList);
+                           Integer i = 1;
+                           for(Ex_InventoryPriceManagementServices.PaymentMilestoneWrapper pmw: paymentMilestoneWrapperList) {
+                               if(pmw.pm != null) {
+                                   pmw.pm.Sequence_Number__c = i;
+                                   pmw.pm.Quotation__c = qId;
+                                   paymentMilestoneList.add(pmw.pm);
+                                   i++;
+                               }
                            }
                        }
                    }
                    
+                   
                    if(!carParkReqList.isEmpty() && carParkReqList != null) {
                        insert carParkReqList;
                    }
+                   
                    if(!paymentMilestoneList.isEmpty() && paymentMilestoneList != null) {
-                       insert paymentMilestoneList;
+                       if(isTenantAccount && q.Modified_AV_Value__c > 0){
+                           insert paymentMilestoneList;
+                       }else if(!isTenantAccount){
+                           insert paymentMilestoneList;
+                       }
                    }
 
                    //  Add 'Included Other Charges' records against the Quotation
@@ -500,5 +610,5 @@ public class Ex_GenerateQuotation {
     // ---- Custom Exception ----
     public class CustomException extends Exception {}
 
-
+    
    }

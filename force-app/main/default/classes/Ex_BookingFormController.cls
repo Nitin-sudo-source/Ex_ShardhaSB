@@ -13,8 +13,6 @@ public class Ex_BookingFormController {
         @AuraEnabled public String modeOfFunding {get; set;}
         @AuraEnabled public String anyOtherOffers {get; set;}
         @AuraEnabled public String remarks {get; set;}
-        @AuraEnabled public String otherChannelPartners {get; set;}
-        @AuraEnabled public Boolean isMemberBooking {get; set;}
         @AuraEnabled public String isLoanSanctioned {get; set;}
         @AuraEnabled public String loanSanctionedBankName {get; set;}
         @AuraEnabled public String loanSactionedPreferredBankName {get; set;}
@@ -31,12 +29,39 @@ public class Ex_BookingFormController {
             this.modeOfFunding = '-';
             this.anyOtherOffers = '-';
             this.remarks = '-';
-            this.otherChannelPartners = '-';
-            this.isMemberBooking = false;
             this.isLoanSanctioned = 'No';
             this.loanSanctionedBankName = '-';
             this.loanSactionedPreferredBankName = '-';
             this.sanctionedAmount = 0.0;
+        }
+    }
+
+
+    // Get Tenant Account 
+    @AuraEnabled
+    public static Quotation__c getTenantAccount(String quotationID){
+        try {
+            Quotation__c tenantAccount = [SELECT Id, Name,
+                                            Tenant_Account__c, Tenant_Account__r.Name, Tower__c, Tower__r.Name,
+                                            Unit__c, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c
+                                          FROM Quotation__c 
+                                          WHERE Id =:quotationID LIMIT 1];
+            return tenantAccount;
+        } catch (Exception e) {
+            throw new CustomException('Error in getting quotation with ID : ' + quotationID, e);
+        }
+    }
+
+    // Get Quotation Type : Tenant Based | Opportunity Based
+    @AuraEnabled
+    public static String getQuotationType(String quotationID){
+        try {
+            Quotation__c quotation = [SELECT Id, Quotation_Type__c
+                                      FROM Quotation__c
+                                      WHERE Id = :quotationID LIMIT 1];
+            return quotation.Quotation_Type__c;
+        } catch (Exception e) {
+            throw new CustomException('Error in getting quotation with ID : ' + quotationID, e);
         }
     }
 
@@ -202,8 +227,7 @@ public class Ex_BookingFormController {
             }
         }
         System.debug('qid : ' + qId);
-        // String soqlQuery = 'Select ' + queryFields  + ', Opportunity__r.Name, Project__r.Name, Tower__r.Name, Opportunity__r.Walk_In_Source__c, Opportunity__r.Walk_In_Sub_Source__c, Opportunity__r.Channel_Partner__c, Opportunity__r.CP_Project__c, Opportunity__r.OwnerId, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c, Payment_Scheme__r.Name, Booking__r.Agreement_Value__c, Unit__r.Saleable_Area__c  from Quotation__c Where Id = :qId';
-        String soqlQuery = 'Select ' + queryFields  + ', Opportunity__r.Name, Project__r.Name, Tower__r.Name, Opportunity__r.Walk_In_Source__c, Opportunity__r.Walk_In_Sub_Source__c, Opportunity__r.OwnerId, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c, Payment_Scheme__r.Name, Booking__r.Agreement_Value__c, Unit__r.Saleable_Area__c  from Quotation__c Where Id = :qId';
+        String soqlQuery = 'Select ' + queryFields  + ', Opportunity__r.Name, Project__r.Name, Tower__r.Name, Opportunity__r.Walk_In_Source__c, Opportunity__r.Walk_In_Sub_Source__c, Opportunity__r.OwnerId, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c, Payment_Scheme__r.Name, Booking__r.Agreement_Value__c, Unit__r.Saleable_Area__c, Tenant_Account__r.Name from Quotation__c Where Id = :qId';
         system.debug(soqlQuery);
         qList = Database.query(soqlQuery);
         
@@ -449,15 +473,16 @@ public class Ex_BookingFormController {
         /*if(bookingDetails.otherChannelPartners != null && !String.isEmpty(bookingDetails.otherChannelPartners)){
             booking.Other_Channel_Partners__c = bookingDetails.otherChannelPartners;
         }*/
-        if(bookingDetails.isMemberBooking != null ){
-            booking.Is_Member_Booking__c = bookingDetails.isMemberBooking;
-        }
         if(bookingDetails.remarks != null && !String.isEmpty(bookingDetails.remarks)){
             booking.Remarks__c = bookingDetails.remarks;
         }
         if(quotation.Unit__r.Floor__c != null){
             booking.Floor__c = quotation.Unit__r.Floor__c;
         }
+        if(quotation.Tenant_Account__c != null){
+            booking.Tenant_Account__c = quotation.Tenant_Account__c;
+        }
+        
 
 
         // Loan Sanctioned Details
@@ -482,7 +507,7 @@ public class Ex_BookingFormController {
         booking.Other_Charges__c = quotation.Modified_Other_Charges_Including_Tax__c;
         booking.All_In_Value__c = quotation.Modified_All_in_Price__c;
 
-        booking.Booking_Stage__c = 'Booking In-Process';
+        booking.Booking_Stage__c = 'Booking Confirmed';
         
         if(bookingAccount != null && !bookingAccount.isEmpty()){
             booking.Account_Name_Flat_Cost__c = bookingAccount[0].Account_Name_Flat_Cost__c;
@@ -518,7 +543,7 @@ public class Ex_BookingFormController {
         if (oppList != null && !oppList.isEmpty()) {
             if (booking.Id != null) {
                 oppList[0].Booking__c = booking.Id;
-                oppList[0].StageName = 'Booking In-Process';
+                oppList[0].StageName = 'Booked';
                 oppList[0].Sub_Stage__c = '';
                 oppList[0].Sub_Stage_Reason__c = '';
             }
@@ -582,7 +607,7 @@ public class Ex_BookingFormController {
             
             if (uniList != null) {
                 if (String.isNotBlank(uniList.Sale_Status__c)) {
-                    uniList.Sale_Status__c = 'Booking In-Process';
+                    uniList.Sale_Status__c = 'Booked';
                 }
                 
                 if(booking != null && booking.Id != null){
@@ -602,7 +627,7 @@ public class Ex_BookingFormController {
                 
                 if(!apData.isEmpty() && apData !=null && apData.containsKey('Receipt_Type__c') && apData.get('Receipt_Type__c') != null){
                     Receipt__c Receipt = new Receipt__c();
-                    Receipt.Mode_Of_Payment__c = (String) apData.get('Mode_Of_Payment__c');
+                    Receipt.Mode_of_Payment__c = (String) apData.get('Mode_of_Payment__c');
                     if(apData.get('Is_Token_Amount_Received__c') != null){
                         Receipt.Is_Token_Amount_Received__c = (Boolean) apData.get('Is_Token_Amount_Received__c');
                     }  

@@ -9,18 +9,6 @@
                         <valueListItems>
                             <value>CustomButton.Opportunity.Create_Quotation</value>
                         </valueListItems>
-                        <valueListItems>
-                            <value>Submit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

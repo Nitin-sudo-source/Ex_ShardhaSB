@@ -3,9 +3,7 @@ import getOppDetails from '@salesforce/apex/Ex_InventoryMatrix.getOppDetails';
 import getQuotationWrapper from '@salesforce/apex/Ex_GenerateQuotation.getQuotationWrapper';
 import getUnitDetails from '@salesforce/apex/Ex_GenerateQuotation.getUnitDetails';
 import getCarParkDetails from '@salesforce/apex/Ex_GenerateQuotation.getCarParkDetails';
-import getPriceListGroupMapDetails from '@salesforce/apex/Ex_GenerateQuotation.getPriceListGroupMapDetails';
 import getPaymentSchemeDetails from '@salesforce/apex/Ex_GenerateQuotation.getPaymentSchemeDetails';
-import getAllPriceInfoFormattedMap from '@salesforce/apex/Ex_GenerateQuotation.getAllPriceInfoFormattedMap';
 import getPaymentScheduleDetails from '@salesforce/apex/Ex_GenerateQuotation.getPaymentScheduleDetails';
 import getPicklistValuesFromApex from '@salesforce/apex/Ex_GenerateQuotation.getPicklistValues';
 import { getPicklistValues } from "lightning/uiObjectInfoApi";
@@ -19,13 +17,16 @@ import Other_Charges__c from '@salesforce/schema/Other_Charges__c';
 import Charge_Type__c from '@salesforce/schema/Other_Charges__c.Charge_Type__c';
 import getOtherCharges from "@salesforce/apex/Ex_GenerateQuotation.getOtherCharges";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { getRecord } from 'lightning/uiRecordApi';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import getAccountInfo from "@salesforce/apex/Ex_GenerateQuotation.getAccountInfo";
+
+
 
 
 export default class Ex_GenerateQuotation extends LightningElement {
     @api uId;
     @api oppId;
+    @api qtype;
     @track fetchOpp;
     @track unit;
     @track storeProjectId = '';
@@ -36,6 +37,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
     @track updatedCarParkList = [];
     @track editPaymentScheduleMode = false;
     @track totalCarParkAmount = 0;
+    @track totalCarParkCount = 0;
 
     @track showToast = false;
     @track toastMessage = '';
@@ -83,6 +85,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
     @track getModifiedSDR = 0;
     @track getModifiedGstAmount = 0;
 
+
     @track formatgetOrginalAVValue = '';
     @track formatgetTotalModifiedAmount = '';
     @track formatgetTotalOrginalAmount = '';
@@ -91,6 +94,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
     @track formatgetModifiedSDR = '';
     @track formatoriginalSDR = '';
     @track formatgetModifiedAVValue = '';
+    @track showPaymentPlanforTenant = false;
 
     // @track getTotalOtherCharges = 0;
     @track getModifiedTotalOtherCharges = 0;
@@ -105,13 +109,20 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
     // --- Discount ---
     @track appliedDiscount = 0;
+    @track isQuotationOpenfromAccount = false;
 
     // --- Toast Error --- 
     @track showErrorMessage = false;
     @track errorMessage = {
-        'title' : '',
-        'content' : ''
+        'title': '',
+        'content': ''
     };
+
+    @track originalFinalCommittedArea = 0;
+    @track getDiffArea = 0;
+    @track diffDate = null;
+    @track getBillAmount = 0;
+    @track dynamiclabel = ''
 
 
     // --- Pricing Scheme and Payment Plan
@@ -122,56 +133,84 @@ export default class Ex_GenerateQuotation extends LightningElement {
     @track BOX_PLAN = 'box';
     @track STANDARD_PLAN = 'standard';
 
-    @track selectedPricingPlan = null;
+    @track selectedPricingPlan = '';
     @track otherCharges = {
         'data': {
-            'originalCharges' : {
-                'otherChargeType' : {
-                    'id' : 'recordTypeID',
-                    'sequenceNo' : 0,
-                    'chargeName' : 'otherChargeType',
-                    'chargeAmount' : 40000,
-                    'GSTPercentage' : 18.00,
-                    'chargeAmountIncludingGST' : 47200,
-                    'availableOtherChargeTypes' : []
+            'originalCharges': {
+                'otherChargeType': {
+                    'id': 'recordTypeID',
+                    'sequenceNo': 0,
+                    'chargeName': 'otherChargeType',
+                    'chargeAmount': 40000,
+                    'GSTPercentage': 18.00,
+                    'chargeAmountIncludingGST': 47200,
+                    'availableOtherChargeTypes': []
                 }
             },
-            'modifiedCharges' : {
-                'otherChargeType' : {},
-                'otherChargeType' : {},
-                'otherChargeType' : {}
+            'modifiedCharges': {
+                'otherChargeType': {},
+                'otherChargeType': {},
+                'otherChargeType': {}
             },
-            'newCharges' : {
-                'otherChargeType' : {},
-                'otherChargeType' : {},
-                'otherChargeType' : {}
+            'newCharges': {
+                'otherChargeType': {},
+                'otherChargeType': {},
+                'otherChargeType': {}
             },
 
         },
-        'metadata' : {
-            'availableOtherChargeTypes' : []
+        'metadata': {
+            'availableOtherChargeTypes': []
         }
     }
     @track chargeDetails = {
-        'quotationType' : {
-                'originalCharges' :  {
-                    'agreementValue' : 7000000,
-                    'otherCharges'   : 100000,
-                    'registrationCharges' : 50000,
-                },
-                'modifiedCharges' : {
-                    'agreementValue' : 8000000,
-                    'otherCharges'   : 200000,
-                    'registrationCharges' : 70000,
-                },
-                'newCharges' : {
-                    'agreementValue' : 7000000,
-                    'otherCharges'   : 100000,
-                    'registrationCharges' : 50000,
-                }    
+        'quotationType': {
+            'originalCharges': {
+                'agreementValue': 7000000,
+                'otherCharges': 100000,
+                'registrationCharges': 50000,
+            },
+            'modifiedCharges': {
+                'agreementValue': 8000000,
+                'otherCharges': 200000,
+                'registrationCharges': 70000,
+            },
+            'newCharges': {
+                'agreementValue': 7000000,
+                'otherCharges': 100000,
+                'registrationCharges': 50000,
             }
+        }
     };
+
     
+
+    handlediffDate(event) {
+        this.diffDate = event.target.value || event.detail.value;
+        console.log('diffDate: ' + this.diffDate);
+    }
+
+    handleFinalCommittedAreaChange(event){
+
+        var finalCommitedArea = event.target.value;
+
+        
+        if(isNaN(finalCommitedArea) || finalCommitedArea == null || finalCommitedArea == undefined || finalCommitedArea <= 0){
+            event.currentTarget.value = 0;
+            this.fetchOpp.Final_Committed_Area__c = 0;
+        }
+        else{
+            this.fetchOpp.Final_Committed_Area__c = parseFloat(finalCommitedArea);
+            console.log('this.fetchOpp.Final_Committed_Area__c : ' + this.fetchOpp.Final_Committed_Area__c);
+        }
+        this.showCalculate = true;
+    }
+
+    get diffAreaNegative() {
+        return this.getDiffArea < 0;   
+    }
+
+
     get getToastClass() {
         return `slds-notify slds-notify_toast slds-theme_${this.toastVariant}`;
     }
@@ -180,25 +219,267 @@ export default class Ex_GenerateQuotation extends LightningElement {
         return 'slds-icon_container slds-icon-utility-close slds-m-right_small slds-no-flex slds-align-top';
     }
     connectedCallback() {
-        this.handleOppData();
+        console.log('qtype: ' + this.qtype);
+        if (this.qtype === '') {
+            this.handleOppData();
+        }
+        else if (this.qtype === 'Tenant') {
+            this.handleTenantData();
+            this.isQuotationOpenfromAccount = true;
+            console.log('qtype: ' + this.qtype);
+            console.log('uId: ' + this.uId);
+            this.pricingPlanOptions = this.pricingPlanOptions.filter(element => element.value !== 'box');
+        }
+        console.log('pricingPlanOptions: ' + JSON.stringify(this.pricingPlanOptions));
+
+
+
     }
 
-    
-    @wire(getObjectInfo, { objectApiName : Other_Charges__c })
+
+    handleTenantData() {
+        if (this.oppId !== undefined) {
+            getAccountInfo({ accId: this.oppId })
+                .then((result) => {
+                    console.log("result ", result);
+                    this.fetchOpp = result;
+                    this.originalFinalCommittedArea = this.fetchOpp.Final_Committed_Area__c;
+                    this.error = undefined;
+                    if (this.fetchOpp.Society__r.Project__r.Id != undefined) {
+                        this.isOppProject = true;
+                        this.storeProjectId = this.fetchOpp.Society__r.Project__r.Id;
+                        this.handleUnitData();
+                        //this.getDiffAreaCal();
+
+                        this.showSpinner = false;
+                    }
+                })
+                .catch((error) => {
+                    this.error = error;
+                    this.fetchOpp = undefined;
+                });
+        }
+
+    }
+
+
+
+    calculateChargeDetailsTenantWise(chargeState = 'modifiedCharges') {
+
+        const getValueOrZero = (value) => {
+            const parsedValue = parseFloat(value);
+            return (!isNaN(parsedValue) && value !== null && value !== undefined) ? parsedValue : 0;
+        };
+
+       
+
+        //console.log('getValueOrZeroAfter: ' + JSON.stringify(getValueOrZero));
+
+        var allChargeDetails = this.chargeDetails[this.selectedPricingPlan];
+        //console.log(':: allChargeDetails : ' + JSON.stringify(allChargeDetails));
+
+        var chargeDetails = { ...allChargeDetails[chargeState] };
+        //console.log(':: chargeDetails : ' + JSON.stringify(chargeDetails));
+
+
+        // Agreement Value Present
+        if (this.selectedPricingPlan == this.STANDARD_PLAN) {
+            var agreementValue = chargeDetails.agreementValue;
+            var otherChargesIncludingTax = chargeDetails.otherChargesIncludingTax;
+            var registrationCharges = chargeDetails.registrationCharges;
+            var stampDutyPercentage = chargeDetails.stampDutyPercentage;
+            var GSTPercentage = chargeDetails.GSTPercentage;
+            var PSF_Rate__c = parseFloat(chargeDetails.PSF_Rate__c);
+
+            if (agreementValue === undefined || agreementValue === null) {
+                agreementValue = 0;
+            }
+
+
+
+            var stampDutyCharges = Math.round(getValueOrZero(agreementValue * getValueOrZero(stampDutyPercentage) / 100));
+            stampDutyCharges = this.roundUpIfDecimalGreaterThan49(stampDutyCharges) ? this.roundUpIfDecimalGreaterThan49(stampDutyCharges) : 0;
+
+            var GSTCharges = Math.round(getValueOrZero(agreementValue * getValueOrZero(GSTPercentage) / 100)) ? Math.round(getValueOrZero(agreementValue * getValueOrZero(GSTPercentage) / 100)) : 0;
+            var carParkCharges = chargeState === 'modifiedCharges' ? this.totalCarParkAmount : 0;
+
+            // Calculate the 'All In Price' based on above values
+            var TotalAllInPrice = Math.round(getValueOrZero(agreementValue)) +
+                Math.round(getValueOrZero(otherChargesIncludingTax)) +
+                Math.round(getValueOrZero(registrationCharges)) +
+                Math.round(getValueOrZero(stampDutyCharges)) +
+                Math.round(getValueOrZero(GSTCharges)) +
+                Math.round(getValueOrZero(carParkCharges));
+
+            if (chargeState == 'modifiedCharges') {
+               
+                this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice = TotalAllInPrice;
+                this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue = agreementValue;
+                this.chargeDetails[this.selectedPricingPlan].modifiedCharges.PSF_Rate__c = PSF_Rate__c;
+                this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges = stampDutyCharges;
+                this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges = GSTCharges;
+                if (this.getDiffArea > 0) {
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue = (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                    console.log('updatedav: ' + this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue);
+
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice = Math.round(getValueOrZero(this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue)) +
+                        Math.round(getValueOrZero(otherChargesIncludingTax)) +
+                        Math.round(getValueOrZero(registrationCharges)) +
+                        Math.round(getValueOrZero(stampDutyCharges)) +
+                        Math.round(getValueOrZero(GSTCharges)) +
+                        Math.round(getValueOrZero(carParkCharges));
+                        this.getBillAmount = (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                        if(this.getBillAmount < 0){
+                            this.getBillAmount = Math.abs(this.getBillAmount);
+                        }
+                        
+                        
+
+                }else{
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue = 0;
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges = 0;
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges = 0;
+                    this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice =  Math.round(getValueOrZero(registrationCharges)) + Math.round(getValueOrZero(carParkCharges)) + Math.round(getValueOrZero(otherChargesIncludingTax));
+                    this.getBillAmount = (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                    if(this.getBillAmount < 0){
+                        this.getBillAmount = Math.abs(this.getBillAmount);
+                    }
+
+                }
+
+
+                if (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue <= 0) {
+                    this.showPaymentScheduleData = false;
+                } else {
+                    this.showPaymentScheduleData = true;
+                }
+
+            }
+
+
+            if (chargeState == 'originalCharges') {
+                this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice = TotalAllInPrice;
+                this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue = agreementValue;
+                this.chargeDetails[this.selectedPricingPlan].originalCharges.PSF_Rate__c = PSF_Rate__c;
+                this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges = stampDutyCharges;
+                this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges = GSTCharges;
+                if (this.getDiffArea > 0) {
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue = (this.chargeDetails[this.selectedPricingPlan].originalCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                    console.log('updatedav: ' + this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue);
+
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice = Math.round(getValueOrZero(this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue)) +
+                        Math.round(getValueOrZero(otherChargesIncludingTax)) +
+                        Math.round(getValueOrZero(registrationCharges)) +
+                        Math.round(getValueOrZero(stampDutyCharges)) +
+                        Math.round(getValueOrZero(GSTCharges)) +
+                        Math.round(getValueOrZero(carParkCharges));
+                        this.getBillAmount = (this.chargeDetails[this.selectedPricingPlan].originalCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                        if(this.getBillAmount < 0){
+                            this.getBillAmount = Math.abs(this.getBillAmount);
+                        }
+
+                }else{
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue = 0;
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges = 0;
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges = 0;
+                    this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice = Math.round(getValueOrZero(registrationCharges)) + Math.round(getValueOrZero(carParkCharges)) + Math.round(getValueOrZero(otherChargesIncludingTax));
+                    this.getBillAmount = (this.chargeDetails[this.selectedPricingPlan].originalCharges.PSF_Rate__c * this.getDiffArea) || 0;
+                    if(this.getBillAmount < 0){
+                        this.getBillAmount = Math.abs(this.getBillAmount);
+                    }
+
+                   
+
+                }
+
+
+            }
+        }
+        console.log('after calculation : ' + JSON.stringify(this.chargeDetails));
+
+
+
+        // if (this.selectedPricingPlan == this.BOX_PLAN) {
+        //     var allInPriceValue = chargeDetails.allInPrice;
+        //     var otherChargesIncludingTax = chargeDetails.otherChargesIncludingTax;
+        //     var registrationCharges = chargeDetails.registrationCharges;
+        //     var stampDutyPercentage = chargeDetails.stampDutyPercentage;
+        //     var GSTPercentage = chargeDetails.GSTPercentage;
+        //     var PSF_Rate__c = parseFloat(chargeDetails.PSF_Rate__c);
+
+        //     var carParkCharges = chargeState === 'modifiedCharges' ? this.totalCarParkAmount : 0;
+
+        //     var agreementValueWithGSTAndStampDutyCharges = getValueOrZero(allInPriceValue) -
+        //         getValueOrZero(otherChargesIncludingTax) -
+        //         getValueOrZero(registrationCharges) -
+        //         getValueOrZero(carParkCharges);
+
+        //     var agreementValue = Math.round(
+        //         (agreementValueWithGSTAndStampDutyCharges) /
+        //         (
+        //             1 +
+        //             getValueOrZero(stampDutyPercentage) / 100 +
+        //             getValueOrZero(GSTPercentage) / 100
+        //         )
+        //     );
+        //     chargeDetails.agreementValue = agreementValue; // Update agreement value
+
+        //     var stampDutyCharges = getValueOrZero(agreementValue) * getValueOrZero(stampDutyPercentage) / 100;
+        //     stampDutyCharges = this.roundUpIfDecimalGreaterThan49(stampDutyCharges);
+
+        //     var GSTCharges = getValueOrZero(agreementValue) * getValueOrZero(GSTPercentage) / 100;
+        //     GSTCharges = Math.round(GSTCharges);
+
+        //     if (chargeState === 'modifiedCharges') {
+        //         this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue = agreementValue;
+        //     }
+        //     if (chargeState === 'originalCharges') {
+        //         this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue = agreementValue;
+        //     }
+        //     console.log('after calculation BOX: ' + JSON.stringify(this.chargeDetails));
+        // }
+    }
+
+    handleDiffAreaCal() {
+        console.log('Inside Diff Calculation');
+        console.log('isQuotationOpenfromAccount:', this.isQuotationOpenfromAccount);
+        console.log('unit:', JSON.stringify(this.unit));
+        console.log('fetchOpp:', JSON.stringify(this.fetchOpp));
+
+        if (this.isQuotationOpenfromAccount) {
+            const totalCarpetArea = this.unit.Total_carpet_Sq_Ft__c || 0;
+            const finalCommittedArea = this.fetchOpp.Final_Committed_Area__c || 0;
+            const differentialCarpetArea = totalCarpetArea - finalCommittedArea;
+
+            console.log('Total Carpet Area:', totalCarpetArea);
+            console.log('Final Committed Area:', finalCommittedArea);
+            console.log('Differential Carpet Area:', differentialCarpetArea);
+
+            this.getDiffArea = differentialCarpetArea;
+        } else {
+            console.log('Quotation is not open from Account, setting Differential Carpet Area to 0.');
+            this.getDiffArea = 0;
+        }
+    }
+
+
+
+
+    @wire(getObjectInfo, { objectApiName: Other_Charges__c })
     otherChargesInfo;
 
     @wire(getPicklistValues, {
         recordTypeId: '$otherChargesInfo.data.defaultRecordTypeId',
         fieldApiName: Charge_Type__c
     })
-    handleChargeTypePicklistValues({error, data}){
-        if(data){
+    handleChargeTypePicklistValues({ error, data }) {
+        if (data) {
             this.otherCharges.metadata.availableOtherChargeTypes = data.values.map(value => {
-                return { 'label' : value.label, 'value' :value.label };
+                return { 'label': value.label, 'value': value.label };
             });
             console.log('this.otherCharges.metadata.availableOtherChargeTypes : ' + JSON.stringify(this.otherCharges));
         }
-        if(error){
+        if (error) {
             console.log('Error in getting picklist values for Charge Type' + JSON.stringify(error));
         }
     }
@@ -209,6 +490,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
             .then(result => {
                 console.log('result: ' + JSON.stringify(result));
                 this.fetchOpp = result;
+                this.originalFinalCommittedArea = this.fetchOpp.Final_Committed_Area__c;
                 this.error = undefined;
                 if (this.fetchOpp.Project__c != undefined) {
                     this.storeProjectId = this.fetchOpp.Project__c;
@@ -230,8 +512,14 @@ export default class Ex_GenerateQuotation extends LightningElement {
         return result;
     }
 
-    get getPSFAmount(){
+    get getPSFAmount() {
         return this.getCurrencyInFormatted(this.unit.PSF__c, false);
+    }
+
+    get getSave() {
+        return (!this.isQuotationOpenfromAccount && this.showPaymentScheduleData) ||
+            (this.isQuotationOpenfromAccount && !this.showCalculate && this.selectedPricingPlan !== '' && this.selectedPaymentScheme !== '');
+
     }
 
 
@@ -239,7 +527,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
         this.showSpinner = true;
         getUnitDetails({ unitId: this.uId })
             .then(result => {
-                console.log('result: ' + JSON.stringify(result));
+                console.log('unit: ' + JSON.stringify(result));
                 this.unit = result;
                 this.error = undefined;
                 this.getQWrapper();
@@ -249,6 +537,8 @@ export default class Ex_GenerateQuotation extends LightningElement {
                 this.getMilestoneType();
                 this.getAmountType();
                 this.getCarPark();
+                this.handleDiffAreaCal();
+
                 this.showSpinner = false;
 
             })
@@ -259,60 +549,63 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
         // Get the Other Charges from Unit
         this.fetchOtherCharges();
+
     }
+
+
 
 
     // Get the Other Charges from Unit
-    fetchOtherCharges(){
+    fetchOtherCharges() {
         this.showSpinner = true
-        getOtherCharges({unitID : this.uId})
-        .then(data => {
-            if(data != null){
-                
-                // Initialize Other Charges
-                this.otherCharges = {
-                    ...this.otherCharges,
-                    'data': {}
-                };
+        getOtherCharges({ unitID: this.uId })
+            .then(data => {
+                if (data != null) {
 
-                // Store other charges
-                data.map((otherCharge, index) =>{
+                    // Initialize Other Charges
+                    this.otherCharges = {
+                        ...this.otherCharges,
+                        'data': {}
+                    };
 
-                    var otherChargeType = otherCharge.Charge_Type__c;
-                    var otherChargeData = {
-                        'id' : otherCharge.Id,
-                        'sequenceNo' : index+1,
-                        'chargeName' : otherCharge.Charge_Type__c,
-                        'chargeAmount' : otherCharge.Charge_Amount__c,
-                        'GSTPercentage' : otherCharge.GST_Percentage__c,
-                        'chargeAmountIncludingGST' : otherCharge.Charge_Amount_Including_GST__c,
-                        'availableOtherChargeTypes' : []
-                    }
+                    // Store other charges
+                    data.map((otherCharge, index) => {
 
-                    this.otherCharges.data[otherChargeType] = otherChargeData;
-                    this.updateAvailableOtherChargeTypeOptions();
+                        var otherChargeType = otherCharge.Charge_Type__c;
+                        var otherChargeData = {
+                            'id': otherCharge.Id,
+                            'sequenceNo': index + 1,
+                            'chargeName': otherCharge.Charge_Type__c,
+                            'chargeAmount': otherCharge.Charge_Amount__c,
+                            'GSTPercentage': otherCharge.GST_Percentage__c,
+                            'chargeAmountIncludingGST': otherCharge.Charge_Amount_Including_GST__c,
+                            'availableOtherChargeTypes': []
+                        }
+
+                        this.otherCharges.data[otherChargeType] = otherChargeData;
+                        this.updateAvailableOtherChargeTypeOptions();
+                        console.log('this.otherCharges :' + JSON.stringify(this.otherCharges));
+                    })
+
                     console.log('this.otherCharges :' + JSON.stringify(this.otherCharges));
-                })
-
-                console.log('this.otherCharges :' + JSON.stringify(this.otherCharges));
-            }
-            else{
-                console.log('getOtherCharges() from apex returned unexpected data');
-            }
-            this.showSpinner = false;
-        })
-        .catch(error => {
-            console.log('Internal Error : ' + error);
-            this.showCustomToast(
-                'Error',
-                'Some internal error occurred while retriving Other Charge Details',
-                'Error',
-                2000
-            );
-            this.showSpinner = false;
-        })
+                }
+                else {
+                    console.log('getOtherCharges() from apex returned unexpected data');
+                }
+                this.showSpinner = false;
+            })
+            .catch(error => {
+                console.log('Internal Error : ' + error);
+                this.showCustomToast(
+                    'Error',
+                    'Some internal error occurred while retriving Other Charge Details',
+                    'Error',
+                    2000
+                );
+                this.showSpinner = false;
+            })
     }
-    
+
 
     getQWrapper() {
         getQuotationWrapper({ unit: this.unit }).then(result => {
@@ -378,8 +671,10 @@ export default class Ex_GenerateQuotation extends LightningElement {
         }
 
     }
+
     handlecalculateValues() {
         this.showCalculate = false;
+        this.handleDiffAreaCal();
 
 
         // Update ChargeDetails with New charges
@@ -388,12 +683,21 @@ export default class Ex_GenerateQuotation extends LightningElement {
             ...this.chargeDetails[this.selectedPricingPlan].newCharges
         }
 
-        // this.calculateModifiedValues();
-        // this.getUpdatedPaymentSchedule();
-        this.calculateChargeDetails('originalCharges');
-        this.calculateChargeDetails('modifiedCharges');
-        this.calculateTotalOtherCharges();
-        this.getPaymentSchedule();
+        if (this.isQuotationOpenfromAccount) {
+            this.calculateChargeDetailsTenantWise('originalCharges');
+            this.calculateChargeDetailsTenantWise('modifiedCharges');
+            this.calculateTotalOtherCharges();
+            if (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue > 0) {
+                this.getPaymentSchedule();
+            }
+        } else {
+            this.calculateChargeDetails('originalCharges');
+            this.calculateChargeDetails('modifiedCharges');
+            this.calculateTotalOtherCharges();
+            this.getPaymentSchedule();
+
+        }
+
     }
 
     getCarPark() {
@@ -428,12 +732,12 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
     }
 
-    handlePricingPlanChange(event){
-        
+    handlePricingPlanChange(event) {
+
         // Save selected pricing plan
         const pricingPlan = event.target.value;
         this.pricingPlanOptions.map(option => {
-            if(option.value != undefined && option.value == pricingPlan){
+            if (option.value != undefined && option.value == pricingPlan) {
                 this.selectedPricingPlan = option.value;
             }
         })
@@ -444,101 +748,135 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
     }
 
-    handleAppliedDiscount(event){
+    handleAppliedDiscount(event) {
         var _appliedDiscount = event.target.value;
 
-        if(_appliedDiscount != null && _appliedDiscount != undefined && _appliedDiscount > 0){
+        if (_appliedDiscount != null && _appliedDiscount != undefined && _appliedDiscount > 0) {
             this.appliedDiscount = _appliedDiscount;
         }
     }
 
     // Retrives the Charge Details
-    fetchChargeDetails(){
+    fetchChargeDetails() {
 
         this.isSpinner = true;
 
-        getChargeDetails({ unitID : this.uId })
-        .then(data => {
+        getChargeDetails({ unitID: this.uId })
+            .then(data => {
 
-            console.log('fetchChargeDetails -> data : ' + JSON.stringify(data));
-            if(data == undefined || data == null && Object.keys(data).length <= 0){
-                this.showCustomToast('Error','Invalid data received from Server, please contact System Administrator !', 'Error', 5000);
-                this.isSpinner = false;
-                return;
-            }
-            
-            // Clean Up existing charge details
-            this.chargeDetails = {};
-
-            // Quotation Type
-            const quotationType = this.selectedPricingPlan;
-
-            // Collect Charges 
-            var pricingPlanChargeMap = {};
-            Object.keys(data).map(chargeName => {
-                
-                const chargeValue = data[chargeName];
-                pricingPlanChargeMap[chargeName] =  chargeValue;
-
-                console.log('chargeName : ' + chargeName);
-                console.log('chargeValue : ' + chargeValue);
-            })
-            if(this.selectedPricingPlan == this.BOX_PLAN){
-                pricingPlanChargeMap['agreementValue'] = null;
-                pricingPlanChargeMap['stampDutyCharges'] = null;
-                pricingPlanChargeMap['GSTCharges'] = null;
-            }
-            if(this.selectedPricingPlan == this.STANDARD_PLAN){
-                pricingPlanChargeMap['allInPrice'] = null;
-                pricingPlanChargeMap['stampDutyCharges'] = null;
-                pricingPlanChargeMap['GSTCharges'] = null;
-            }
-
-            // Store Charge Details
-            var originalCharges = pricingPlanChargeMap;
-            var modifiedCharges = {...pricingPlanChargeMap};  // Initializing with originalCharges
-
-            if(this.chargeDetails[quotationType] == undefined){
-                this.chargeDetails[quotationType] = {
-                    'originalCharges' : {},
-                    'modifiedCharges' : {},
-                    'newCharges' : {}
+                console.log('fetchChargeDetails -> data : ' + JSON.stringify(data));
+                if (data == undefined || data == null && Object.keys(data).length <= 0) {
+                    this.showCustomToast('Error', 'Invalid data received from Server, please contact System Administrator !', 'Error', 5000);
+                    this.isSpinner = false;
+                    return;
                 }
-            }
 
-            this.chargeDetails[quotationType]['originalCharges'] = originalCharges;
-            this.chargeDetails[quotationType]['modifiedCharges'] = modifiedCharges;
+                // Clean Up existing charge details
+                this.chargeDetails = {};
 
-            console.log('this.chargeDetails -> ' + JSON.stringify(this.chargeDetails));
+                // Quotation Type
+                const quotationType = this.selectedPricingPlan;
 
-            // After retrieving calculate the charges and show the page
-            this.calculateChargeDetails('originalCharges');
-            this.calculateChargeDetails('modifiedCharges');
-            this.getPaymentSchedule();
-            
-            this.showPaymentScheduleData = true;
-            this.showTable = true;
-            this.isPaymentScheduleEnable = true;
+                // Collect Charges 
+                var pricingPlanChargeMap = {};
+                Object.keys(data).map(chargeName => {
 
-            this.isSpinner = false;
-    
-        })
-        .catch(error => {
-            console.log('fetchChargeDetails -> error : ' + JSON.stringify(error));
-            this.showCustomToast('Error', error.body.message, 'Error in fetching charge details', 5000);
-            this.isSpinner = false;
-        })
+                    const chargeValue = data[chargeName];
+                    pricingPlanChargeMap[chargeName] = chargeValue;
+
+                    console.log('chargeName : ' + chargeName);
+                    console.log('chargeValue : ' + chargeValue);
+                })
+                if (this.selectedPricingPlan == this.BOX_PLAN) {
+                    pricingPlanChargeMap['agreementValue'] = null;
+                    pricingPlanChargeMap['stampDutyCharges'] = null;
+                    pricingPlanChargeMap['GSTCharges'] = null;
+                    if (this.isQuotationOpenfromAccount) {
+                        pricingPlanChargeMap['PSF_Rate__c'] = null;
+                        pricingPlanChargeMap['PSF_Rate__c'] = this.unit.PSF_Rate__c ? parseFloat(this.unit.PSF_Rate__c) : 0;
+                    }
+                }
+                if (this.selectedPricingPlan == this.STANDARD_PLAN) {
+                    pricingPlanChargeMap['allInPrice'] = null;
+                    pricingPlanChargeMap['stampDutyCharges'] = null;
+                    pricingPlanChargeMap['GSTCharges'] = null;
+                    if (this.isQuotationOpenfromAccount) {
+                        pricingPlanChargeMap['PSF_Rate__c'] = null;
+                        pricingPlanChargeMap['PSF_Rate__c'] = this.unit.PSF_Rate__c ? parseFloat(this.unit.PSF_Rate__c) : 0;
+                    }
+                }
+
+                // Store Charge Details
+                var originalCharges = pricingPlanChargeMap;
+                var modifiedCharges = { ...pricingPlanChargeMap };  // Initializing with originalCharges
+
+                if (this.chargeDetails[quotationType] == undefined) {
+                    this.chargeDetails[quotationType] = {
+                        'originalCharges': {},
+                        'modifiedCharges': {},
+                        'newCharges': {}
+                    }
+                }
+
+                this.chargeDetails[quotationType]['originalCharges'] = originalCharges;
+                this.chargeDetails[quotationType]['modifiedCharges'] = modifiedCharges;
+
+                console.log('this.chargeDetails -> ' + JSON.stringify(this.chargeDetails));
+
+                // After retrieving calculate the charges and show the page
+
+
+                if (this.isQuotationOpenfromAccount) {
+                    this.calculateChargeDetailsTenantWise('originalCharges');
+                    this.calculateChargeDetailsTenantWise('modifiedCharges');
+                    if (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue > 0) {
+                        this.getPaymentSchedule();
+                        this.showTable = true;
+                        this.isPaymentScheduleEnable = true;
+                        this.isSpinner = false;
+                    } else if (this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue < 0) {
+                        console.log('Agreement Value is negative:', this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue);
+                        this.showTable = true;
+                        this.isSpinner = false;
+                    } else {
+                        this.showTable = true;
+                        this.isSpinner = false;
+                    }
+                } else {
+                    this.calculateChargeDetails('originalCharges');
+                    this.calculateChargeDetails('modifiedCharges');
+                    this.getPaymentSchedule();
+                    this.showPaymentScheduleData = true;
+                    this.showTable = true;
+                    this.isPaymentScheduleEnable = true;
+                    this.isSpinner = false;
+                }
+
+
+            })
+            .catch(error => {
+                console.log('fetchChargeDetails -> error : ' + JSON.stringify(error));
+                this.showCustomToast('Error', error.body.message, 'Error in fetching charge details', 5000);
+                this.isSpinner = false;
+            })
 
     }
 
     // Handle Charge Details Change
-    handleChargeDetailsChange(event){
+    handleChargeDetailsChange(event) {
 
-        var chargeName =  event.target.dataset.chargeName;
+        var chargeName = event.target.dataset.chargeName;
         var chargeValue = event.target.value;
 
         console.log(chargeName);
         console.log(chargeValue);
+
+        if (chargeName == 'PSF_Rate__c' && (chargeValue == undefined || chargeValue == null)) {
+            chargeValue = 0;
+        }
+        else {
+            chargeValue = parseFloat(chargeValue);
+        }
 
         // Get new charges
         var _newCharges = {
@@ -547,16 +885,16 @@ export default class Ex_GenerateQuotation extends LightningElement {
         _newCharges[chargeName] = chargeValue;
 
         // Update new charges
-        this.chargeDetails[this.selectedPricingPlan].newCharges = {..._newCharges};
+        this.chargeDetails[this.selectedPricingPlan].newCharges = { ..._newCharges };
 
-        console.log('this.chargeDetails : ' + JSON.stringify(this.chargeDetails)); 
+        console.log('this.chargeDetails : ' + JSON.stringify(this.chargeDetails));
 
         if (chargeValue != undefined && chargeValue >= 0) {
             this.showCalculate = true;
         } else {
             this.showCalculate = false;
         }
-       
+
     }
 
     getPaymentScheme() {
@@ -573,7 +911,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
             })
             .catch(error => {
                 console.log('Some error occured : ' + JSON.stringify(error));
-                
+
             })
     }
 
@@ -599,10 +937,10 @@ export default class Ex_GenerateQuotation extends LightningElement {
                 return;
             } else if (value < 0) {
                 this.showCustomToast('Warning', 'Please provide valid details.');
-                if(eventName === 'carParkRequiredCount'){
+                if (eventName === 'carParkRequiredCount') {
                     event.target.value = this.updatedCarParkList[index].carParkRequiredCount;
                 }
-                else if(eventName === 'carParkAmount'){
+                else if (eventName === 'carParkAmount') {
                     event.target.value = this.updatedCarParkList[index].carParkAmount;
                 }
                 return;
@@ -616,10 +954,12 @@ export default class Ex_GenerateQuotation extends LightningElement {
                 this.updatedCarParkList[index] = newObj;
 
                 this.totalCarParkAmount = 0;
+                this.totalCarParkCount = 0;
                 console.log('this.updatedCarParkList : ' + JSON.stringify(this.updatedCarParkList));
                 this.updatedCarParkList.forEach(element => {
                     console.log('Test: ' + element.carParkRequiredCount);
                     this.totalCarParkAmount += (element.carParkAmount * element.carParkRequiredCount);
+                    this.totalCarParkCount  += element.carParkRequiredCount;
                     this.QuotationWrapper.q.Car_Park_Amount__c = this.totalCarParkAmount;
                     this.handleCarParkCalculation();
                 })
@@ -782,23 +1122,23 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
     // Calculate the original/modified charge details
     // TODO : Need to review rounding up logic 
-    calculateChargeDetails(chargeState='modifiedCharges'){
+    calculateChargeDetails(chargeState = 'modifiedCharges') {
 
-        const getValueOrZero = (value) => value ? parseFloat(value) : 0;
+        const getValueOrZero = (value) => value !== undefined && value !== null ? parseFloat(value) || 0 : 0;
 
         console.log('this.selectedPricingPlan : ' + JSON.stringify(this.selectedPricingPlan));
         console.log('this.allChargeDetails : ' + JSON.stringify(this.chargeDetails));
-        
+
         // Both Modified AND ORIGINAL
         var allChargeDetails = this.chargeDetails[this.selectedPricingPlan];
         console.log(':: allChargeDetails : ' + JSON.stringify(allChargeDetails));
 
-        var chargeDetails = {...allChargeDetails[chargeState]};
+        var chargeDetails = { ...allChargeDetails[chargeState] };
         console.log(':: chargeDetails : ' + JSON.stringify(chargeDetails));
 
 
         // Agreement Value Present
-        if(this.selectedPricingPlan == this.STANDARD_PLAN){
+        if (this.selectedPricingPlan == this.STANDARD_PLAN) {
             var agreementValue = chargeDetails.agreementValue;
             var otherChargesIncludingTax = chargeDetails.otherChargesIncludingTax;
             var registrationCharges = chargeDetails.registrationCharges;
@@ -806,29 +1146,29 @@ export default class Ex_GenerateQuotation extends LightningElement {
             var GSTPercentage = chargeDetails.GSTPercentage;
 
 
-            var stampDutyCharges = Math.round(getValueOrZero(agreementValue*getValueOrZero(stampDutyPercentage)/100));
-                stampDutyCharges = this.roundUpIfDecimalGreaterThan49(stampDutyCharges);
+            var stampDutyCharges = Math.round(getValueOrZero(agreementValue * getValueOrZero(stampDutyPercentage) / 100));
+            stampDutyCharges = this.roundUpIfDecimalGreaterThan49(stampDutyCharges);
 
-            var GSTCharges = Math.round(getValueOrZero(agreementValue*getValueOrZero(GSTPercentage)/100));
+            var GSTCharges = Math.round(getValueOrZero(agreementValue * getValueOrZero(GSTPercentage) / 100));
             var carParkCharges = chargeState === 'modifiedCharges' ? this.totalCarParkAmount : 0;
 
             // Calculate the 'All In Price' based on above values
-            var TotalAllInPrice = Math.round(getValueOrZero(agreementValue)) + 
-                                          Math.round(getValueOrZero(otherChargesIncludingTax)) +
-                                          Math.round(getValueOrZero(registrationCharges)) + 
-                                          Math.round(getValueOrZero(stampDutyCharges)) +
-                                          Math.round(getValueOrZero(GSTCharges)) + 
-                                          Math.round(getValueOrZero(carParkCharges));
+            var TotalAllInPrice = Math.round(getValueOrZero(agreementValue)) +
+                Math.round(getValueOrZero(otherChargesIncludingTax)) +
+                Math.round(getValueOrZero(registrationCharges)) +
+                Math.round(getValueOrZero(stampDutyCharges)) +
+                Math.round(getValueOrZero(GSTCharges)) +
+                Math.round(getValueOrZero(carParkCharges));
 
-            
-            
+
+
             // Store All In Price
-            if(chargeState == 'modifiedCharges'){
+            if (chargeState == 'modifiedCharges') {
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice = TotalAllInPrice;
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges = stampDutyCharges;
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges = GSTCharges;
             }
-            if(chargeState == 'originalCharges'){
+            if (chargeState == 'originalCharges') {
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice = TotalAllInPrice;
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges = stampDutyCharges;
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges = GSTCharges;
@@ -837,7 +1177,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
         }
 
         // All In Price Present
-        if(this.selectedPricingPlan == this.BOX_PLAN){
+        if (this.selectedPricingPlan == this.BOX_PLAN) {
 
             var allInPriceValue = chargeDetails.allInPrice;
             var otherChargesIncludingTax = chargeDetails.otherChargesIncludingTax;
@@ -849,39 +1189,39 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
             // Calculate the 'Base Value' / 'Agreeement Value with 'GST charges' and 'Stamp Duty Charges'
             var agreementValueWithGSTAndStampDutyCharges = getValueOrZero(allInPriceValue) -
-                                                           getValueOrZero(otherChargesIncludingTax) -
-                                                           getValueOrZero(registrationCharges) - 
-                                                           getValueOrZero(carParkCharges);
-                                      var agreementValue = Math.round(
-                                                                (agreementValueWithGSTAndStampDutyCharges) / 
-                                                                (
-                                                                    1 +
-                                                                    getValueOrZero(stampDutyPercentage)/100 + 
-                                                                    getValueOrZero(GSTPercentage)/100
-                                                                )
-                                                          );
-                                                
+                getValueOrZero(otherChargesIncludingTax) -
+                getValueOrZero(registrationCharges) -
+                getValueOrZero(carParkCharges);
+            var agreementValue = Math.round(
+                (agreementValueWithGSTAndStampDutyCharges) /
+                (
+                    1 +
+                    getValueOrZero(stampDutyPercentage) / 100 +
+                    getValueOrZero(GSTPercentage) / 100
+                )
+            );
+
             // Calculate Stamp Duty Charge, GST charges
-            var stampDutyCharges = getValueOrZero(agreementValue)*getValueOrZero(stampDutyPercentage)/100;
+            var stampDutyCharges = getValueOrZero(agreementValue) * getValueOrZero(stampDutyPercentage) / 100;
             stampDutyCharges = this.roundUpIfDecimalGreaterThan49(stampDutyCharges);
 
-            var GSTCharges = getValueOrZero(agreementValue)*getValueOrZero(GSTPercentage)/100;
+            var GSTCharges = getValueOrZero(agreementValue) * getValueOrZero(GSTPercentage) / 100;
             GSTCharges = Math.round(GSTCharges);
-            
+
             // Store All In Price
-            if(chargeState === 'modifiedCharges'){
+            if (chargeState === 'modifiedCharges') {
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue = agreementValue;
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges = stampDutyCharges;
                 this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges = GSTCharges;
             }
-            if(chargeState === 'originalCharges'){
+            if (chargeState === 'originalCharges') {
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue = agreementValue;
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges = stampDutyCharges;
                 this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges = GSTCharges;
             }
             console.log('after calcualtion BOX: ' + JSON.stringify(this.chargeDetails));
 
-        }   
+        }
     }
 
     roundUpIfDecimalGreaterThan49(value) {
@@ -898,11 +1238,13 @@ export default class Ex_GenerateQuotation extends LightningElement {
         this.updatedPaymentMilestoneWrapperList = [];
         console.log('this.getModifiedGstAmount' + this.getModifiedGstAmount);
         console.log('this.getModifiedGstAmount' + typeof (this.getModifiedGstAmount));
-        getPaymentScheduleDetails({ uId: this.unit.Id, 
-                                    selectedScheme: this.selectedPaymentScheme, 
-                                    getModifiedAV: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
-                                    gst: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage,
-                                    getModifiedGstAmount: parseInt(this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges) })
+        getPaymentScheduleDetails({
+            uId: this.unit.Id,
+            selectedScheme: this.selectedPaymentScheme,
+            getModifiedAV: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
+            gst: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage,
+            getModifiedGstAmount: parseInt(this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges)
+        })
             .then(data => {
                 if (data) {
                     console.log('paymentMilestoneWrapperList: ' + JSON.stringify(data));
@@ -917,6 +1259,10 @@ export default class Ex_GenerateQuotation extends LightningElement {
                             element.constructionStageList.forEach(cs => {
                                 csList.push({ label: cs.Name, value: cs.Id });
                             })
+
+                            console.log('csList zxc :' + JSON.stringify(csList));
+                            console.log('element :' + JSON.stringify(element));
+                            
 
                             this.paymentMilestoneWrapperList.push({
                                 ...element,
@@ -1073,8 +1419,8 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
                 var rowPercentage = this.updatedPaymentMilestoneWrapperList[i].pm["Charge_Bucket_" + this.agSeqNumber + "_Percentage__c"];
                 console.log('rowpercetntage: ' + rowPercentage);
-                
-                if( rowPercentage != undefined && rowPercentage!= null ){
+
+                if (rowPercentage != undefined && rowPercentage != null) {
                     totalPercentage = parseFloat(totalPercentage) + parseFloat(rowPercentage);
                 }
             }
@@ -1083,7 +1429,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
         console.log('validationErrorList-1: ' + validationErrorList);
         console.log('totalPercentage: ' + totalPercentage);
-        if(parseFloat(totalPercentage) !== parseFloat(100)){
+        if (parseFloat(totalPercentage) !== parseFloat(100)) {
             errorCount++;
             validationErrorList.push(`Percentage sum should be equal to 100% (currently ${totalPercentage}%)`);
         }
@@ -1091,10 +1437,11 @@ export default class Ex_GenerateQuotation extends LightningElement {
         if (validationErrorList.length === 0) {
             const allPriceInfoMap = new Map();
             allPriceInfoMap.set('Agreement Value', this.getModifiedAVValue);  // String key and decimal (Number) value
-            validateUpdatedPaymentScheduleDetails({ 
-                                                    agSeqNumber: this.agSeqNumber,
-                                                    getModifiedAv: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
-                                                    updatedPaymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList })
+            validateUpdatedPaymentScheduleDetails({
+                agSeqNumber: this.agSeqNumber,
+                getModifiedAv: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
+                updatedPaymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList
+            })
                 .then(data => {
                     if (data) {
                         for (let i = 0; i < data.length; i++) {
@@ -1133,12 +1480,14 @@ export default class Ex_GenerateQuotation extends LightningElement {
     }
 
     getUpdatedPaymentSchedule() {
-        getUpdatedPaymentScheduleDetails({ u: this.unit,
-                                           agSeqNumber: this.agSeqNumber,
-                                           getModifiedAV: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
-                                           updatedPaymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList,
-                                           gstAmount: parseInt(this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges),
-                                           gstPer: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage })
+        getUpdatedPaymentScheduleDetails({
+            u: this.unit,
+            agSeqNumber: this.agSeqNumber,
+            getModifiedAV: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
+            updatedPaymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList,
+            gstAmount: parseInt(this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges),
+            gstPer: this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage
+        })
             .then(data => {
                 console.log('data: ' + JSON.stringify(data));
                 if (data) {
@@ -1199,49 +1548,88 @@ export default class Ex_GenerateQuotation extends LightningElement {
         this.showToast = false;
     }
 
-    updateQuotationWrapperDetails(){
+    updateQuotationWrapperDetails() {
         this.QuotationWrapper['q'] = {
             ...this.QuotationWrapper['q'],
-            'Orginal_AV_Value__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue,
-            'Modified_AV_Value__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
-            'Total_Other_Charges_Including_Tax__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.otherChargesIncludingTax,
-            'Modified_Other_Charges_Including_Tax__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.otherChargesIncludingTax,
-            'Registration_Charges__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.registrationCharges,
-            'Modified_Registration_Charges__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.registrationCharges,
-            'Stamp_Duty_Percentage__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyPercentage,
-            'Modified_Stamp_Duty__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyPercentage,
-            'All_in_Price__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice,
-            'Modified_All_in_Price__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice,
-            'Car_Park_Amount__c' : this.QuotationWrapper.q.Car_Park_Amount__c,
-            'Pricing_Plan__c' : this.selectedPricingPlan == 'box' ? 'Box Plan' : this.selectedPricingPlan == 'standard' ? 'Standard Plan' : null,
-            'Modified_GST__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage,
-            'GST_Charges__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges,
-            'Modified_GST_Charges__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges,
-            'Stamp_Duty_Charges__c' : this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges,
-            'Modified_Stamp_Duty_Charges__c' : this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges,
-            'Applied_Discount__c' : this.appliedDiscount
+            'Orginal_AV_Value__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.agreementValue,
+            'Modified_AV_Value__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.agreementValue,
+            'Total_Other_Charges_Including_Tax__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.otherChargesIncludingTax,
+            'Modified_Other_Charges_Including_Tax__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.otherChargesIncludingTax,
+            'Registration_Charges__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.registrationCharges,
+            'Modified_Registration_Charges__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.registrationCharges,
+            'Stamp_Duty_Percentage__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyPercentage,
+            'Modified_Stamp_Duty__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyPercentage,
+            'All_in_Price__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.allInPrice,
+            'Modified_All_in_Price__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.allInPrice,
+            'Car_Park_Amount__c': this.QuotationWrapper.q.Car_Park_Amount__c,
+            'Car_Park_Required_Count__c': this.totalCarParkCount,
+            'Original_Final_Committed_Area__c' : this.originalFinalCommittedArea,
+            'Modified_Final_Committed_Area__c' : this.fetchOpp.Final_Committed_Area__c,
+            'Pricing_Plan__c': this.selectedPricingPlan == 'box' ? 'Box Plan' : this.selectedPricingPlan == 'standard' ? 'Standard Plan' : null,
+            'Modified_GST__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTPercentage,
+            'GST_Charges__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.GSTCharges,
+            'Modified_GST_Charges__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.GSTCharges,
+            'Stamp_Duty_Charges__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.stampDutyCharges,
+            'Modified_Stamp_Duty_Charges__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.stampDutyCharges,
+            'Applied_Discount__c': this.appliedDiscount,
+            'Original_PSF_Rate__c': this.chargeDetails[this.selectedPricingPlan].originalCharges.PSF_Rate__c,
+            'Modified_PSF_Rate__c': this.chargeDetails[this.selectedPricingPlan].modifiedCharges.PSF_Rate__c,
+            'Differential_Carpet_Area__c': this.getDiffArea ? this.getDiffArea : 0
         }
     }
 
     saveQuotation() {
         this.isSpinner = true;
-
         this.updateQuotationWrapperDetails();
+       
+        //console.log('_otherCharges: ' + JSON.stringify(_otherCharges));
+
+        if(this.isQuotationOpenfromAccount && (this.getChargeDetailsData.PSF_Rate__c === null || this.getChargeDetailsData.PSF_Rate__c <= 0)){
+            this.showCustomToast('Error', 'PSF Rate cannot be zero', 'Error', 5000);
+            this.isSpinner = false;
+            return;
+        }
+        if(this.isQuotationOpenfromAccount && (this.fetchOpp.Final_Committed_Area__c === null || this.fetchOpp.Final_Committed_Area__c <= 0)){
+            this.showCustomToast('Error', 'Final Commited Area cannot be zero', 'Error', 5000);
+            this.isSpinner = false;
+            return;
+        }
+        if(this.isQuotationOpenfromAccount && this.diffDate === null && this.getDiffArea <= 0){
+            this.showCustomToast('Error', 'Please Provide Bill Date', 'Error', 5000);
+            this.isSpinner = false;
+            return;
+        }else if(this.isQuotationOpenfromAccount && this.diffDate !== null){
+            this.callSave();
+        }else{
+            this.callSave();
+        }
+       
+    }
+
+    callSave(){
+        console.log('inside save: '+this.getBillAmount);
+        console.log('inside isQuotationOpenfromAccount: '+this.isQuotationOpenfromAccount);
+        console.log('inside getDiffArea: '+this.getDiffArea);
+        console.log('inside diffDate: '+this.diffDate);
         var _otherCharges = Object.values(this.otherCharges.data).map(otherCharge => {
-            const {availableOtherChargeOptions, availableOtherChargeTypes, ...rest} = otherCharge;
+            const { availableOtherChargeOptions, availableOtherChargeTypes, ...rest } = otherCharge;
             return rest;
         })
-        console.log('_otherCharges: ' + JSON.stringify(_otherCharges));
+
         
 
+
         saveQuotationDetails({
-                 u: this.unit,
-                 oppId: this.oppId,
-                 selectedSchemeId: this.selectedPaymentScheme,
-                 carParkList: this.updatedCarParkList,
-                 paymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList,
-                 qWrapper: this.QuotationWrapper,
-                 otherCharges : _otherCharges
+            u: this.unit,
+            oppId: this.oppId,
+            selectedSchemeId: this.selectedPaymentScheme,
+            carParkList: this.updatedCarParkList,
+            paymentMilestoneWrapperList: this.updatedPaymentMilestoneWrapperList || null,
+            qWrapper: this.QuotationWrapper,
+            otherCharges: _otherCharges,
+            isTenantAccount: this.isQuotationOpenfromAccount,
+            diDate: this.diffDate,
+            BillAmount: this.getBillAmount
         }).then(data => {
             if (data) {
                 console.log('data: ' + JSON.stringify(data));
@@ -1261,49 +1649,52 @@ export default class Ex_GenerateQuotation extends LightningElement {
     }
 
 
-    get otherChargesList(){
+    get otherChargesList() {
         var _otherChargesList = Object.values(this.otherCharges.data) || [];
         console.log('_otherChargesList : ' + JSON.stringify(_otherChargesList));
-        
+
         return {
-            'data' : _otherChargesList,
-            'isEmpty' : _otherChargesList.length == 0
+            'data': _otherChargesList,
+            'isEmpty': _otherChargesList.length == 0
         };
     }
 
     // Show Error/Success messages as a Toast
-    showToastMessage(messageType, messageTitle, messageContent){
-        var toastMessageEvent =  new ShowToastEvent({
-            title : messageTitle,
-            variant : messageType,
-            message : messageContent
+    showToastMessage(messageType, messageTitle, messageContent) {
+        var toastMessageEvent = new ShowToastEvent({
+            title: messageTitle,
+            variant: messageType,
+            message: messageContent
         })
         this.dispatchEvent(toastMessageEvent);
     }
 
-    get isBoxPlan(){
-        var status = this.selectedPricingPlan == this.BOX_PLAN;
-        return status;
+    get isBoxPlan() {
+        if (!this.isQuotationOpenfromAccount) {
+            var status = this.selectedPricingPlan == this.BOX_PLAN;
+            return status;
+        }
+
     }
-    get isStandardPlan(){
+    get isStandardPlan() {
         var status = this.selectedPricingPlan == this.STANDARD_PLAN;
         return status;
-    }   
+    }
 
     // Returns the Map of charge name -  value
     // TODO : Need to revise, to add dyanmic identifier for input field.
-    get getChargeDetailsData(){
-        if(this.selectedPricingPlan != undefined && this.selectedPricingPlan != null  && this.chargeDetails != undefined && this.chargeDetails != null){
+    get getChargeDetailsData() {
+        if (this.selectedPricingPlan != undefined && this.selectedPricingPlan != null && this.chargeDetails != undefined && this.chargeDetails != null) {
             var chargeDetailsData = this.chargeDetails[this.selectedPricingPlan];
-            if(chargeDetailsData && chargeDetailsData.modifiedCharges){
-                
+            if (chargeDetailsData && chargeDetailsData.modifiedCharges) {
+
                 // Add Dynamic Labels
                 var labelledChargeDetails = {};
                 // console.log('Object.keys(chargeDetailsData.modifiedCharges) : ' + chargeDetailsData.modifiedCharges);
                 // console.log('Object.keys(chargeDetailsData.modifiedCharges) : ' + Object.keys(chargeDetailsData.modifiedCharges));
-                
+
                 Object.keys(chargeDetailsData.modifiedCharges).map(chargeName => {
-                    labelledChargeDetails[chargeName] = { 'label' : chargeName , 'value' : chargeDetailsData.modifiedCharges[chargeName]};
+                    labelledChargeDetails[chargeName] = { 'label': chargeName, 'value': chargeDetailsData.modifiedCharges[chargeName] };
                 });
                 // console.log('labelledChargeDetails : ' + JSON.stringify(labelledChargeDetails));
 
@@ -1315,72 +1706,69 @@ export default class Ex_GenerateQuotation extends LightningElement {
         return {};
     }
 
-    get getChargeDetailsDataFormatted(){
+    get getChargeDetailsDataFormatted() {
         // Convert Price value -> Formatted values
 
         var formattedData = {};
 
-        if(this.selectedPricingPlan != undefined && this.selectedPricingPlan != null  && this.chargeDetails != undefined && this.chargeDetails != null){
-            var chargeDetailsData = {...this.chargeDetails[this.selectedPricingPlan]};
-            if(chargeDetailsData && chargeDetailsData.modifiedCharges){
-                var dataSample = {...chargeDetailsData.modifiedCharges};
+        if (this.selectedPricingPlan != undefined && this.selectedPricingPlan != null && this.chargeDetails != undefined && this.chargeDetails != null) {
+            var chargeDetailsData = { ...this.chargeDetails[this.selectedPricingPlan] };
+            if (chargeDetailsData && chargeDetailsData.modifiedCharges) {
+                var dataSample = { ...chargeDetailsData.modifiedCharges };
                 // console.log('dataSample : ' + JSON.stringify(dataSample));
-                
+
                 Object.keys(dataSample).map(chargeName => {
                     // console.log('CAHRGE NAME : ' + chargeName);
                     // console.log('CAHRGE NAME : ' + dataSample[chargeName]);
                     // console.log('CAHRGE NAME : ' + formattedData[chargeName]);
-        
+
                     var name = String(chargeName);
-                    // console.log(' --' + name);
                     var value = this.getCurrencyInFormatted(dataSample[chargeName]);
-                    
-                    // console.log(' --' + value);
-                    formattedData[name] = value;       
-                    
+
+                    formattedData[name] = value;
+
                     return null;
-                })        
+                })
             }
-        }  
-        
+        }
+
         return formattedData;
     }
 
-    get getOriginalChargeDetailsDataFormatted(){
+    get getOriginalChargeDetailsDataFormatted() {
         // Convert Price value -> Formatted values
 
         var formattedData = {};
 
-        if(this.selectedPricingPlan != undefined && this.selectedPricingPlan != null  && this.chargeDetails != undefined && this.chargeDetails != null){
-            var chargeDetailsData = {...this.chargeDetails[this.selectedPricingPlan]};
-            if(chargeDetailsData && chargeDetailsData.originalCharges){
-                var dataSample = {...chargeDetailsData.originalCharges};
-                // console.log('dataSample : ' + JSON.stringify(dataSample));
-                
+        if (this.selectedPricingPlan != undefined && this.selectedPricingPlan != null && this.chargeDetails != undefined && this.chargeDetails != null) {
+            var chargeDetailsData = { ...this.chargeDetails[this.selectedPricingPlan] };
+            if (chargeDetailsData && chargeDetailsData.originalCharges) {
+                var dataSample = { ...chargeDetailsData.originalCharges };
+                console.log('dataSample : ' + JSON.stringify(dataSample));
+
                 Object.keys(dataSample).map(chargeName => {
                     var name = String(chargeName);
-                    // console.log(' --' + name);
                     var value = this.getCurrencyInFormatted(dataSample[chargeName]);
-                    
-                    // console.log(' --' + value);
-                    formattedData[name] = value;       
-                    
+
+                    formattedData[name] = value;
+
                     return null;
-                })        
+                })
             }
-        }  
-        
+        }
+
         return formattedData;
     }
 
 
     // Get Currency In Formatted
-    getCurrencyInFormatted(amount, includeSlash=true){
-
-        if(amount == undefined || amount == null || Number.isNaN(amount) || amount < 0){
+    getCurrencyInFormatted(amount, includeSlash = true) {
+        if (amount == undefined || amount == null || Number.isNaN(amount)) {
             return '';
         }
 
+        const isNegative = amount < 0; // Check if the value is negative
+        amount = Math.abs(amount); // Convert to positive for formatting
 
         // Convert to number and decimal part
         var numberInString = Number(amount).toFixed(2);
@@ -1390,71 +1778,78 @@ export default class Ex_GenerateQuotation extends LightningElement {
         var decimalPart = wholeParts[1];
 
         var numberPartFormatted = '';
-        if(numberPart.length > 3){
+        if (numberPart.length > 3) {
             let lastThree = numberPart.slice(-3);
             let remaining = numberPart.slice(0, -3);
 
             // Add commas to the remaining part of the number in groups of 2 digits
             numberPartFormatted = this.splitStringIntoParts(remaining) + ',' + lastThree;
         }
-        else{
+        else {
             numberPartFormatted = numberPart;
         }
-    
+
         var formattedNumber = numberPartFormatted + '.' + decimalPart;
-        if(includeSlash === true){
+        if (includeSlash === true) {
             formattedNumber = formattedNumber + '/-';
         }
+
+        // Add negative sign if the original amount was negative
+        if (isNegative) {
+            formattedNumber = '-' + formattedNumber;
+        }
+
         return formattedNumber;
     }
+
 
     splitStringIntoParts(str) {
         let result = [];
         let length = str.length;
-    
+
         if (length % 2 !== 0) {
-            result.push(str[0]); 
-            str = str.slice(1);  
+            result.push(str[0]);
+            str = str.slice(1);
         }
-    
+
         for (let i = 0; i < str.length; i += 2) {
-            result.push(str.substring(i, i + 2)); 
+            result.push(str.substring(i, i + 2));
         }
-    
+
         return result.join(',');
     }
 
     // --- Other Charge Calculations and Handling ---
-    handleOtherChargeDetailChange(event){
+    handleOtherChargeDetailChange(event) {
 
         this.showCalculate = true;
 
         var inputType = event.target.dataset.inputType;
         var chargeType = event.target.dataset.chargeType;
         var value = event.target.value;
-        
-        if(inputType == 'GSTPercentage'){
+
+        if (inputType == 'GSTPercentage') {
             this.otherCharges.data[chargeType].GSTPercentage = parseFloat(value);
         }
-        if(inputType == 'chargeAmount'){
+        if (inputType == 'chargeAmount') {
             this.otherCharges.data[chargeType].chargeAmount = parseFloat(value);
         }
 
         var modifiedChargeAmountIncludingGST = (
-                                                this.otherCharges.data[chargeType].chargeAmount  + 
-                                                this.otherCharges.data[chargeType].GSTPercentage*this.otherCharges.data[chargeType].chargeAmount/100
-                                                );
+            this.otherCharges.data[chargeType].chargeAmount +
+            this.otherCharges.data[chargeType].GSTPercentage * this.otherCharges.data[chargeType].chargeAmount / 100
+        );
         this.otherCharges.data[chargeType].chargeAmountIncludingGST = modifiedChargeAmountIncludingGST;
     }
 
     // Handle Add button
-    handleOtherChargeAddButtonClick(event){
+    handleOtherChargeAddButtonClick(event) {
 
         // Validate : Check is there any existing addable charge present
         var availableOtherChargeTypes = this.otherCharges.metadata.availableOtherChargeTypes.filter(availableOtherChargeType => {
             return Object.keys(this.otherCharges.data).indexOf(availableOtherChargeType.value) == -1;
         });
-        if(availableOtherChargeTypes == undefined || availableOtherChargeTypes == null || availableOtherChargeTypes.length == 0 ){
+        if (availableOtherChargeTypes == undefined || availableOtherChargeTypes == null || availableOtherChargeTypes.length == 0) {
             this.showCustomToast('Error', "All 'Other Charges' has been used, you cannot add more.", 'Error', 5000);
             return;
         }
@@ -1463,17 +1858,17 @@ export default class Ex_GenerateQuotation extends LightningElement {
 
         var otherChargeType = availableOtherChargeTypes[0].value;
         var otherChargeDetails = {
-            'id' : 'recordTypeID',
-            'sequenceNo' : Object.keys(this.otherCharges.data).length+1,
-            'chargeName' : otherChargeType,
-            'chargeAmount' : 0,
-            'GSTPercentage' : 0,
-            'chargeAmountIncludingGST' : 0,
-            'availableOtherChargeTypes' : availableOtherChargeTypes
+            'id': 'recordTypeID',
+            'sequenceNo': Object.keys(this.otherCharges.data).length + 1,
+            'chargeName': otherChargeType,
+            'chargeAmount': 0,
+            'GSTPercentage': 0,
+            'chargeAmountIncludingGST': 0,
+            'availableOtherChargeTypes': availableOtherChargeTypes
             // 'availableOtherChargeOptions' : availableOtherChargeTypes
         }
 
-        var modifiedData = {...this.otherCharges.data};
+        var modifiedData = { ...this.otherCharges.data };
         modifiedData[otherChargeType] = otherChargeDetails;
 
         this.otherCharges.data = modifiedData;
@@ -1481,7 +1876,7 @@ export default class Ex_GenerateQuotation extends LightningElement {
     }
 
     // Remove button handler
-    handleOtherChargeRemoveButtonClick(event){
+    handleOtherChargeRemoveButtonClick(event) {
 
         this.showCalculate = true;
 
@@ -1493,16 +1888,16 @@ export default class Ex_GenerateQuotation extends LightningElement {
     }
 
     // Update Options for Charges
-    updateAvailableOtherChargeTypeOptions(){
-        
+    updateAvailableOtherChargeTypeOptions() {
+
         var usedOtherChargeTypeOptions = Object.keys(this.otherCharges.data);
         Object.keys(this.otherCharges.data).map((otherChargeType, index) => {
-            
+
             var otherChargeData = this.otherCharges.data[otherChargeType];
             otherChargeData = {
                 ...otherChargeData,
-                'sequenceNo' : index+1,
-                'availableOtherChargeTypes' : this.otherCharges.metadata.availableOtherChargeTypes.filter(otherChargeOption => {
+                'sequenceNo': index + 1,
+                'availableOtherChargeTypes': this.otherCharges.metadata.availableOtherChargeTypes.filter(otherChargeOption => {
                     return otherChargeOption.value == otherChargeType || usedOtherChargeTypeOptions.indexOf(otherChargeOption.value) == -1
                 })
             }
@@ -1512,8 +1907,8 @@ export default class Ex_GenerateQuotation extends LightningElement {
     }
 
     // Calculate All other charges
-    calculateTotalOtherCharges(){
-        
+    calculateTotalOtherCharges() {
+
         var totalOtherCharges = Object.values(this.otherCharges.data).reduce(
             (total, otherCharge) => {
                 console.log('total : ' + JSON.stringify(total));
@@ -1526,27 +1921,5 @@ export default class Ex_GenerateQuotation extends LightningElement {
         this.calculateChargeDetails('modifiedCharges');
     }
 
-
-    // Box Plan Calculation
-    /*
-    AllInPrice = AgreementValue + OtherChargesIncludingGST + RegistrationCharges +
-                    StampDuty(%)*AgreementValue + GST(%)*AgreementValue
-        
-    So,
-    AgreementValue = AllInPrice - OtherChargesIncludingGST - RegistrationCharges -
-                    StampDuty(%)*AgreementValue - GST(%)*AgreementValue
-    AgreementValue =  aip - o - r  - s*a - g*a
-    AgreementValue = (aip - o - r) - s*a - g*a
-    AgreementValue =     baseValue - s*a - g*a         // baseValue = aip - o - r
-        
-    baseValue = a + s*a + g*a                           // a = Agreement Value
-    baseValue = a(1 + s + g)
-           a  = baseValue/((1 + s + g))
-
-    So, 
-    AgreementValue = baseValue/((1 + s + g))
-                   = (AllInPrice - o - r )/((1 + s + g))   
-    AgreementValue = (AllInPrice - OtherChargesIncludingGST - RegistrationCharges )/((1 + StampDuty(%) + GST(%)))   
-*/
 
 }

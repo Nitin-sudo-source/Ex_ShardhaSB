@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Payment Details</fullName>
+        <default>false</default>
+        <label>Payment Details</label>
+    </customValue>
+    <customValue>
+        <fullName>Contact Information</fullName>
+        <default>false</default>
+        <label>Contact Information</label>
+    </customValue>
+    <customValue>
+        <fullName>Cost Sheet Details</fullName>
+        <default>false</default>
+        <label>Cost Sheet Details</label>
+    </customValue>
+    <customValue>
+        <fullName>Applicant Details</fullName>
+        <default>false</default>
+        <label>Applicant Details</label>
+    </customValue>
+    <customValue>
+        <fullName>Channel Partner Details</fullName>
+        <default>false</default>
+        <label>Channel Partner Details</label>
+    </customValue>
+    <customValue>
+        <fullName>Booking Details</fullName>
+        <default>false</default>
+        <label>Booking Details</label>
+    </customValue>
+    <customValue>
+        <fullName>KYC Documents Information</fullName>
+        <default>false</default>
+        <label>KYC Documents Information</label>
+    </customValue>
+    <customValue>
+        <fullName>Feedback</fullName>
+        <default>false</default>
+        <label>Feedback</label>
+    </customValue>
+    <customValue>
+        <fullName>Customer Details</fullName>
+        <default>false</default>
+        <label>Customer Details</label>
+    </customValue>
+    <customValue>
+        <fullName>Offer or Commitment Information</fullName>
+        <default>false</default>
+        <label>Offer or Commitment Information</label>
+    </customValue>
+    <customValue>
+        <fullName>Registration Schedule Date</fullName>
+        <default>false</default>
+        <label>Registration Schedule Date</label>
+    </customValue>
+    <customValue>
+        <fullName>Loan or Self-Funding Status</fullName>
+        <default>false</default>
+        <label>Loan or Self-Funding Status</label>
+    </customValue>
+    <masterLabel>Category</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

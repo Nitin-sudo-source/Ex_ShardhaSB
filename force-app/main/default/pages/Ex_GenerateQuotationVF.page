@@ -1,3 +1,10 @@
+<!--
+  @description       : 
+  @author            : nitinSFDC@exceller.SFDoc
+  @group             : 
+  @last modified on  : 18-03-2025
+  @last modified by  : nitinSFDC@exceller.SFDoc
+-->
 <apex:page showHeader="false" sidebar="false">
     <apex:includeLightning />  
     <div id="LightningComponentid" />    
@@ -7,7 +14,8 @@
                        $Lightning.createComponent("c:ex_GenerateQuotation",
                                                   { 
                                                         uId: '{!$CurrentPage.parameters.uId}',
-                                                      oppId: '{!$CurrentPage.parameters.oppId}'
+                                                      oppId: '{!$CurrentPage.parameters.oppId}',
+                                                      qtype: '{!$CurrentPage.parameters.qtype}'
                                                       
                                                       
                                                   },

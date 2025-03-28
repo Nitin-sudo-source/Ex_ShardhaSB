@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Loan</fullName>
+        <default>false</default>
+        <label>Loan</label>
+    </customValue>
+    <customValue>
+        <fullName>Self Funding</fullName>
+        <default>false</default>
+        <label>Self Funding</label>
+    </customValue>
+    <customValue>
+        <fullName>Partial Funding</fullName>
+        <default>false</default>
+        <label>Partial Funding</label>
+    </customValue>
+    <masterLabel>Mode of Funding</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

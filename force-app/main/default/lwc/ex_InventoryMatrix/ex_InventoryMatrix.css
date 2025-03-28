@@ -491,3 +491,9 @@ input{
 .box3{
     background-color: white !important;
 }
+
+.helperMessage{
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
