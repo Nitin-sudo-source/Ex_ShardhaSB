@@ -1,0 +1,140 @@
+<apex:page controller="Ex_PrintQuotationController" applyHtmlTag="false" sidebar="false" showHeader="false" standardStylesheets="false" docType="html-5.0" renderAs="PDF">
+    <head>        
+        <style>
+            @page {
+            size:A4 portrait;
+            border: 2px solid black;
+            margin: 8mm;
+            /*@bottom-center {
+            content: "Page " counter(page) " of " counter(pages);
+            }*/
+            }
+           
+            body {
+            font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; 
+            font-weight:normal; 
+            font-size:11px; 
+            text-align: center;
+            mso-line-height-rule: exactly;
+            }
+            h2, p {
+            font-weight: bold;
+            }
+            .infobox {
+            font-size: 100%;
+            }
+            .sfdc_richtext img {
+            border: 0;
+            width: 100px;
+            height:90px;
+            }
+            .RMStyle {
+            border-collapse: collapse;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #104E8B;
+            }
+            .RMStyle th {
+            border-width: 1px;
+            border-style: solid;
+            border-color: #104E8B;
+            background-color:#E2DDD9;
+            align:center;
+            valign:bottom;
+            }
+            /* Padding and font style */
+            .RMStyle td {
+            border-style: solid;
+            border-width: .5px;
+            border-color: #CAD1C3;
+            }
+            .paymenttoStyle th {
+            border-style: solid;
+            border-color: #CAD1C3;
+            background-color:#FFD8D8;
+            align:center;
+            valign:bottom;
+            }
+            .left-align {
+            text-align: right;
+            
+            }
+            .left-alignname {
+            text-align: left;
+            text-color: white;
+            }
+            .paymenttoStyle {
+            border-width: 1px;
+            border-style: solid;
+            border-color: #CAD1C3B;
+            }
+            .demandStyle th {
+            border-width: 1px;
+            border-style: solid;
+            border-color: #CAD1C3;
+            background-color:#fff7f8;
+            padding: 3px;
+            align:center;
+            valign:bottom;
+            }
+            /* Padding and font style */
+            .demandStyle td {
+            border-style: solid;
+            border-width: .5px;
+            border-color: #CAD1C3;
+            padding: 2px;
+            }
+            .demandStyle {
+            border-collapse: collapse;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #CAD1C3;
+            }
+            .dateBold {
+            font-size:12px;
+            font-weight: bold;
+            }
+            @media print {
+            #fontsize {font-size:10px;}
+            
+            }
+            div.fadeMe {
+            opacity:    0.5; 
+            background: #D9E9FF; 
+            width:      100%;
+            height:     100%; 
+            z-index:    1000;
+            top:        0; 
+            left:       0; 
+            position:   fixed; 
+            }
+            
+            .center-table {
+            margin: 0 auto;
+            width: 50%;
+            text-align: center;
+            }
+            
+            h1 {
+            font-size: 34px;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            text-color: white;
+            }
+            
+            
+            
+        </style>
+    </head>
+    <body width="100%">
+        
+        <table class="logotable" width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="padding-bottom:25px; text-align: left;">
+                    <!--<apex:image style="" url="{!$Resource.logo}" width="150" height="100"/>-->
+                    <span style="padding-left: 175px; font-size: 24px; font-weight: bold; color: #002244;">Shardha Live Space  {!qId}</span>
+                </td>
+            </tr>
+        </table>
+    </body>
+</apex:page>

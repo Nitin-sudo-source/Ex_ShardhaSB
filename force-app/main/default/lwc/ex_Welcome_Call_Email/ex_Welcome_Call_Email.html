@@ -24,8 +24,29 @@
             <!-- Content Area -->
             <div class="modern-modal-content">
                 <slot>
-                    {getResPonse}
+                    {getResPonse.isSuccess}<br/>
+                    {getResPonse.emailSubject}<br/>
+
+                    <lightning-formatted-rich-text
+                      value={getResPonse.emailBody}></lightning-formatted-rich-text>
+                    
                 </slot>
+                <!-- <slot>
+                    <template if:true={getResPonse.emailBody}>
+                        <iframe src={getResPonse.emailBody} width="100%" height="600px"></iframe>
+                    </template>
+                    <template if:false={getResPonse.emailBody}>
+                        <p>Loading PDF...</p>
+                    </template>
+                </slot>
+                <slot>
+                    <template if:true={pdfData}>
+                        <iframe src={pdfData} width="100%" height="600px"></iframe>
+                    </template>
+                    <template if:false={pdfData}>
+                        <p>Loading PDF...</p>
+                    </template>
+                </slot> -->
                 <slot>
                     Are You Sure You Want To Send Welcome Call Email ?
                 </slot>

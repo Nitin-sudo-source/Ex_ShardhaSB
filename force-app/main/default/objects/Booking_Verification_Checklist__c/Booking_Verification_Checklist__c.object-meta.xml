@@ -155,9 +155,10 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Booking Verification Checklist</label>
     <nameField>
+        <displayFormat>BVC-{00000}</displayFormat>
         <label>Booking Verification Checklist Name</label>
         <trackHistory>false</trackHistory>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Booking Verification Checklist</pluralLabel>
     <searchLayouts></searchLayouts>

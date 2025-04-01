@@ -459,6 +459,7 @@ public class Ex_BookingFormController {
         }
         if (quotation.Opportunity__c != null) {
             booking.Opportunity__c = quotation.Opportunity__c;
+            booking.Booking_Type__c = 'Opportunity Based';        
         }
         
         if (bkWrapper.bk.Any_Other_Offers__c != null) {
@@ -481,8 +482,8 @@ public class Ex_BookingFormController {
         }
         if(quotation.Tenant_Account__c != null){
             booking.Tenant_Account__c = quotation.Tenant_Account__c;
-        }
-        
+            booking.Booking_Type__c = 'Tenant Based';
+        }        
 
 
         // Loan Sanctioned Details

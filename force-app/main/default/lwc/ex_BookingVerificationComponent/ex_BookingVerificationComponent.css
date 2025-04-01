@@ -153,3 +153,10 @@ svg{
     transform: rotate(360deg);
   }
 }
+.table1 td{
+    border: 1px solid #c2c2c2;;
+    padding:5px;
+}
+.table1 thead,th{
+  padding:5px;
+}

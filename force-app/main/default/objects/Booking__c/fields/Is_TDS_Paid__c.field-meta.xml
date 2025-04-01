@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Is_Receipt_Threshold_Amount_Paid__c</fullName>
-    <formula>Paid_Receipt_Threshold_Amount__c  &gt;= Receipt_Threshold_Amount__c</formula>
+    <fullName>Is_TDS_Paid__c</fullName>
+    <formula>TDS_Paid_Amount__c &gt;= TDS_Expected_Amount__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <label>Is Receipt Threshold Amount Paid</label>
+    <label>Is TDS Paid</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

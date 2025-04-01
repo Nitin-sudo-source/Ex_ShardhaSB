@@ -2,6 +2,7 @@
     <lightning-card>
         <div class="mains">
             <div class="main" style="padding: 15px; display: flex; align-items: center; padding-left:25px">
+                <!-- <lightning-icon icon-name="utility:check" alternative-text="Booking Verification Checklist" size="small" style="margin-right: 10px;"></lightning-icon> -->
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 480 480"
                     style="enable-background: 0 0 480 480;" xml:space="preserve">
@@ -30,14 +31,89 @@
                 </svg>
                 <label class="head">Booking Verification Checklist</label>
             </div>
-            <br/>
+            <br>
+
             <div style="padding-bottom:15px; text-align:center;">
                 <template if:true={showButton}>
                     <button class="button" style="text-align:center;" onclick={generateWelcomeCall}><span>Create Booking
                             Verification Checklist</span></button>
+
                 </template>
             </div>
+            <div style="padding:10px;">
+                <div if:true={isSpinner} class="spinner-container">
+                    <div class="loader"></div>
+                    <div class="wait-text">Please wait...</div>
+                </div>
+                <template if:true={showDetails}>
+                    <div style="float:left;padding:5px;">
+                        <span><b>Project/Booking Reference Number:&nbsp;</b>{projectName}</span><br/>
+                        <span><b>Client Name:&nbsp;</b>{customerName}</span><br/>
+                        <span><b>Date:&nbsp;</b>{bookingDate}</span><br/>
+                    </div><br/>
+                    <div style="float: right;padding:5px;font-weight: bold;">
+                        <lightning-input class="slds-p-left_xx-large" type="checkbox" label="Accept All"
+                            onchange={handleAllAcceptChange} checked={acceptAll}></lightning-input>
+                        <lightning-input class="slds-p-left_xx-large" type="checkbox" label="Reject All"
+                            onchange={handleAllRejectChange} checked={rejectAll}></lightning-input>
+                    </div>
+                    <br /><br />
+                <div class="mains">
+                    <table class="table1" style="width:100%;margin:0px;border: 1px solid #c2c2c2;background-color: #f9f9f9;">
+                        <thead>
+                            <tr style="border: 1px solid #c2c2c2;">
+                                <th style="width:10%;text-align:center;border: 1px solid #c2c2c2;">Sr. No.</th>
+                                <th style="width:70%;text-align:center;border: 1px solid #c2c2c2;">Required Document/Task</th>
+                                <th style="width:20%;text-align:center;border: 1px solid #c2c2c2;">Verification Status</th>
+                            </tr>
+                        </thead>
+                      <tbody>
+                        <template for:each={categoryData} for:item="category" for:index="index">
+                          <tr key={category.Id} style="border: 1px solid #c2c2c2;">
+                            <td style="text-align:center;">{category.Sequence_Number__c}</td>
+                            <td style="text-align:left;">{category.Category__c}</td>
+                            <td style="text-align:center;">
+                                <template if:true={category.Accepted__c}>
+                                    <lightning-combobox disabled placeholder="Accepted">
+                                    </lightning-combobox>
+                                </template>
+                                <template if:false={category.Accepted__c}>
+                                    <lightning-combobox data-key={index} value={selectedval}
+                                        placeholder="Select an Option" options={options}
+                                        onchange={handleOptions}>
+                                    </lightning-combobox>
+                                </template>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                </div>
+                    <div class="mains">
+                        <div class="main" style="padding: 15px;">
+                            <table class="Table1Css">
+                                <tr>
+                                    <th>
+                                        Remarks <span class="required">*</span>
+                                    </th>
+                                    <td>
+                                        <b><lightning-textarea type="text" class="slds-align_absolute-center"
+                                                value={remark} onchange={handleRemarks}></lightning-textarea></b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="text-align: center;padding-top: 10px;">
+                        <lightning-button variant="brand" label="Submit" title="Submit" onclick={handleSubmit}>
+                        </lightning-button>
+                    </div>
+                    <br />
+                </template>
+            </div>
+            <template if:true={isLoading}>
+                <lightning-spinner variant="brand" size="large" alternative-text="Loading"></lightning-spinner>
+            </template>
         </div>
-
     </lightning-card>
 </template>

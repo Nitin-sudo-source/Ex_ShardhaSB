@@ -26,6 +26,7 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
     @api toastVariant = 'success'; // 'success', 'warning', 'error'
     toastTimeout;
     @api recordId;
+    pdfData;
 
     // Public method to open modal
     @api
@@ -41,7 +42,7 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
 
     // Public method to show toast
     @api
-    showToastMessage(message, variant = 'success', duration = 1000) {
+    showToastMessage(message, variant = 'success', duration = 30000) {
         this.toastMessage = message;
         this.toastVariant = variant;
         this.showToast = true;
@@ -66,7 +67,6 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
     handleYes() {
         this.close();
         this.dispatchEvent(new CustomEvent('yes'));
-        this.showToastMessage('Action confirmed!', 'success');
         alert('RecordId: ' + this.recordId);
         sendEmailOnClick({ recordId: this.recordId })
             .then((result) => {
@@ -74,6 +74,11 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
                 console.log('result : ' + JSON.stringify(result));
                 this.getResPonse = result;
                 console.log('OUTPUT : ' + JSON.stringify(this.getResPonse));
+                // if (this.getResPonse.isSuccess) {
+                //     this.pdfData = 'data:application/pdf;base64,' + this.getResPonse.emailAttachment;
+                // } else {
+                //     console.error('Error:', this.getResPonse.errorMessage);
+                // }
                 //this.navigateToViewBookingPage();
                 
             })
@@ -82,6 +87,8 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
                 this.getResPonse = '';
                
             });
+            this.showToastMessage(this.getResPonse.bookingRecord.Name + ' Successfully Send Email To  ' +this.getResPonse.recipientEmail, 'success');
+
     }
 
 

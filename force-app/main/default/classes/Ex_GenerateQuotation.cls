@@ -400,6 +400,13 @@ public class Ex_GenerateQuotation {
                     q.Modified_GST_Charges__c = qWrapper.q.Modified_GST_Charges__c;
                }
 
+               if(isTenantAccount){
+                    q.Quotation_Type__c = 'Tenant Based';
+               }
+               else {
+                    q.Quotation_Type__c = 'Opportunity Based';
+               }
+
                //  Final Committed Area details
                if(qWrapper.q.Original_Final_Committed_Area__c != null){
                 q.Original_Final_Committed_Area__c = qWrapper.q.Original_Final_Committed_Area__c;
