@@ -19,6 +19,7 @@ public with sharing class Ex_WelcomeEmailSend {
             // Initialize response object
             EmailTestResponse response = new EmailTestResponse();
             System.debug('RecordId: ' + recordId);
+            List<Booking__c> updateBookingList = new List<Booking__c>();
             
             OrgWideEmailAddress owea = [SELECT Id, Address, DisplayName 
                                       FROM OrgWideEmailAddress 
@@ -49,9 +50,18 @@ public with sharing class Ex_WelcomeEmailSend {
             }
             String body = '';
             String subject = '';
+            List<String> monthNames = new List<String>{
+                '', 'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            };
+            
+            // Extract day, month, and year
+            String formattedDate = bk.Booking_Date__c.day() + ' / ' +
+                monthNames[bk.Booking_Date__c.month()] + ' / ' +
+                bk.Booking_Date__c.year();
             
             if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Opportunity Based')){
-                subject = '<b> Welcome to Shardha Live Space - Project Confirmation for '+ bk.Project__r.Name +'</b>';
+                subject = 'Welcome to Shardha Live Space - Project Confirmation for '+ bk.Project__r.Name +'';
                 body = 'Dear '+ bk.Primary_Applicant_Name__c  +'<br/><br/>';
                 body += 'Warm Greetings from Shardha Live Space!<br/>';
                 body += 'We are thrilled to welcome you to '+ 'Shardha Live Space' +'! We appreciate the trust you have placed in us to handle your '+ 'NA Project Type' +'project, and we are excited to get started..<br/>';
@@ -59,22 +69,25 @@ public with sharing class Ex_WelcomeEmailSend {
                 body += '<br/>Please find the details of your booking below:<br/><br/>';
                 body += '<ul>';
                 body += '<li> <b>Project Name:</b> '+ bk.Project__r.Name +'</li>';
-                body += '<li> <b>Booking Date:</b> '+ bk.Booking_Date__c +'</li>';
+                
+                
+                // Append to email body
+                body += '<li> <b>Booking Date:</b> ' + formattedDate + '</li>';
                 body += '<li> <b>Unit:</b> '+ bk.Unit__r.Name +'</li>';
                 body += '<li> <b>Floor:</b> '+ bk.Unit__r.Floor__c +'</li>';
                 body += '<li> <b>Total Amount:</b> '+  Ex_InventoryPriceManagementServices.currencyFormat(bk.Agreement_Value__c) +'</li>';
                 body += '</ul>';
                 body += '<br/>';
             } else  if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Tenant Based')){
-                subject = '<b> Welcome to Shardha Live Space -  Rehabilitation Project Details for '+ bk.Tenant_Account__r.Name +'</b>';
+                subject = 'Welcome to Shardha Live Space -  Rehabilitation Project Details for '+ bk.Tenant_Account__r.Name +'';
                 body = 'Dear '+ bk.Tenant_Account__r.Name  +'<br/><br/>';
                 body = 'We are pleased to welcome you to Shardha Live Space! We appreciate your cooperation and understanding as we work on the rehabilitation project at ____________________ (Property Address). Our goal is to ensure that the process is as smooth and convenient as possible for you <br/><br/>';
                 body += '<b>Summary of Rehabilitation project:<b><br/>';
                 body += '<br/>Please find the details of your Rehabilitation project below:<br/><br/>';
                 body += '<ul>';
                 body += '<li> <b>Project Name:</b> '+ bk.Project__r.Name +'</li>';
-                body += '<li> <b>Start Date of Rent:</b> '+ bk.Booking_Date__c +'</li>';
-                body += '<li> <b>End Date of Rent:</b> '+ bk.Booking_Date__c +'</li>';
+                body += '<li> <b>Start Date of Rent:</b> '+formattedDate +'</li>';
+                body += '<li> <b>End Date of Rent:</b> '+formattedDate +'</li>';
                 body += '</ul>';
                 body += '<br/>';
             }
@@ -83,44 +96,35 @@ public with sharing class Ex_WelcomeEmailSend {
             body += '<b><u>Contact Information:<u></b><br/>';
             body += 'For any support or queries, please do not hesitate to contact us:<br/>';
             body += '<ul>';
-            body += '<li> <b>Contact Person:</b> '+ bk.Project__r.Name +'</li>';
-            body += '<li> <b>Email:</b> '+ bk.Booking_Date__c +'</li>';
-            body += '<li> <b>Phone:</b> '+ bk.Unit__r.Name +'</li>';
+            body += '<li> <b>Contact Person:</b> '+ 'NA' +'</li>';
+            body += '<li> <b>Email:</b> '+ 'NA' +'</li>';
+            body += '<li> <b>Phone:</b> '+ 'NA' +'</li>';
             body += '</ul>';
             body += '<br/>';
             body += '<u>Attachments:</u><br/><br/>';
             body += 'We have included the following documents for your reference:<br/><br/>';
             body += '<ul>';
             if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Opportunity Based')){
-            body += '<li> <b>Signed Booking Form: This document confirms the project details and terms agreed upon.</b></li>';
-            body += '<li> <b>Project Timeline: A detailed timeline outlining key milestones and deadlines</b></li>';
-            body += '<li> <b>Payment Schedule: A breakdown of the payment terms and due dates.</b></li>';
-            body += '</ul>';
+                body += '<li> <b>Signed Booking Form: This document confirms the project details and terms agreed upon.</b></li>';
+                body += '<li> <b>Project Timeline: A detailed timeline outlining key milestones and deadlines</b></li>';
+                body += '<li> <b>Payment Schedule: A breakdown of the payment terms and due dates.</b></li>';
+                body += '</ul>';
             } else  if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Tenant Based')){
                 body += '<li> <b>Project Timeline: A detailed timeline outlining key milestones and deadlines</b></li>';
-
-
+                
+                
             }
             body += '<br/>';
             body += 'Please review these documents carefully and let us know if you have any questions.<br/>';
-
+            
             if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Opportunity Based')){
-
-            body += 'Thank you again for choosing '+ 'Shardha Live Space' +'. We look forward to working with you and delivering an exceptional project experience.<br/>';
+                
+                body += 'Thank you again for choosing '+ 'Shardha Live Space' +'. We look forward to working with you and delivering an exceptional project experience.<br/>';
             } else  if(bk.Booking_Type__c != null && bk.Booking_Type__c.equalsIgnoreCase('Tenant Based')){
                 body += 'Thank you for your understanding and cooperation. We are committed to minimizing disruptions and ensuring your safety and comfort throughout the project.<br/>';
             }
-
-
             
-
-            
-            
-            
-            
-            
-            
-            
+           
             body += '<br/><br/>Thanks & Regards,<br/> For Shardha Live Space';
             body += '<br/><br/>';
             body += 'Authorized Signatory';
@@ -130,24 +134,43 @@ public with sharing class Ex_WelcomeEmailSend {
             pdf.getParameters().put('qId', bk.Quotation__c);
             Blob b = pdf.getContentAsPDF();
             
+            PageReference bkpdf = Page.Ex_PrintBookingFormVF;
+            bkpdf.getParameters().put('bId', bk.Id);
+            Blob bkpdfContent = bkpdf.getContentAsPDF();
+            
+            
+            
             Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment();
             efa.setContentType('application/pdf');
-            efa.setFileName('Quotation_' + bk.Quotation__c + '.pdf');
+            efa.setFileName('QuotationForm_' + bk.Quotation__c + '.pdf');
             efa.setInline(false);
             efa.setBody(b);
-            response.emailAttachment = EncodingUtil.base64Encode(b);
+            //response.emailAttachment = EncodingUtil.base64Encode(b);
+            
+            Messaging.EmailFileAttachment efa2 = new Messaging.EmailFileAttachment();
+            efa2.setContentType('application/pdf');
+            efa2.setFileName('BookingForm_' + bk.Id + '.pdf');
+            efa2.setInline(false);
+            efa2.setBody(bkpdfContent);
+            
             
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             mail.setToAddresses(new String[]{recipientEmail});
             mail.setOrgWideEmailAddressId(owea.Id);
-            mail.setSubject('Welcome Email');
+            mail.setSubject(subject);
             mail.setHtmlBody(body);
-            mail.setFileAttachments(new Messaging.EmailFileAttachment[]{efa});
+
+            mail.setFileAttachments(new Messaging.EmailFileAttachment[]{efa, efa2});
             
             Messaging.SendEmailResult[] results = Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
             
             if (results[0].isSuccess()) {
                 response.isSuccess = true;
+                response.bookingRecord.Is_Welcome_Email_Send__c = true;
+                updateBookingList.add(response.bookingRecord);
+                if(updateBookingList != null){
+                    update updateBookingList;
+                }
             } else {
                 response.isSuccess = false;
                 response.errorMessage = 'Email failed to send: ' + results[0].getErrors()[0].getMessage();

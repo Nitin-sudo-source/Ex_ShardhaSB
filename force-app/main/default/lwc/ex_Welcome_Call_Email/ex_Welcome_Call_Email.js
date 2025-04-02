@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : nitinSFDC@exceller.SFDoc
  * @group             : 
- * @last modified on  : 28-03-2025
+ * @last modified on  : 01-04-2025
  * @last modified by  : nitinSFDC@exceller.SFDoc
 **/
 import { LightningElement, api, track } from 'lwc';
@@ -19,6 +19,7 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
     @api yesButtonLabel = 'Yes';
     @api noButtonLabel = 'No';
     @track getResPonse = {};
+    @track disabledYes = false;
 
     // Toast Configuration
     @api showToast = false;
@@ -42,16 +43,16 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
 
     // Public method to show toast
     @api
-    showToastMessage(message, variant = 'success', duration = 30000) {
+    showToastMessage(message, variant = 'success') {
         this.toastMessage = message;
         this.toastVariant = variant;
         this.showToast = true;
 
         // Auto-hide after duration
-        clearTimeout(this.toastTimeout);
-        this.toastTimeout = setTimeout(() => {
-            this.hideToast();
-        }, duration);
+        // clearTimeout(this.toastTimeout);
+        // this.toastTimeout = setTimeout(() => {
+        //     this.hideToast();
+        // }, duration);
     }
 
     hideToast() {
@@ -65,29 +66,29 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
     }
 
     handleYes() {
-        this.close();
+        this.disabledYes = true;
+       
         this.dispatchEvent(new CustomEvent('yes'));
-        alert('RecordId: ' + this.recordId);
+        // alert('RecordId: ' + this.recordId);
         sendEmailOnClick({ recordId: this.recordId })
             .then((result) => {
-                //this.showToastMessage('Successfully Link Send to Email Please Check', 'success');
                 console.log('result : ' + JSON.stringify(result));
                 this.getResPonse = result;
                 console.log('OUTPUT : ' + JSON.stringify(this.getResPonse));
-                // if (this.getResPonse.isSuccess) {
-                //     this.pdfData = 'data:application/pdf;base64,' + this.getResPonse.emailAttachment;
-                // } else {
-                //     console.error('Error:', this.getResPonse.errorMessage);
-                // }
-                //this.navigateToViewBookingPage();
+                alert(this.getResPonse.bookingRecord.Name + ' Successfully Send Email To  ' +this.getResPonse.recipientEmail);
                 
+
+                // setInterval(() => {
+                    location.replace('/' + this.getResPonse.bookingRecord.Id);
+                // }, 3000);
             })
+            
             .catch(error => {
                 this.showToastMessage(error, 'error');
                 this.getResPonse = '';
-               
             });
-            this.showToastMessage(this.getResPonse.bookingRecord.Name + ' Successfully Send Email To  ' +this.getResPonse.recipientEmail, 'success');
+            
+           
 
     }
 
@@ -96,7 +97,7 @@ export default class Ex_Welcome_Call_Email extends NavigationMixin(LightningElem
     handleNo() {
         this.handleClose();
         this.dispatchEvent(new CustomEvent('no'));
-        this.showToastMessage('Action cancelled', 'warning');
+        //this.showToastMessage('Action cancelled', 'warning');
         this.navigateToViewBookingPage();
     }
 
