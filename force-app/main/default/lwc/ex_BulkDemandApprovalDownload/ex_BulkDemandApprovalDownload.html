@@ -1,0 +1,123 @@
+<!--
+  @description       : 
+  @author            : nitinSFDC@exceller.SFDoc
+  @group             : 
+  @last modified on  : 07-04-2025
+  @last modified by  : nitinSFDC@exceller.SFDoc
+-->
+<template>
+    <lightning-card class="container2">
+
+        <template if:true={isSpinner}>
+            <div class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-fixed">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+
+                    <!-- additional element to show the text under the spinner -->
+                    <p class="slds-spinner-text">Loading...</p>
+                </div>
+            </div>
+
+        </template>
+
+        <h1>Bulk Demand Approval Dashboard </h1>
+        <!-- <div class="slds-col slds-size_1-of-3 slds-text-align_center"> -->
+        <template if:true={showTable}>
+            <template if:true={recordSelected}>
+                <h5>No of Records Selected: <b>{recordSelected}</b></h5>
+            </template>
+        </template>
+
+
+
+        <!-- </div> -->
+
+
+
+        <!-- Filters and Controls -->
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_medium">
+            <!-- Project Dropdown -->
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-combobox aria-label="Project" label="Project" title={projectTitle} variant="standard"
+                    value={projectId} class="user-input-box" options={projectOptions} required
+                    placeholder="Select Project" onchange={handleProjectChange}>
+                </lightning-combobox>
+            </div>
+
+            <!-- Tower Dropdown -->
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-combobox aria-label="Tower" label="Tower" title={towerTitle} variant="standard"
+                    value={towerId} class="user-input-box" placeholder="Select Tower" required options={towerOptions}
+                    onchange={handleTowerChange}>
+                </lightning-combobox>
+            </div>
+
+            <!-- Document Type Buttons -->
+            <!-- <div class="slds-col slds-size_1-of-4">
+
+                <lightning-combobox aria-label="Document Type" label="Document Type" title={docTitle}
+                    value={documentType} placeholder="Select Document Type" variant="standard" required
+                    class="user-input-box" icon-position="left" options={documentOptions} onchange={handleDocumentType}>
+                </lightning-combobox>
+
+            </div>
+        </div> -->
+
+        <!-- Action Buttons -->
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_medium">
+            <div class="slds-col slds-size_1-of-3">
+                <button class="search-button" onclick={fetchDocumentRecords}>
+                    <lightning-icon icon-name="utility:search" size="small" title="Search Button to Fetch Files"
+                        alternative-text="Search"></lightning-icon>
+                    <span class="slds-m-left_x-small">Fetch Files</span>
+                </button>
+
+                <template if:true={showTable}>
+                    <button class="search-button slds-m-left_small" onclick={handleReset}>
+                        <lightning-icon icon-name="utility:close"
+                            title="Reset Buttons to Clear All Filters and Reload Page" size="small"
+                            alternative-text="Reset"></lightning-icon>
+                        <span class="slds-m-left_x-small">Reset</span>
+                    </button>
+                </template>
+            </div>
+
+            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                <template if:true={showTable}>
+                    <template if:true={finalurl}>
+                        <button class="search-button" onclick={handleBulkDownload}>
+                            <lightning-icon icon-name="utility:download" size="small" title="Download All Files in Bulk"
+                                alternative-text="Download All"></lightning-icon>
+                            <span class="slds-m-left_x-small">Download All</span>
+                        </button>
+                    </template>
+                </template>
+            </div>
+
+
+
+
+
+
+            <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                <template if:true={showTable}>
+                    <button class="search-button" title="Go To Previous Page" disabled={isPreviousDisabled}
+                        onclick={handlePreviousPage}>
+                        &lt; Previous
+                    </button>
+                    <button class="search-button slds-m-left_small" title="Go To Next Page" disabled={isNextDisabled}
+                        onclick={handleNextPage}>
+                        Next &gt;
+                    </button>
+                    <div class="slds-text-title slds-truncate slds-m-left_large"
+                        title="Show Page No and Total Number of Pages">Page {currentPage} of {totalPages}
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        </div>
+        </lightning-card>
+</template>

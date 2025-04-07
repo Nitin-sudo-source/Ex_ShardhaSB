@@ -1,0 +1,372 @@
+.user-input-box{
+    padding-bottom: 18px;
+    flex-wrap: wrap; 
+    border-radius: 15px;
+  }
+  
+  .user-input-box label{
+    /* width: 95%; */
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 5px;
+    flex-wrap: wrap; 
+  }
+  
+  .user-input-box lightning-input,lightning-slider,lightning-input-field,lightning-combobox {
+    /* width: 95%; */
+    border-radius: 15px;
+    flex-wrap: wrap; 
+  
+  }
+
+  .chart-heading {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.chart-heading h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.chart-heading p {
+    margin: 0;
+    color: grey;
+    font-size: 0.9rem;
+}
+
+.chart-container {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 15px; /* Adds padding around the chart */
+    overflow: visible; /* Prevents clipping */
+}
+
+
+/* Hover effect for fading and scaling */
+/* .chart-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+} */
+
+.chart-segment {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Highlight hovered segment */
+.chart-segment.active {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+
+
+
+  
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 12px;
+}
+
+th {
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+tr {
+    border-bottom: 1px solid #ddd;
+    transition: background 0.3s ease-in-out;
+}
+
+tr:last-child {
+    border-bottom: none;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background: #d4e9ff;
+}
+
+td {
+    color: #333;
+}
+
+td:first-child, th:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+td:last-child, th:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+
+lightning-input[type="checkbox-button"] {
+    margin: auto;
+}
+
+
+
+lightning-input[type="checkbox-button"] {
+    margin: auto;
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+
+    
+    .container,
+    .container2 {
+      flex-direction: column;
+      /* Stack items vertically on mobile */
+      max-width: 100%;
+      /* Use full width on small screens */
+      padding: 0 10px;
+      /* Add padding for spacing */
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-size: 1.4rem;
+    }
+
+    lightning-combobox {
+        width: 100%;
+    }
+
+    .user-input-box {
+        width: 100%;
+    }
+
+
+    th,
+    td {
+        padding: 8px;
+        font-size: 10px;
+    }
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .search-button {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .search-button {
+        padding: 6px 8px;
+        font-size: 12px;
+        width: 100%; /* Makes the button fill the available width */
+        margin-bottom: 0.5rem; /* Adds spacing between stacked buttons */
+    }
+}
+
+
+
+@media screen and (max-width: 600px) {
+
+    .container,
+    .container2 {
+      flex-direction: column;
+      /* Stack items vertically on mobile */
+      max-width: 100%;
+      /* Use full width on small screens */
+      padding: 0 10px;
+      /* Add padding for spacing */
+    }
+  
+  
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+    }
+}
+
+
+/* Modern Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+/* Primary Heading (H1) */
+h1 {
+    font-size: 2rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Secondary Heading (H2) */
+h2 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #556270, #283e51);
+    padding: 0.8rem;
+}
+
+/* Subheadings (H3 - H6) */
+h3, h4, h5, h6 {
+    font-size: 1.5rem;
+    color: #283e51;
+    background-color: #f4f4f4;
+    padding: 0.6rem;
+    border-bottom: 2px solid #4b79a1;
+}
+
+
+
+
+
+
+
+.search-button {
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    border: none;
+    color: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.search-button:hover {
+    background: linear-gradient(135deg, #283e51, #4b79a1);
+    transform: scale(1.05);
+}
+
+.search-button lightning-icon {
+    --slds-c-icon-color-foreground-default: white;
+}
+
+
+
+.slds-spinner-text {
+    width: 320px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+.slds-spinner--small .slds-spinner-text {
+    transform: translate(-36%, -50%) rotate(-90deg);
+}
+.slds-spinner--medium .slds-spinner-text {
+    transform: translate(-32%, -50%) rotate(-90deg);
+}
+.slds-spinner--large .slds-spinner-text {
+    transform: translate(-26%, -50%) rotate(-90deg);
+}
+
+.slds-spinner_container{
+    background-color: rgba(255, 255, 255, 50%);
+  } 
+
+  .navexStandardManager .slds-template__container .slds-spinner_container, .navexStandardManager>.center .s1FixedTop{
+    z-index: 1;
+  }
+
+
+  .clickable-link {
+    color: blue; /* Link color */
+    cursor: pointer;
+    text-decoration: underline; /* Makes it look like a link */
+    font-weight: bold; /* Optional */
+}
+
+.clickable-link:hover {
+    color: darkblue; /* Changes color when hovered */
+}
+
+.curved-box {
+    /* background-color: white; */
+    border-radius: 15px; /* Adjust this value for more or less curvature */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Adds a soft shadow */
+    /* padding: 20px; */
+    /* margin: 10px; */
+}
+
+
+
+
+.slds-button {
+    margin: 0.25rem;
+}
+
+.slds-table {
+    margin-top: 1rem;
+}
+
+.slds-table th,
+.slds-table td {
+    text-align: center;
+}
+
+.slds-table th {
+    background-color: #f3f2f2;
+}
+
+.slds-button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.custom-checkbox {
+    margin: 0 auto;
+}
