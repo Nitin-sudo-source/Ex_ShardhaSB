@@ -1802,6 +1802,13 @@ export default class Ex_GenerateQuotation extends LightningElement {
         return formattedNumber;
     }
 
+    // Get Car Park Details
+    get getCarParkDetails() {
+        return {
+            'originalCarParkCharges' : this.getCurrencyInFormatted(0),
+            'modifiedCarParkCharges' : this.getCurrencyInFormatted(this.totalCarParkAmount),
+        };
+    }
 
     splitStringIntoParts(str) {
         let result = [];

@@ -25,6 +25,7 @@ export default class Ex_BookingVerificationComponent extends LightningElement {
     @track data = [];
 
     @track projectName;
+    @track bookingName;
     @api showDetails = false;
     @track customerName;
     @track bookingDate;
@@ -44,6 +45,7 @@ export default class Ex_BookingVerificationComponent extends LightningElement {
              console.log('this.data is::' + JSON.stringify(this.data));
              if(this.data.length > 0){
                 this.projectName = this.data[0].Project__r.Name;
+                this.bookingName = this.data[0].Name;
                 
                 this.customerName = ( this.data[0].Booking_Type__c != null && this.data[0].Booking_Type__c === 'Opportunity Based' && this.data[0].Opportunity__c != null && this.data[0].Opportunity__c != undefined) ? this.data[0].Opportunity__r.Name
                                    :(this.data[0].Booking_Type__c != null && this.data[0].Booking_Type__c === 'Tenant Based' && this.data[0].Tenant_Account__c != null && this.data[0].Tenant_Account__c != undefined) ? this.data[0].Tenant_Account__r.Name : '';
@@ -111,7 +113,9 @@ export default class Ex_BookingVerificationComponent extends LightningElement {
                 this.wccList = result;
                 this.isLoading = false;
                 
-                this.categoryData = this.wccList;
+                this.categoryData = this.wccList.map((item,index)=>{
+                    return { ...item, 'Sequence_Number__c': index+1};
+                });
                 console.log('this.categoryData is::' + JSON.stringify(this.categoryData));;
             })
             .catch(error => {

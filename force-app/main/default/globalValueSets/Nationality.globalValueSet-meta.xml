@@ -10,6 +10,16 @@
         <default>false</default>
         <label>NRI</label>
     </customValue>
+    <customValue>
+        <fullName>PIO</fullName>
+        <default>false</default>
+        <label>PIO</label>
+    </customValue>
+    <customValue>
+        <fullName>OCI</fullName>
+        <default>false</default>
+        <label>OCI</label>
+    </customValue>
     <masterLabel>Nationality</masterLabel>
     <sorted>false</sorted>
 </GlobalValueSet>

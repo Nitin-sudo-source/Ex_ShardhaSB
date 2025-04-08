@@ -1,0 +1,113 @@
+*{
+    font-family: "SF Pro Display";   
+}
+.slds-p-around_medium {
+    padding: 1rem;
+}
+
+.align-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bolder;
+}
+
+
+.slds-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.slds-table th,
+.slds-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border: 1px solid #ccc;
+
+}
+
+.slds-line-height_reset {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+.section-header th {
+    text-align: center;
+    background-color: #f0f0f0;
+    font-size: 16px;
+}
+
+.header{
+     text-align: center;
+     font-weight: bold;
+     font-size: 22px;
+     background-color: #cfe1f4;
+     padding: 10px;
+}
+
+.column-headers th {
+    background-color: #f0f0f0;
+}
+
+.data-row td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.spinner-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(5px); 
+    z-index: 9999; 
+
+}
+.loader {
+    border: 4px solid #f3f3f3; 
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite; 
+}
+
+.wait-text {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #fff;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.booking-info{
+    font-size: 16px;
+}
+.section-name{
+    font-size: 18px !important;
+}
+.flex{
+    display: flex;  
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    padding: 5px;
+}
+.button{
+    margin: 10px;
+}

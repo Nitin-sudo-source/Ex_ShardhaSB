@@ -20,6 +20,11 @@
                 <default>false</default>
                 <label>Construction Linked</label>
             </value>
+            <value>
+                <fullName>Registration Linked</fullName>
+                <default>false</default>
+                <label>Registration Linked</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

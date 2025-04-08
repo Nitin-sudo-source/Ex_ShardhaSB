@@ -48,6 +48,7 @@ export default class Ex_BookingForm extends LightningElement {
     @track applicantCounter = 1;
     @track documentsArray = [];
     @track isdocumentRequired = true;
+    @track selectedApplicantKey = null;
 
     
     // Added Later
@@ -153,6 +154,18 @@ export default class Ex_BookingForm extends LightningElement {
         return this.quotationType == 'Opportunity Based';
    }
 
+   get isNonResidentOfIndia(){
+        var key = this.selectedApplicantKey;
+        var selectedApplicant = this.getApplicantData.find(applicant => applicant.key == key);
+
+        console.log('key: '+ JSON.stringify(key));
+        console.log('selectedApplicant: '+ JSON.stringify(selectedApplicant));
+        console.log('selectedApplicant: '+ JSON.stringify(selectedApplicant?.ap?.Nationality__c));
+        
+
+        return selectedApplicant?.ap?.Nationality__c === 'NRI' || selectedApplicant?.ap?.Nationality__c === 'PIO';
+   }
+
    initializeBookingDetails(){
 
         console.log('Quotation Type : ' + this.quotationType);
@@ -169,29 +182,45 @@ export default class Ex_BookingForm extends LightningElement {
             'totalCarpetArea' : this.quote.Unit__r.Total_carpet_Sq_Ft__c,
             'remarks' : '',
             'isLoanSanctioned' : '',
-            'modeOfFunding' : ''
+            'modeOfFunding' : '',
+            'ownContributionAmount' : 0,
+            'bookingSource' : '',
+            'bookingSubsource' : '',
         }
-        
    }
 
    handleBookingDetailsChange(event){
         const fieldName = event.target.dataset.fieldName;
         const fieldValue = event.target.value ? event.target.value : event.target.checked;
 
-        if(fieldName == 'isLoanSanctioned' && fieldValue == null){
-            this.bookingDetails = {
-                ...this.bookingDetails,
-                [fieldName] : ''
-            }
+        if(fieldName == 'ownContributionAmount'){
+            this.bookingDetails['ownContributionAmount'] = parseFloat(fieldValue);
+        }
+        else if(fieldValue != null){
+            this.bookingDetails = {  ...this.bookingDetails, [fieldName] : fieldValue }
         }
 
-        if(fieldValue != null){
-            this.bookingDetails = {
-                ...this.bookingDetails,
-                [fieldName] : fieldValue
-            }
-        }
         console.log('this.bookingDetails : ' + JSON.stringify(this.bookingDetails));
+   }
+
+   get getLoanSanctionAmount(){
+       var agreementValue = this.quote?.Modified_AV_Value__c;
+       var ownContributionAmount = this.bookingDetails.ownContributionAmount;
+
+        return this.getNumberOrZero(agreementValue) - this.getNumberOrZero(ownContributionAmount);
+   }
+
+   getNumberOrZero(number){
+        return parseFloat(number) || 0;
+   }
+
+   get isBookingSourceChannelPartner(){
+    console.log('this.this.bookingDetails : ' + JSON.stringify(this.bookingDetails));
+    
+    if(this.bookingDetails != null && this.bookingDetails != undefined){
+        return this.bookingDetails.bookingSource == 'Channel Partner' && this.bookingDetails.bookingSubsource == 'Channel Partner';
+    }
+    return false;
    }
    
 
@@ -701,6 +730,8 @@ export default class Ex_BookingForm extends LightningElement {
             console.log('fieldValue:', fieldValue);
             console.log('fieldApiName:', fieldApiName);
 
+            this.selectedApplicantKey = tabKey;
+
             //  console.log('fieldApiName::'+fieldApiName +' fieldValue:: '+ fieldValue);
             const applicantIndex = this.getApplicantData.findIndex(item => item.key === tabKey);
             if (applicantIndex !== -1) {
@@ -1127,6 +1158,7 @@ export default class Ex_BookingForm extends LightningElement {
                 console.log('applicantData : ' + JSON.stringify(this.applicantData));
                 console.log('this.bookingDetails : ' + JSON.stringify(this.bookingDetails));
 
+                console.log('legalEntiety : ' + JSON.stringify(this.legalEntity));
                 
                 this.isSpinner = true;
                 createBookingRecord({
@@ -1134,7 +1166,8 @@ export default class Ex_BookingForm extends LightningElement {
                     applicantData: JSON.stringify(this.getApplicantData),
                     quotationDetails: this.quote,
                     receiptData: JSON.stringify(this.getReceiptData),
-                    bookingDetails : this.bookingDetails
+                    bookingDetails : this.bookingDetails,
+                    bookingAccount : this.legalEntity
                 })
                     .then(result => {
                         console.log('Booking: ', result);

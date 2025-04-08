@@ -10,9 +10,6 @@
                             <value>Booking__c.Registration_Call</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Booking__c.Registration_Call2</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Booking__c.Create_Receipt</value>
                             <visibilityRule>
                                 <criteria>
@@ -35,6 +32,16 @@
                                     <leftValue>{!Record.Booking_Stage__c}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Booking Confirmed</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Booking__c.Possession_Checklist</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Possession_Process_Start__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>true</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -63,9 +70,25 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Booking__c.Complete_Registration</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.Registration_Status__c}</leftValue>
+                                    <operator>NE</operator>
+                                    <rightValue>Completed</rightValue>
+                                </criteria>
+                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Booking__c.Upload_Registration_Docs</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Booking__c.Update_Loan_Details</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Booking__c.Upload_Loan_Sanction_Letter</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>CustomButton.Booking__c.Print_Booking</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>

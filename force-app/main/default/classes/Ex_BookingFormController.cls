@@ -17,6 +17,14 @@ public class Ex_BookingFormController {
         @AuraEnabled public String loanSanctionedBankName {get; set;}
         @AuraEnabled public String loanSactionedPreferredBankName {get; set;}
         @AuraEnabled public Decimal sanctionedAmount {get; set;}
+        @AuraEnabled public Decimal ownContributionAmount {get; set;}
+        @AuraEnabled public String bookingSource {get; set;}
+        @AuraEnabled public String bookingSubsource {get; set;}
+        @AuraEnabled public String channelPartnerName {get; set;}
+        @AuraEnabled public String channelPartnerMobile {get; set;}
+        @AuraEnabled public String channelPartnerEmail {get; set;}
+        @AuraEnabled public String channelPartnerReraNo {get; set;}
+        @AuraEnabled public String channelPartnerPOC {get; set;}
 
         public BookingDetails(){
             this.opportunityName = '-';
@@ -33,6 +41,9 @@ public class Ex_BookingFormController {
             this.loanSanctionedBankName = '-';
             this.loanSactionedPreferredBankName = '-';
             this.sanctionedAmount = 0.0;
+            this.ownContributionAmount = 0.0;
+            this.bookingSource = '-';
+            this.bookingSubsource = '-';
         }
     }
 
@@ -227,7 +238,7 @@ public class Ex_BookingFormController {
             }
         }
         System.debug('qid : ' + qId);
-        String soqlQuery = 'Select ' + queryFields  + ', Opportunity__r.Name, Project__r.Name, Tower__r.Name, Opportunity__r.Walk_In_Source__c, Opportunity__r.Walk_In_Sub_Source__c, Opportunity__r.OwnerId, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c, Payment_Scheme__r.Name, Booking__r.Agreement_Value__c, Unit__r.Saleable_Area__c, Tenant_Account__r.Name from Quotation__c Where Id = :qId';
+        String soqlQuery = 'Select ' + queryFields  + ', Opportunity__r.Name, Project__r.Name, Tower__r.Name, Opportunity__r.Walk_In_Source__c, Opportunity__r.Walk_In_Sub_Source__c, Opportunity__r.OwnerId, Unit__r.Name, Unit__r.Floor__c, Unit__r.Total_carpet_Sq_Ft__c, Payment_Scheme__r.Name, Booking__r.Agreement_Value__c, Unit__r.Saleable_Area__c, Tenant_Account__r.Name, Project__r.TDS_Percentage__c,  Project__r.TDS_Threshold__c,  from Quotation__c Where Id = :qId';
         system.debug(soqlQuery);
         qList = Database.query(soqlQuery);
         
@@ -418,7 +429,7 @@ public class Ex_BookingFormController {
     
     @AuraEnabled
     public static Id createBookingRecord(BookWrapper bkWrapper, String applicantData, Quotation__c quotationDetails,
-                                         String receiptData, List<Legal_Entity__c> bookingAccount, BookingDetails bookingDetails){
+                                         String receiptData, Legal_Entity__c bookingAccount, BookingDetails bookingDetails){
         System.debug('bookingAccount: '+bookingAccount);
         System.debug('quotationDetails: '+quotationDetails);
         Decimal agreementValue = 0;
@@ -471,9 +482,6 @@ public class Ex_BookingFormController {
         booking.Booking_Date__c = System.today();
 
         // Extra Details from BookingDetailsWrapper
-        /*if(bookingDetails.otherChannelPartners != null && !String.isEmpty(bookingDetails.otherChannelPartners)){
-            booking.Other_Channel_Partners__c = bookingDetails.otherChannelPartners;
-        }*/
         if(bookingDetails.remarks != null && !String.isEmpty(bookingDetails.remarks)){
             booking.Remarks__c = bookingDetails.remarks;
         }
@@ -487,18 +495,41 @@ public class Ex_BookingFormController {
 
 
         // Loan Sanctioned Details
-        if(bookingDetails.isLoanSanctioned != null) {
-            booking.Is_Loan_Sanctioned__c = bookingDetails.isLoanSanctioned;
-        }
-        if(bookingDetails.loanSanctionedBankName != null) {
-            booking.Loan_Sanctioned_Bank_Name__c = bookingDetails.loanSanctionedBankName;
-        }
         if(bookingDetails.loanSactionedPreferredBankName != null) {
             booking.Loan_Sanctioned_Preferred_Bank_Name__c = bookingDetails.loanSactionedPreferredBankName;
         }
-        if(bookingDetails.sanctionedAmount != null) {
-            booking.Sanctioned_Amount__c = bookingDetails.sanctionedAmount;
+        if(bookingDetails.ownContributionAmount != null) {
+            booking.Own_Contribution_Amount__c	 = bookingDetails.ownContributionAmount;
+            booking.Loan_Sanction_Amount__c	= quotation.Modified_AV_Value__c - bookingDetails.ownContributionAmount;
         }
+        if(bookingDetails.modeOfFunding != null) {
+            booking.Mode_Of_Funding__c	 = bookingDetails.modeOfFunding;
+        }
+
+        // Booking Source Details
+        if(bookingDetails.bookingSource != null) {
+            booking.Booking_Source__c = bookingDetails.bookingSource;
+        }
+        if(bookingDetails.bookingSubsource != null) {
+            booking.Booking_Sub_Source__c = bookingDetails.bookingSubsource;
+        }
+        if(bookingDetails.channelPartnerName != null) {
+            booking.Channel_Partner_Name__c = bookingDetails.channelPartnerName;
+        }
+        if(bookingDetails.channelPartnerMobile != null) {
+            booking.Channel_Partner_Mobile__c = bookingDetails.channelPartnerMobile;
+        }
+        if(bookingDetails.channelPartnerEmail != null) {
+            booking.Channel_Partner_Email__c = bookingDetails.channelPartnerEmail;
+        }
+        if(bookingDetails.channelPartnerReraNo != null) {
+            booking.Channel_Partner_RERA_No__c	 = bookingDetails.channelPartnerReraNo;
+        }
+        if(bookingDetails.channelPartnerPOC != null) {
+            booking.Channel_Partner_POC__c	 = bookingDetails.channelPartnerPOC;
+        }
+
+
 
         
         booking.Agreement_Value__c = quotation.Modified_AV_Value__c;
@@ -507,20 +538,21 @@ public class Ex_BookingFormController {
         booking.Registration_Charges__c = quotation.Registration_Charges__c;
         booking.Other_Charges__c = quotation.Modified_Other_Charges_Including_Tax__c;
         booking.All_In_Value__c = quotation.Modified_All_in_Price__c;
+        booking.TDS_Expected_Amount__c = quotation.Modified_AV_Value__c >= quotation.Project__r.TDS_Threshold__c ? quotation.Modified_AV_Value__c*quotation.Project__r.TDS_Percentage__c: 0;
 
         booking.Booking_Stage__c = 'Booking Confirmed';
         
-        if(bookingAccount != null && !bookingAccount.isEmpty()){
-            booking.Account_Name_Flat_Cost__c = bookingAccount[0].Account_Name_Flat_Cost__c;
-            booking.Account_Name_Tax__c = bookingAccount[0].Account_Name_Tax__c;
-            booking.Account_Number_Flat_Cost__c = bookingAccount[0].Account_Number_Flat_Cost__c;
-            booking.Account_Number_Tax__c = bookingAccount[0].Account_Number_Tax__c;
-            booking.Bank_Name_Flat_Cost__c = bookingAccount[0].Bank_Name_Flat_Cost__c;
-            booking.Branch_Name_Flat_Cost__c = bookingAccount[0].Branch_Name_Flat_Cost__c;
-            booking.Branch_Name_Tax__c = bookingAccount[0].Branch_Name_Tax__c;
-            booking.Bank_Name_Tax__c = bookingAccount[0].Bank_Name_Tax__c;
-            booking.IFSC_Code_Flat_Cost__c = bookingAccount[0].IFSC_Code_Flat_Cost__c;
-            booking.IFSC_Code_Tax__c = bookingAccount[0].IFSC_Code_Tax__c;
+        if(bookingAccount != null){
+            booking.Account_Name_Flat_Cost__c = bookingAccount.Account_Name_Flat_Cost__c;
+            booking.Account_Name_Tax__c = bookingAccount.Account_Name_Tax__c;
+            booking.Account_Number_Flat_Cost__c = bookingAccount.Account_Number_Flat_Cost__c;
+            booking.Account_Number_Tax__c = bookingAccount.Account_Number_Tax__c;
+            booking.Bank_Name_Flat_Cost__c = bookingAccount.Bank_Name_Flat_Cost__c;
+            booking.Branch_Name_Flat_Cost__c = bookingAccount.Branch_Name_Flat_Cost__c;
+            booking.Branch_Name_Tax__c = bookingAccount.Branch_Name_Tax__c;
+            booking.Bank_Name_Tax__c = bookingAccount.Bank_Name_Tax__c;
+            booking.IFSC_Code_Flat_Cost__c = bookingAccount.IFSC_Code_Flat_Cost__c;
+            booking.IFSC_Code_Tax__c = bookingAccount.IFSC_Code_Tax__c;
         }
         try {
             insert booking;
@@ -735,6 +767,18 @@ public class Ex_BookingFormController {
                 }
                 if (apData.get('Nationality__c') != null) {
                     applicant.Nationality__c = (String) apData.get('Nationality__c');
+                }
+                if (apData.get('Occupation__c') != null) {
+                    applicant.Occupation__c = (String) apData.get('Occupation__c');
+                }
+                if (apData.get('Relation_with_Primary_Applicant__c') != null) {
+                    applicant.Relation_with_Primary_Applicant__c = (String) apData.get('Relation_with_Primary_Applicant__c');
+                }
+                if (apData.get('Local_Contact_Name__c') != null) {
+                    applicant.Local_Contact_Name__c = (String) apData.get('Local_Contact_Name__c');
+                }
+                if (apData.get('Local_Contact_Number__c') != null) {
+                    applicant.Local_Contact_Number__c = (String) apData.get('Local_Contact_Number__c');
                 }
                 if (booking.Id != null) {
                     applicant.Booking__c = booking.Id;   

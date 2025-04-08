@@ -246,3 +246,8 @@
   .grid-item {
     text-align: center;
   }
+
+  .mandatoryField ::after {
+      color: red;
+      content: " * ";
+  }

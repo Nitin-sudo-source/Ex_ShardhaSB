@@ -110,14 +110,66 @@
                                         </lightning-input-field>
                                     </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td colspan="1">Is Member Booking</td>
-                                    <td colspan="3">
-                                        <lightning-input type="checkbox" variant="label-hidden" data-field-name="isMemberBooking" name="isMemberBooking" label-hidden=true
-                                                            onchange={handleBookingDetailsChange} checked={getBookingDetails.data.isMemberBooking}>
-                                        </lightning-input>
-                                    </td>
-                                </tr> -->
+                                
+                                <tr>
+                                    <td>Booking Source</td>
+                                        <td>
+                                            <lightning-input-field data-field-name="bookingSource" field-name="Booking_Source__c" variant="label-hidden"
+                                                                onchange={handleBookingDetailsChange}>
+                                            </lightning-input-field>
+                                        </td>
+                                    <td>Booking Sub-source</td>
+                                    <td>
+                                        <lightning-input-field data-field-name="bookingSubsource" field-name="Booking_Sub_Source__c" variant="label-hidden"
+                                                                    onchange={handleBookingDetailsChange}>
+                                        </lightning-input-field>
+                                    </td>                                      
+                                </tr>
+
+                                <!-- Input CP Details -->
+                                <template if:true={isBookingSourceChannelPartner}>
+                                <tr>
+                                    <td>Channel Partner Name</td>
+                                        <td>
+
+                                            <lightning-input-field data-field-name="channelPartnerName" field-name="Channel_Partner_Name__c" variant="label-hidden"
+                                                                onchange={handleBookingDetailsChange}>
+                                            </lightning-input-field>
+                                        </td>
+                                    <td>Channel Partner Mobile</td>
+                                    <td>
+                                        <lightning-input-field data-field-name="channelPartnerMobile" field-name="Channel_Partner_Mobile__c" variant="label-hidden"
+                                                                    onchange={handleBookingDetailsChange}>
+                                        </lightning-input-field>
+                                    </td>                                      
+                                </tr>
+
+                                <tr>
+                                    <td>Channel Partner Email</td>
+                                    <td>
+                                        <lightning-input-field data-field-name="channelPartnerEmail" field-name="Channel_Partner_Email__c" variant="label-hidden"
+                                                                    onchange={handleBookingDetailsChange}>
+                                        </lightning-input-field>
+                                    </td>                                      
+
+                                    <td>Channel Partner RERA No</td>
+                                    <td>
+                                        <lightning-input-field data-field-name="channelPartnerReraNo" field-name="Channel_Partner_RERA_No__c" variant="label-hidden"
+                                                                    onchange={handleBookingDetailsChange}>
+                                        </lightning-input-field>
+                                    </td>                                      
+                                </tr>
+                                <tr>
+                                    <td>Channel Partner POC</td>
+                                    <td>
+                                        <lightning-input-field data-field-name="channelPartnerPOC" field-name="Channel_Partner_POC__c" variant="label-hidden"
+                                                                    onchange={handleBookingDetailsChange}>
+                                        </lightning-input-field>
+                                    </td>                                      
+                                </tr>
+                                </template>
+
+
                                 <tr>
                                     <td colspan="1">Remarks 
                                         <span style="color: red;">*</span>
@@ -128,14 +180,8 @@
                                         </lightning-textarea>
                                     </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td colspan="1">Other Channel Partners</td>
-                                    <td colspan="3">
-                                        <lightning-textarea variant="label-hidden" data-field-name="otherChannelPartners" name="otherChannelPartners" label-hidden=true
-                                                            onchange={handleBookingDetailsChange} value={getBookingDetails.data.otherChannelPartners}>
-                                        </lightning-textarea>
-                                    </td>
-                                </tr> -->
+
+
                             </template>
                             
                             <template if:true={getBookingDetails.isEmpty}>
@@ -159,43 +205,37 @@
                                 <tr>
                                     <th colspan="4" class="text-center table-header">Home Loan Assessement Details</th>
                                 </tr>
-                                <tr>
-                                    <td> Sanctioned </td>     
-                                    <td> 
-                                        <lightning-input-field data-field-name="isLoanSanctioned" field-name="Is_Loan_Sanctioned__c" variant="label-hidden"
-                                            onchange={handleBookingDetailsChange} value={getBookingDetails.data.isLoanSanctioned}>
-                                        </lightning-input-field>
-                                    </td>     
-                                </tr>
-                                <template if:true={isLoanSantionedStatusYes}>
-                                        <tr>
-                                            <td> Name of Bank </td>     
-                                            <td> 
-                                                <lightning-input type="text" variant="label-hidden" data-field-name="loanSanctionedBankName" name="loanSanctionedBankName" label-hidden=true
-                                                onchange={handleBookingDetailsChange} checked={getBookingDetails.data.loanSanctionedBankName}>
-                                                </lightning-input>
-                                            </td>    
-                                        </tr>
 
-                                        <tr>
-                                            <td> Sanctioned Amount</td>     
-                                            <td> 
-                                                <lightning-input type="number" variant="label-hidden" data-field-name="sanctionedAmount" name="sanctionedAmount" label-hidden=true
-                                                onchange={handleBookingDetailsChange} checked={getBookingDetails.data.sanctionedAmount}>
-                                                </lightning-input>
-                                            </td>     
-                                        </tr>                                    
-                                </template>
-                                <template if:true={isLoanSantionedStatusNo}>
-                                    <tr>
-                                        <td> Name of Preferred Bank </td>     
-                                        <td> 
-                                            <lightning-input type="text" variant="label-hidden" data-field-name="loanSactionedPreferredBankName" name="loanSactionedPreferredBankName" label-hidden=true
-                                            onchange={handleBookingDetailsChange} checked={getBookingDetails.data.loanSactionedPreferredBankName}>
-                                            </lightning-input>
-                                        </td>     
-                                    </tr>
-                                </template>
+                                <tr>
+                                    <td> <span class="mandatoryField">Preferred Bank Name </span></td>     
+                                    <td> 
+                                        <lightning-input type="text" variant="label-hidden" data-field-name="loanSactionedPreferredBankName" name="loanSactionedPreferredBankName" label-hidden=true
+                                        onchange={handleBookingDetailsChange}>
+                                        </lightning-input>
+                                    </td>    
+                                </tr>
+
+                                <tr>
+                                    <td> <span class="mandatoryField">Own Contribution Amount </span></td>     
+                                    <td> 
+                                        <lightning-input type="number" variant="label-hidden" data-field-name="ownContributionAmount" 
+                                        name="ownContributionAmount" label-hidden=true
+                                        value={bookingDetails.ownContributionAmount}
+                                        onchange={handleBookingDetailsChange}
+                                        min="0.00" step="0.01">
+                                        </lightning-input>
+                                    </td>     
+                                </tr>                                    
+                                <tr>
+                                    <td> <span class="mandatoryField">Loan Sanction Amount </span></td>     
+                                    <td> 
+                                        <lightning-input type="number" variant="label-hidden" data-field-name="loanSanctionAmount" 
+                                        disabled=true
+                                        value={getLoanSanctionAmount} step="0.01"
+                                        name="loanSanctionAmount" label-hidden=true>
+                                        </lightning-input>
+                                    </td>     
+                                </tr>                                    
                             </table>
                             </lightning-record-edit-form>
                         </div>
@@ -422,7 +462,46 @@
                                                 field-name="Nationality__c" variant="label-hidden"
                                                 onchange={handleApplicant}></lightning-input-field>
                                         </td>
-
+                                    </tr>
+                                    <template if:true={isNonResidentOfIndia}>
+                                        <tr>
+                                            <th style="text-align:left;"> Local Contact Name 
+                                            </th>
+                                            <td>
+                                                <lightning-input-field data-key={applicant.key} name="Local_Contact_Name__c"
+                                                    variant="label-hidden" value={applicant.ap.Local_Contact_Name__c}
+                                                    field-name="Local_Contact_Name__c"
+                                                    onchange={handleApplicant}></lightning-input-field>
+                                            </td>
+                                            <th style="text-align:left;">Local Contact Number
+                                            </th>
+                                            <td>
+                                                <lightning-input-field name="Local_Contact_Number__c" data-id="Local_Contact_Number__c"
+                                                    value={applicant.ap.Local_Contact_Number__c} data-key={applicant.key}
+                                                    field-name="Local_Contact_Number__c" variant="label-hidden"
+                                                    onchange={handleApplicant}></lightning-input-field>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <tr>
+                                        <th style="text-align:left;">Occupation
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Occupation__c" data-id="Occupation__c"
+                                                value={applicant.ap.Occupation__c} data-key={applicant.key}
+                                                field-name="Occupation__c" variant="label-hidden"
+                                                onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
+                                        <th style="text-align:left;">Relationship with Primary Applicant
+                                        </th>
+                                        <td>
+                                            <lightning-input-field name="Relation_with_Primary_Applicant__c" data-id="Relation_with_Primary_Applicant__c"
+                                                value={applicant.ap.Relation_with_Primary_Applicant__c} data-key={applicant.key}
+                                                field-name="Relation_with_Primary_Applicant__c" variant="label-hidden"
+                                                onchange={handleApplicant}>
+                                            </lightning-input-field>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th colspan="4">

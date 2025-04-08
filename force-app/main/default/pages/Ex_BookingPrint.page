@@ -1,0 +1,670 @@
+<apex:page controller="Ex_BookingPrintController" renderAs="pdf"  standardStylesheets="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false" showHeader="false">
+
+<html>
+        <head>
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <style>
+
+                /* Page Layout setup */
+                @page {
+                    margin:0.2in 0.2in 0.2in 0.2in;
+                    size: A4;                
+                    padding:0px 0px 0px 0px;
+                    font-family: "serif";
+                    font-weight: 400;
+                    font-style: normal;
+                }
+                
+                @page:first {
+                    margin: 10px;
+                }
+                @bottom-center {
+                    content: "Page " counter(page);
+                }
+
+                .rich-text-body p{
+                    text-align: justify;
+                }
+
+
+                .section-terms-and-condition-details table{
+                    -fs-table-paginate: paginate;
+                }
+
+                *{
+                    /* font-family: "Arial Unicode MS"; */
+                    font-family: "serif";
+                    padding: 0px;
+                    margin: 0px;
+                    box-sizing: border-box;
+                }
+
+
+                /* Other Required classes */
+
+                .t-bold{ font-weight: 600; }
+
+                /* -- Header and Logo -- */
+                .section-header-logo{
+                    overflow: hidden;
+                    height: 100px;
+                }
+                .section-header-logo img{
+                    height: 90px;
+                    padding: 0px 20px;
+                    width: auto;
+                }
+                .section-header-logo .header{
+                    text-align: center;
+                    padding : 40px 0px;
+                    font-size: 22px;
+                    font-weight: 700;
+                
+                }
+
+                /* User and Unit details */
+                .section-important-instructions{
+                    margin: 10px 15px 0px 15px;
+                }
+                table{
+                    width: 95%;
+                    border-collapse: collapse;
+                    table-layout: auto;
+                    text-align: left;
+                    border: none;
+                    margin: 15px auto;
+                }
+                td{
+                    font-size: 16px;
+                    padding: 4px 5px;
+                    vertical-align: top;
+                    word-break:break-all !important; 
+                }
+                th{
+                    font-size: 18px;
+                    font-weight: 600;
+                    padding: 3px 5px;
+                    text-align: left;
+                }
+                .total-row{
+                    background: #ffff00;
+                }
+                .currency-field{
+                    text-align: right;
+                }
+                .text-center{
+                    text-align: center !important;
+                }
+                .text-left{
+                    text-align: left !important;
+                }
+                .text-right{
+                    text-align: right !important;
+                }
+                
+                
+
+                /* Payment Schedule Details */
+                .table-header{
+                    font-size: 18px;
+                    font-weight: 700;
+                    color:white;
+                    text-align: left;
+                    text-transform: uppercase;
+                    padding: 6px 10px;
+                    margin: 10px 0px;
+                    border: 0.5px solid #996600;
+                    background: #b07603;
+                }
+
+                /* Other Details */
+                .rich-text-area{
+                    font-size: 12px !important;
+                }
+                .term-conditions{
+                    font-size: 12px !important;
+                    padding: 10px 0px;
+                }
+                .signature{
+                    font-size: 14px !important;
+                    font-weight: 600;
+                    margin-top: 60px;
+                }
+                .section-important-instructions{
+                    margin-top: 25px;
+                }
+                .declaration-details-table td{
+                    padding: 0px 15px;
+                    border-left:15px solid white;
+                    border-right:15px solid white;
+                }
+                .border-bottom{
+                   padding: 15px 0px;
+                    margin: 150px 0px 10px 0px;
+                }
+                .signature{
+                    font-size: 14px !important;
+                    font-weight: 600;
+                    margin: 60px 0px 0px 0px;
+                }
+                .applicant-label{
+                    font-size: 12px;
+                    padding: 10px;
+                }
+
+                .letter-head-wrapper{
+                    width: 100vw;
+                    height: 100vh;
+                }
+
+                .letter-head-wrapper img{
+                    width: 100%;
+                    height: auto;
+                    margin-top: 2px;
+                }
+                .page{
+                    border: 1.4px solid rgb(125, 125, 125);
+                    margin: 15px;
+                    padding: 10px 0px;
+                    height: 797pt !important;
+                }
+                .second-page{
+                    background-position: bottom;
+                    background-repeat: no-repeat;
+                    height: 802pt !important;
+                    padding-bottom: 12px;
+                    box-sizing: border-box;
+                }
+                
+                /* Applicant Details Table */
+                .applicant-details-table, .applicant-details-table th, .applicant-details-table td{
+                    border: 1px solid rgb(45, 45, 45);
+                    border-collapse: collapse;
+                    table-layout: auto;
+                }
+                .office-only-details-table, .office-only-details-table th, .office-only-details-table td{
+                    border: 1px solid rgb(45, 45, 45);
+                    border-collapse: collapse;
+                    table-layout: fixed;
+                }
+                .office-only-details-table td, th{
+                    padding: 7px 8px;
+                }
+                .office-only-details-table tr th{
+                    background: #b07603;
+                    color: white;
+                    font-size: 16px;
+                }
+                .applicant-details-table tr th{
+                    background: #b07603;
+                    color: white;
+                    font-size: 16px;
+                }
+                
+                .section-payment-details, .section-termsCondition-details,
+                .section-documentList-details, .section-declaration-details, 
+                .section-termsCondition-details, .section-channel-partner-details{
+                    page-break-inside: avoid;
+                }
+
+                .personal-details-table tr :first-child{
+                    font-weight: 600;
+                }
+                .personal-details-table td:first-child{
+                    width: 35%;
+                }
+
+                section{
+                    page-break-inside: avoid;
+                }
+                .cover-page-content-wrapper{
+                    margin: 50px;
+                }
+                .cover-page-content-1{
+                    text-align: center;
+                    padding-top: 200px;
+                }
+                .cover-page-content-2{
+                    margin-top: 400px;
+                }
+                .cover-page-content-2 p{
+                    font-size: 24px;
+                    font-weight: 600;
+                    padding: 0px 110px;
+                }
+                .cover-page-content-2 span{
+                    margin: 0px 15px;
+                    line-height: 40px;
+                    font-weight: 500;
+                    border-bottom: 1.6px solid black;
+
+                }
+            </style>
+            
+        </head>
+        <body>
+
+
+
+            <apex:repeat value="{!bookingWrapperList}" var="bookingWrapper">
+                    
+                    <!-- Cover Page : Front -->
+                    <section class="cover-page"  style="width:100%; padding:20px;">
+                        <div class="cover-page-content-wrapper">
+                            
+                            <div class="cover-page-content-1">
+                                    <img height="120px" src="{!$RESOURCE.Shraddha_Logo_Front_Page}" />
+                            </div>
+
+                            <div class="cover-page-content-2">
+                                <p>Name &nbsp;&nbsp; : <span>{!bookingWrapper.applicantDetails.applicantName}</span></p>
+                                <p>Flat No  : <span>{!bookingWrapper.unitDetails.unitNo} (Floor No - {!bookingWrapper.unitDetails.floorNo})</span></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Page Break -->
+                    <div style="page-break-after: always"/>
+
+                    <!-- Section : Shraddha Logo -->
+                    <section>
+                        <div class="logo-wrapper" style="padding:20px; text-align:center">
+                            <img class="top-logo" src="{!$RESOURCE.Shraddha_Lifespaces_Logo}" width="auto" height="50px" />
+                        </div>
+                        <table style="margin:0px 15px">
+                            <tr>
+                                <td class="text-left">Form No : {!bookingWrapper.otherDetails.formNo}</td>
+                                <td class="text-right">Date : {!bookingWrapper.otherDetails.bookingDate}</td>
+                            </tr>
+                        </table>
+                    </section> 
+
+                    <!-- Section : Personal Details -->
+                    <section class="section-personal-details">
+                            <table class="personal-details-table">
+                                <tr>
+                                    <th colspan="2" class="table-header">A) Personal Details</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td>Name of Applicant </td>
+                                    <td>{!bookingWrapper.applicantDetails.applicantName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Residential Address</td>
+                                    <td>{!bookingWrapper.applicantDetails.presentAddress} </td>
+                                </tr>
+                                <tr>
+                                    <td>Occupation</td>
+                                    <td>{!bookingWrapper.applicantDetails.occupation}</td>
+                                </tr>
+                                <tr>
+                                    <td>Permanent Address</td>
+                                    <td>{!bookingWrapper.applicantDetails.permanentAddress}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email Address</td>
+                                    <td>{!bookingWrapper.applicantDetails.email}</td>
+                                </tr>
+                                <tr>
+                                    <td>Contact No.</td>
+                                    <td>{!bookingWrapper.applicantDetails.mobile}</td>
+                                </tr>
+                                <tr>
+                                    <td>Nationality Status</td>
+                                    <td>{!bookingWrapper.applicantDetails.nationality}</td>
+                                </tr>
+                                <tr style="{!IF( bookingWrapper.applicantDetails.isNonIndianResident == true, '', 'display:none;')}">
+                                    <td>Local Contact Name </td>
+                                    <td>{!bookingWrapper.applicantDetails.localContactName}</td>
+                                </tr>
+                                <tr style="{!IF( bookingWrapper.applicantDetails.isNonIndianResident == true, '', 'display:none;')}">
+                                    <td>Local Contact Number </td>
+                                    <td> {!bookingWrapper.applicantDetails.localContactNumber} </td>
+                                </tr>
+                            </table>
+
+                            <table class="applicant-details-table">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Relation with 1st Applicant</th>
+                                    <th>Date Of Birth </th>
+                                    <th>Anniversary Date </th>
+                                    <th>PAN No </th>
+                                </tr>
+                                <apex:repeat value="{!bookingWrapper.applicantDetails.allApplicantDetailsRowWise}" var="allApplicantDetailsRow">
+                                    <tr>
+                                        <apex:repeat value="{!allApplicantDetailsRow}" var="allApplicantDetails">
+                                            <td> {!allApplicantDetails} </td>
+                                        </apex:repeat>
+                                    </tr>
+                                </apex:repeat>
+
+                            </table>
+                    </section>
+
+                    <!-- Section : Unit Details -->
+                    <section class="section-unit-details">
+                            <table class="personal-details-table">
+                                <tr>
+                                    <th colspan="2" class="table-header">B) Details of Flat Purchased</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td>Project Name </td>
+                                    <td>{!bookingWrapper.unitDetails.projectName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Flat No</td>
+                                    <td>{!bookingWrapper.unitDetails.unitNo} </td>
+                                </tr>
+                                <tr>
+                                    <td>RERA Carpet Area (Sq.ft)</td>
+                                    <td>{!bookingWrapper.unitDetails.carpetAreaSqft}</td>
+                                </tr>
+                                <tr>
+                                    <td>Car Parking Count</td>
+                                    <td>{!bookingWrapper.unitDetails.noOfParkings}</td>
+                                </tr>
+                                <tr>
+                                    <td>Flat Consideration Value (Rs.)</td>
+                                    <!-- <td><p style="display:inline-block; width:150px; text-align:right; font-weight:500">{!bookingWrapper.unitDetails.totalAgreementValue}</p></td> -->
+                                    <td>{!bookingWrapper.unitDetails.totalAgreementValue}</td>
+                                </tr>
+                                <tr>
+                                    <td>Car Parking Value (Rs.)</td>
+                                    <!-- <td><p style="display:inline-block; width:150px; text-align:right; font-weight:500">{!bookingWrapper.unitDetails.totalCarParkAmount}</p></td> -->
+                                    <td>{!bookingWrapper.unitDetails.totalCarParkAmount}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Agreement Value (Rs.)</td>
+                                    <!-- <td><p style="display:inline-block; width:150px; text-align:right; font-weight:500">{!bookingWrapper.unitDetails.totalAgreementValue}</p></td> -->
+                                    <td>{!bookingWrapper.unitDetails.totalAgreementValue}</td>
+                                </tr>
+                            </table>
+                    </section>
+
+                    <!-- Section : Payment Schedule Details -->
+                    <section class="section-payment-schedule-details">
+                        <table class="">
+                            <tr>
+                                <th colspan="2" class="table-header">C) Payment Schedule</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>As per the cost sheet / Quotation attached herewith.</td>
+                            </tr>
+                        </table>
+                    </section>
+
+                    <!-- Section : Source Of Funding Details -->
+                    <section class="section-sourceOfFunding-details">
+                        <table class="personal-details-table">
+                            <tr>
+                                <th colspan="2" class="table-header">D) Source Of Funding</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Have you opted for Loan ?</td>
+                                <td style="{!IF( bookingWrapper.homeLoanAssement.isOptedForLoan == true, '', 'display:none')}">Yes</td>
+                                <td style="{!IF( bookingWrapper.homeLoanAssement.isOptedForLoan == false, '', 'display:none')}">No</td>
+                            </tr>
+                            <tr style="{!IF( bookingWrapper.homeLoanAssement.isOptedForLoan == true, '', 'display:none')}">
+                                <td>Name of the Bank/Financial Institute </td>
+                                <td> {! bookingWrapper.homeLoanAssement.nameOfBank} </td>
+                            </tr>
+                            <tr style="{!IF( bookingWrapper.homeLoanAssement.isOptedForLoan == true, '', 'display:none')}">
+                                <td>Name and Contact of Bank Officer at Bank/FI </td>
+                                <td> {! bookingWrapper.homeLoanAssement.bankOfficerName} - {! bookingWrapper.homeLoanAssement.bankOfficerContactNo}</td>
+                            </tr>
+                            <tr style="{!IF( bookingWrapper.homeLoanAssement.isOptedForLoan == true, '', 'display:none')}">
+                                <td>Own Contribution Amount</td>
+                                <td> {! bookingWrapper.homeLoanAssement.homeLoanAmount} </td>
+                            </tr>
+                        </table>
+                    </section>
+
+                    <!-- Section : Source Of Booking Details -->
+                    <section class="section-sourceOfBooking-details">
+                        <table class="personal-details-table">
+                            <tr>
+                                <th colspan="2" class="table-header">E) Source Of Booking</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Booking Source </td>
+                                <td>{!bookingWrapper.BookingSourceDetails.sourceOfBooking}</td>
+                            </tr>
+                            <tr>
+                                <td>Booking Sub-source </td>
+                                <td>{!bookingWrapper.BookingSourceDetails.subSourceOfBooking}</td>
+                            </tr>
+                        </table>
+                    </section>
+                    
+                    <!-- Section : Channel Partner Details -->
+                    <section class="section-channel-partner-details">
+                        <table class="personal-details-table">
+                            <tr>
+                                <th colspan="2" class="table-header">E) Channel Partner Details</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Name Of Channel Partner/Agency</td>
+                                <td>{!bookingWrapper.BookingSourceDetails.channelPartnerDetails.channelPartnerName}</td>
+                            </tr>
+                            <tr>
+                                <td>Contact Person (POC)</td>
+                                <td>{!bookingWrapper.BookingSourceDetails.channelPartnerDetails.channelPartnerPOC}</td>
+                            </tr>
+                            <tr>
+                                <td>Mobile No</td>
+                                <td>{!bookingWrapper.BookingSourceDetails.channelPartnerDetails.phone1}</td>
+                            </tr>
+                            <tr>
+                                <td>Email </td>
+                                <td>{!bookingWrapper.BookingSourceDetails.channelPartnerDetails.email}</td>
+                            </tr>
+                            <tr>
+                                <td>RERA No.</td>
+                                <td>{!bookingWrapper.BookingSourceDetails.channelPartnerDetails.reraNo}</td>
+                            </tr>
+                            <tr><td></td><td></td></tr>
+                            <tr><td></td><td></td></tr>
+                            <tr>
+                                <td>Signature of Channel Partner</td>
+                                <td>_________________</td>
+                            </tr>
+                        </table>
+                    </section>
+
+                    <!-- Section : Booking Payment Details -->
+                    <section class="section-booking-payment-details">
+                        <table class="">
+                            <tr>
+                                <th colspan="5" class="table-header">G) Booking Payment Details</th>
+                            </tr>
+                            <tr>
+                                <th colspan="5"></th>
+                            </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <p><b>Cheque/Draft/UTR No:</b> Dated __/__/_____ of Rs.x,xx,xxx (Rupees in words : x lakh x thousands x hundred only) Drawn on:</p>
+                                    <br/>
+                                    <p>I/We, the undersigned intend to book a residential flat/shop and request to allot me/us as per your terms and
+                                          conditions, which I/We has/have read, understood and agree to abide by the same as stipulated by you.
+                                          I/We remit the above mentioned payment as Earnest Money to be paid at the time of booking.
+                                    </p>
+                                    <br/>
+                                    <p>
+                                        I/We, agree to pay further installments of sales price and other charges as stipulated/called for by you. I/We
+                                        further agree to execute necessary Agreement for Sale as and when instructed by you.
+                                    </p>
+                                    <br/>
+                                    <p><b>Photograph and signature of the Applicant/s</b></p>
+                                    <br/>
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <apex:repeat value="{!bookingWrapper.applicantDetails.allApplicantNames}" var="applicantName">
+                                        <td>
+                                            <p class="text-center text-bold">{!applicantName}</p>
+                                            <p class="border-bottom text-center">________________</p>
+                                        </td>
+                                </apex:repeat>
+                            </tr>
+                        </table>
+                    </section>
+
+
+                    <!-- Page Break -->
+                    <div style="page-break-after: always"/>
+
+                    <!-- Section : Terms and Condition Details -->
+                    <section class="section-terms-and-condition-details">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td class="table-header text-center" colspan="5">
+                                        Terms and Conditions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody class="rich-text-body">
+                                <tr>
+                                    <td colspan="5">
+                                        <apex:outputText value="{!bookingWrapper.otherDetails.termsAndConditions}" escape="false"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot >
+                                <tr>
+                                    <apex:repeat value="{!bookingWrapper.applicantDetails.allApplicantNames}" var="applicantName">
+                                        <td>
+                                            <p class="text-center t-bold" style="margin:10px 0px 0px 0px">{!applicantName}</p>
+                                            <p style="text-align:center; margin:40px 0px 0px 0px">________________</p>
+                                        </td>
+                                    </apex:repeat>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+                    
+                    </section>
+
+                    <!-- Page Break -->
+                    <div style="page-break-after: always"/>
+
+                    <!-- Section : Declaration Details -->
+                    <section class="section-declaration-details">
+                        <table>
+                            <tr>
+                                <td class="table-header text-center" colspan="5">
+                                    Declaration
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <br/>
+                                    I/We the undersigned Applicant(s), do hereby declare that the above mentioned particulars/ information given by
+                                    me/us are irrevocable, true and correct to my/our knowledge and no material fact has beenconcealed there from.
+                                    I/We have gone through and understood the terms and conditions written in this Booking Form and accept the same
+                                    and which shall ipso - facto be applicable to my/our legal heirs and successors. I/We declare thatin case of non-
+                                    allotment of the applied Premises, my/our claim shall be limited only to the extent of amount paid by me/using
+                                    relation to this Booking Form.
+                                </td>
+                            </tr>
+                            <tr>
+                                <apex:repeat value="{!bookingWrapper.applicantDetails.allApplicantNames}" var="applicantName">
+                                    <td>
+                                        <p class="text-center t-bold" style="margin:10px 0px 0px 0px">{!applicantName}</p>
+                                        <p style="text-align:center; margin:40px 0px 0px 0px">________________</p>
+                                    </td>
+                                </apex:repeat>
+                            </tr>
+                        </table>
+                    
+                    </section>
+
+                    <!-- Section : For Office Use Only  -->
+                    <section class="section-declaration-details">
+                        <table>
+                            <tr>
+                                <td class="table-header text-center" colspan="5">
+                                    For Office Use Only
+                                </td>
+                            </tr>
+                            <table class="office-only-details-table">
+                                <tr>
+                                    <th>Signatory</th>
+                                    <th>Name</th>
+                                    <th>Signature</th>
+                                </tr>
+                                <tr>
+                                    <td>Social Manager</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Sales Manager</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Site Head</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>CRM Head</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                            </table>
+
+                            <tr>
+                                <td class="t-bold" style="padding:10px 20px;"> Remarks (If any) : </td>
+                            </tr>
+                        </table>
+                    
+                    </section>
+
+                    <!-- Cover Page : Back -->
+                    <section class="cover-page"  style="width:100%; padding:20px;">
+                        <div class="cover-page-content-wrapper">
+                            
+                            <div class="cover-page-content-1">
+                                    <img height="120px" src="{!$RESOURCE.Shraddha_Logo_Front_Page}" />
+                            </div>
+
+                            <div class="cover-page-content-2" style="text-align:center; line-height:25px;">
+                                Site Address: Shivkunj, Caves Road, Jogeshwari (E), Mumbai - 400 060
+                                <br/>
+                                Contact: 8879 44 6666 Email: sales@shraddhalifespaces.com
+                                <br/>
+                                www.shraddhalifespaces.com | Maharera No. : P51800027559
+                            </div>
+                        </div>
+                    </section>
+
+            </apex:repeat>    
+
+        </body>
+    </html>
+</apex:page>

@@ -1,0 +1,274 @@
+<template>
+	<div style="background-color: white; margin: 10px; padding: 10px;">
+		<div if:true={isSpinner} class="spinner-container">
+			<div class="loader"></div>
+			<div class="wait-text">Please wait...</div>
+		</div>
+		<template if:false={accScuccess}>
+			<template if:false={showData}>
+				<center>
+					<p style="font-weight:bold;font-size:25px;color:red">{errorMsg}</p>
+				</center>
+			</template>
+			<template if:true={showData}>
+				<template if:true={alreadyCheckList}>
+					<center>
+						<p style="font-weight:bold;font-size:25px;color:red">{errorMsg}</p>
+					</center>
+				</template>
+				<template if:false={alreadyCheckList}>
+					<div style="margin: 10px; padding: 10px;">
+						<h1 class="header">Checklist for Possession</h1><br>
+						<p class="booking-info" style="text-align: right;"><b>Booking Date :</b>
+							{booking.Booking_Date__c}</p>
+						<br>
+						<p class="booking-info"><b>Name :</b> {booking.Opportunity__r.Name}</p><br>
+						<p class="booking-info"><b>Address :</b> {booking.Primary_Applicant_Address__c}</p><br>
+						<div style="display: flex; justify-content: space-between;">
+							<p class="booking-info" if:true={booking.Unit__r} style="float: left;"><b>Flat No. :</b>
+								{booking.Unit__r.Name}</p>
+							<p class="booking-info" if:true={booking.Tower__r} style="float: right;"><b>Wing No. :</b>
+								{booking.Tower__r.Name}</p>
+						</div>
+					</div>
+					<br>
+					<div if:true={isCRMHead} class="slds-p-around_medium">
+						<div if:false={isCustomer} class="slds-p-around_medium">
+							<template if:true={checklistData}>
+								<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+									<thead>
+										<tr>
+											<th scope="col" style="background-color : #deeaf6 ;">Sr. Number</th>
+											<th scope="col" style="background-color : #deeaf6 ;">Section</th>
+											<th scope="col" style="background-color : #deeaf6 ;">Particulars</th>
+											<th scope="col" style="background-color : #deeaf6 ;">CRM Status</th>
+											<th scope="col" style="background-color : #deeaf6 ;">FM Status</th>
+											<th scope="col" style="background-color : #deeaf6 ;">Remarks / Info</th>
+										</tr>
+									</thead>
+									<tbody>
+										<template for:each={checklistData} for:item="item">
+											<tr key={item.Id}>
+												<td>{item.Name}</td>
+												<td>{item.Section__c}</td>
+												<td>{item.Particulars__c}</td>
+												<td>{item.Status__c}</td>
+												<td>{item.FM_Status__c}</td>
+												<td>{item.Remarks__c}</td>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</template>
+							<br><br>
+							<!-- Show only for CRM head -->
+							<template if:true={isCRMHead}>
+								<div class="flex">
+									<lightning-button data-approval-status="Rejected" class="slds-m-left_x-small"
+										variant="destructive" label="Reject" onclick={handleCRMHeadApproval}>
+									</lightning-button>
+									<lightning-button data-approval-status="Approved" class="slds-m-left_x-small"
+										variant="brand" label="Approve" onclick={handleCRMHeadApproval}>
+									</lightning-button>
+								</div>
+							</template>
+							<template if:true={error}>
+								<p class="slds-text-color_error">Error: {error.body.message}</p>
+							</template>
+						</div>
+					</div>
+					<br><br>
+					<div if:true={isCRMManager} class="slds-p-around_medium">
+						<div class="slds-p-around_medium">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<tbody>
+									<template if:true={possessionChecklistArray}>
+										<template for:each={possessionChecklistArray} for:item="sectionObj"
+											for:index="index">
+
+											<tr key={sectionObj} class="slds-hint-parent section-header">
+												<th style="background-color:rgb(226, 239, 217)" colspan="5">
+													{sectionObj.sectionName}
+													<lightning-input class="align-right" type="checkbox"
+														label="Accept All" onchange={handleAcceptAllCRMChecklist}
+														data-index={index}>
+													</lightning-input>
+												</th>
+
+											</tr>
+											<tr key={sectionObj} class="column-headers">
+												<th style="background-color : #deeaf6 ;">Sr. Number</th>
+												<th style="background-color : #deeaf6 ;">Particulars</th>
+												<th style="background-color : #deeaf6 ;">Status</th>
+												<template if:false={sectionObj.isHideRemark}>
+													<th style="background-color : #deeaf6 ;">Remarks / Info</th>
+												</template>
+											</tr>
+											<template for:each={sectionObj.items} for:item="pc" for:index="itemIndex">
+												<tr key={pc.Id} class="data-row">
+													<td>{pc.Sr_Number__c}</td>
+													<td>{pc.Particulars__c}</td>
+													<td>
+														<lightning-combobox name="Status__c"
+															data-particular={pc.Particulars__c} value={pc.Status__c}
+															data-index={pc.Index__c} options={ItemStatus}
+															onchange={handleChange}>
+														</lightning-combobox>
+													</td>
+													<template if:false={pc.isHideRemark}>
+														<td>
+															<lightning-textarea value={pc.Remarks__c}
+																data-particular={pc.Particulars__c} type="text"
+																name="remarks" data-index={pc.Index__c}
+																onchange={handleChange}>
+															</lightning-textarea>
+														</td>
+													</template>
+												</tr>
+											</template>
+										</template>
+									</template>
+									<template if:false={possessionChecklistArray}>
+										<div>Loading...</div>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<br><br>
+
+					<div if:true={isAccManager} class="slds-p-around_medium">
+						<div if:false={isCRMManager} class="slds-p-around_medium">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<tbody>
+									<template if:true={possessionChecklistArray}>
+										<template for:each={possessionChecklistArray} for:item="sectionObj"
+											for:index="index">
+
+											<tr key={sectionObj} class="slds-hint-parent section-header">
+												<th style="background-color:rgb(226, 239, 217)" colspan="5">
+													{sectionObj.sectionName}
+													<lightning-input class="align-right" type="checkbox"
+														label="Accept All" onchange={handleAcceptAllAccounthecklist}
+														data-index={index}>
+													</lightning-input>
+												</th>
+
+											</tr>
+											<tr key={sectionObj} class="column-headers">
+												<th style="background-color : #deeaf6 ;">Sr. Number</th>
+												<th style="background-color : #deeaf6 ;">Particulars</th>
+												<th style="background-color : #deeaf6 ;">Status</th>
+												<template if:false={sectionObj.isHideRemark}>
+													<th style="background-color : #deeaf6 ;">Remarks / Info</th>
+												</template>
+											</tr>
+											<template for:each={sectionObj.items} for:item="pc" for:index="itemIndex">
+												<tr key={pc.Id} class="data-row">
+													<td>{pc.Sr_Number__c}</td>
+													<td>{pc.Particulars__c}</td>
+													<td>
+														<lightning-combobox name="FM_Status__c"
+															data-particular={pc.Particulars__c} value={pc.FM_Status__c}
+															data-index={pc.Index__c} options={ItemStatus}
+															onchange={handleChange}>
+														</lightning-combobox>
+													</td>
+													<template if:false={pc.isHideRemark}>
+														<td>
+															<lightning-textarea value={pc.Remarks__c}
+																data-particular={pc.Particulars__c} type="text"
+																name="remarks" data-index={pc.Index__c}
+																onchange={handleChange}>
+															</lightning-textarea>
+														</td>
+													</template>
+												</tr>
+											</template>
+										</template>
+									</template>
+									<template if:false={possessionChecklistArray}>
+										<div>Loading...</div>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<br><br>
+
+					<div if:true={isCustomer} class="slds-p-around_medium">
+						<div if:false={isCRMManager} class="slds-p-around_medium">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<tbody>
+									<template if:true={possessionChecklistArray}>
+										<template for:each={possessionChecklistArray} for:item="sectionObj"
+											for:index="index">
+
+											<tr key={sectionObj} class="slds-hint-parent section-header">
+												<th style="background-color:rgb(226, 239, 217)" colspan="5">
+													{sectionObj.sectionName}
+													<lightning-input class="align-right" type="checkbox"
+														label="Accept All" onchange={handleAcceptAllCustomerChecklist}
+														data-index={index}>
+													</lightning-input>
+												</th>
+
+											</tr>
+											<tr key={sectionObj} class="column-headers">
+												<th style="background-color : #deeaf6 ;">Sr. Number</th>
+												<th style="background-color : #deeaf6 ;">Particulars</th>
+												<th style="background-color : #deeaf6 ;">Status</th>
+												<template if:false={sectionObj.isHideRemark}>
+													<th style="background-color : #deeaf6 ;">Remarks / Info</th>
+												</template>
+											</tr>
+											<template for:each={sectionObj.items} for:item="pc" for:index="itemIndex">
+												<tr key={pc.Id} class="data-row">
+													<td>{pc.Sr_Number__c}</td>
+													<td>{pc.Particulars__c}</td>
+													<td>
+														<lightning-combobox name="Customer_Status__c"
+															data-particular={pc.Particulars__c}
+															value={pc.Customer_Status__c} data-index={pc.Index__c}
+															options={ItemStatus} onchange={handleChange}>
+														</lightning-combobox>
+													</td>
+													<template if:false={pc.isHideRemark}>
+														<td>
+															<lightning-textarea value={pc.Remarks__c}
+																data-particular={pc.Particulars__c} type="text"
+																name="remarks" data-index={pc.Index__c}
+																onchange={handleChange}>
+															</lightning-textarea>
+														</td>
+													</template>
+												</tr>
+											</template>
+										</template>
+									</template>
+									<template if:false={possessionChecklistArray}>
+										<div>Loading...</div>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<!-- Show only to other than CRM head  -->
+					<template if:true={showSubmitButton}>
+						<div style="text-align:center;padding:10px;">
+							<lightning-button variant="brand" label="Submit" onclick={handleSubmit}
+								class="slds-m-left_x-small">
+							</lightning-button>
+						</div>
+					</template>
+				</template>
+			</template>
+		</template>
+		<template if:true={accScuccess}>
+			<center>
+				<p style="font-weight:bold;font-size:25px;color:green">{accScuccessMessage}</p>
+			</center>
+		</template>
+	</div>
+	<c-custom-toast></c-custom-toast>
+</template>

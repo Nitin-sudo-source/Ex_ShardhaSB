@@ -2,12 +2,15 @@
  * @description       : 
  * @author            : nitinSFDC@exceller.SFDoc
  * @group             : 
- * @last modified on  : 07-04-2025
+ * @last modified on  : 08-04-2025
  * @last modified by  : nitinSFDC@exceller.SFDoc
 **/
 import { LightningElement, api, wire, track } from 'lwc';
 import getProject from '@salesforce/apex/Ex_BulkDemandApprovalDashboard.getProject';
 import getTower from '@salesforce/apex/Ex_BulkDemandApprovalDashboard.getTower';
+import getBookings from '@salesforce/apex/Ex_BulkDemandApprovalDashboard.getBookings';
+import getPMDetails from '@salesforce/apex/Ex_BulkDemandApprovalDashboard.getPMDetails';
+import getDemandDetails from '@salesforce/apex/Ex_BulkDemandApprovalDashboard.getDemandDetails';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
@@ -37,28 +40,62 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
     @track activeStatusFilter = ''; //
     @track sortDirection = 'ASC';
     @track sortedBy = '';
+    @track pmDetail = [];
 
-    @track sortIcons = {
-        bookingNo: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
-        bookingStatus: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
-        registrationDate: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
-        UnitName: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
-        fileType: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' }
-    };
+    isListening = false;
 
+    @track pickListOrdered = [];
+    @track searchResults;
+    @track selectedSearchResult = {};
+    @track pmDetailsOptions;
 
+    @track showModal = false;
+    @track modalRecords = [];
+    @track modalTitle = '';
+    autoCloseTimeout;
+    @track getCount = 0;
+    pmId = '';
+
+   
+
+   
+
+    
     @wire(getProject) getProjectData;
     @wire(getTower, { ProjectId: '$projectId' }) getTowerData;
 
+    renderedCallback() {
+        if (this.isListening) return;
+
+        window.addEventListener("click", (event) => {
+            this.hideDropdown(event);
+        });
+        this.isListening = true;
+    }
+
+    get selectedValue() {
+        return this.selectedSearchResult?.label ?? null;
+    }
+
     get projectOptions() {
         return this.getProjectData.data ? this.getProjectData.data.map(p => ({ label: p.Name, value: p.Id })) : [];
+    }
+
+    get pm() {
+        const pmOptions = this.pmDetail 
+            ? this.pmDetail.map(item => ({
+                label: item.paymentmilestone.Milestone_Name__c,
+                value: item.paymentmilestone.Id
+            })) 
+            : [];
+            return [{ label: 'All', value: 'all' }, ...pmOptions];
+
     }
 
     get towerOptions() {
         return this.getTowerData.data ? this.getTowerData.data.map(t => ({ label: t.Name, value: t.Id })) : [];
     }
 
-    
     getSortIcon() {
         return this.sortDirection === 'ASC' ? 'utility:arrowup' : 'utility:arrowdown';
     }
@@ -121,10 +158,6 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
         return this.currentPage === this.totalPages;
     }
 
-    //Pagination Logic End
-
-    //Title to Show on Page Start
-
     get projectTitle() {
         return this.projectId ? 'Project Selected' : 'Please Select Project';
     }
@@ -134,27 +167,369 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
     }
 
     get recordSelected() {
-        const count = this.mainList.length > 0 ? this.mainList.length : 0;
-        if (count > 0) {
-            const message = count === 1 ? '1 File has been selected.' : `${count} Files have been selected.`;
-            this.showToast('Records Selected', message, 'success');
+        // this.getCount = 0;
+        let count = 0;
 
+        for (let record of this.regData) {
+            if (
+                this.mainList.includes(String(record.demand.Id)) &&
+                record.isSelected &&
+                record.approvalStatus === 'Pending for approval'
+            ) {
+                count++;
+            }
         }
-        // else if(count == 0){
-        //     const message = count === 0 ? 'No File has been selected.' : '';
-        //     this.showToast('Records Selected', message, 'warning');
-        // }
+        //this.getCount = count;
         return count;
     }
 
+    get recordSelectedRejected() {
+        //this.getCount = 0;
+        let count = 0;
+
+        for (let record of this.regData) {
+            if (
+                this.mainList.includes(String(record.demand.Id)) &&
+                record.isSelected &&
+                record.approvalStatus === 'Rejected'
+            ) {
+                count++;
+            }
+        }
+        //this.getCount = count;
+        return count;
+    }
+
+    get recordSelectedApproved() {
+        // this.getCount = 0;
+        let count = 0;
+
+        for (let record of this.regData) {
+            if (
+                this.mainList.includes(String(record.demand.Id)) &&
+                record.isSelected &&
+                record.approvalStatus === 'Approved'
+            ) {
+                count++;
+            }
+        }
+        //this.getCount = count;
+        return count;
+    }
+
+   
+
+    
+    filteronview(filterstatus) {
+        return this.regData
+            .filter(record =>
+                this.mainList.includes(String(record.demand.Id)) &&
+                record.isSelected &&
+                record.approvalStatus === filterstatus
+            )
+            .map(record => `• ${record.demand.Name}`);
+    }
+
+
+    handleBulkPending(event) {
+        const dataName = event.target.dataset.name;
+        const filterData = this.filteronview(dataName);
+
+        this.showModalWithRecords(`Selected Records ${dataName}`, filterData, true);
+
+        if (filterData.length === 0) {
+            this.showModalWithRecords('No Selected Records', filterData, true);
+        }
+
+        this.showModal = true;
+    }
+
+
+    getBooking() {
+        getBookings({ ProjectId: this.projectId, TowerId: this.towerId }).then((result) => {
+            console.log('getBooking result: ' + JSON.stringify(result));
+            // Transform booking data into picklist format
+            this.pickListOrdered = result.map(item => ({
+                label: item.booking.Name + ' - ' + item.booking.Unit__r.Name + ' - ' + item.booking.Primary_Applicant_Name__c,
+                value: item.booking.Id,
+                qid: item.booking.Quotation__c
+            }));
+
+            // Optional: sort alphabetically by label
+            this.pickListOrdered.sort((a, b) => a.label.localeCompare(b.label));
+
+        });
+    }
+
+
+    getPMDetail() {
+        getPMDetails({ qId: this.selectedSearchResult.qid }).then((result) => {
+            console.log('getPMDetail result: ' + JSON.stringify(result));
+            this.pmDetail = result;
+            this.pmDetailsOptions = result.map(item => ({
+                label: item.paymentmilestone.Name,
+                value: item.paymentmilestone.Id,
+            }));
+            });
+            console.log(this.pmDetailsOptions);
+    }
+
+
+    fetchDocumentRecords() {
+
+        console.log('label :' + this.selectedSearchResult.label);
+        console.log('value: :' + this.selectedSearchResult.value);
+        console.log('qid: :' + this.selectedSearchResult.qid);
+        console.log('projectId: :' + this.projectId);
+        console.log('towerId: :' + this.towerId);
+
+
+        if (this.projectId === '' || this.projectId == '') {
+            this.showToast('Warning', 'Please select Project', 'warning');
+            return;
+        } else if (this.towerId === '' || this.towerId == '') {
+            this.showToast('Warning', 'Please select Tower', 'warning');
+            return;
+        }
+        // else if (this.documentType == null || this.documentType === '' || this.documentType == '') {
+        //     this.showToast('Warning', 'Please select Document Type', 'warning');
+        //     return;
+        // }
+        else {
+            this.showTable = false;
+            this.isSpinner = true;
+            getDemandDetails({ bId: this.selectedSearchResult.value, startDate: this.startDate, endDate: this.endDate, mType: this.pmId })
+                .then((result) => {
+                    console.log('fetch demands' + JSON.stringify(result));
+
+                    if (result != null) {
+                        this.regData = result.map((item, index) => ({
+                            ...item,
+                            // contentSizeKB: (item.contentSize / 1024).toFixed(2) + 'KB',
+                            isSelected: false,
+                            // isDownloaded: item.isDownloaded,
+                            // "url": `/sfc/servlet.shepherd/document/download/${item.contentDocumentId}`,
+                            "serialNumber": index + 1,
+                            // previewUrl: `/sfc/servlet.shepherd/version/renditionDownload?rendition=THUMB720BY480&versionId=${item.contentVersionId}`
+
+                        }));
+                        this.showTable = true;
+                        this.isSpinner = false;
+                        console.log('regData: ' + JSON.stringify(this.regData));
+                        this.selectedList = this.regData;
+                        this.selectAllcheckBox = false;
+                        this.mainList = [];
+                        // this.finalurl = '';
+                        // this.url = [];
+                        this.modalRecords = [];
+                        //console.log('selectedList: ' + JSON.stringify(this.selectedList));
+
+                    } else {
+                        this.showToast('Warning', 'No Demands Found', 'warning');
+                        this.showTable = false;
+                        this.isSpinner = false;
+                        this.selectAllcheckBox = false;
+                        // this.finalurl = '';
+                        this.mainList = [];
+                        this.modalRecords = [];
+                    }
+
+                    if (this.regData.length === 0) {
+                        this.showToast('Warning', 'No Demands Found', 'warning');
+                        this.showTable = false;
+                        this.isSpinner = false;
+                        this.selectAllcheckBox = false;
+                        // this.finalurl = '';
+                        this.mainList = [];
+                        this.modalRecords = [];
+                    }
+
+
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.showToast('Warning', 'Something Went Wrong', 'warning');
+                    this.showTable = false;
+                    this.isSpinner = false;
+                    this.selectAllcheckBox = false;
+                    // this.finalurl = '';
+                    this.mainList = [];
+                    this.modalRecords = [];
+                });
+            this.showModalWithRecords('No Selected Record', this.modalRecords, false);
+        }
+
+
+    }
+
+
+
+
+
+
+    hideDropdown(event) {
+        const cmpName = this.template.host.tagName;
+        const clickedElementSrcName = event.target.tagName;
+        const isClickedOutside = cmpName !== clickedElementSrcName;
+        if (this.searchResults && isClickedOutside) {
+            this.clearSearchResults();
+        }
+    }
+
+    search(event) {
+        const input = event.detail.value.toLowerCase();
+        const result = this.pickListOrdered.filter((pickListOption) =>
+            pickListOption.label.toLowerCase().includes(input)
+        );
+        this.searchResults = result;
+    }
+
+    selectSearchResult(event) {
+        const selectedValue = event.currentTarget.dataset.value;
+        const qid = event.target.dataset.qid;
+        this.selectedSearchResult = this.pickListOrdered.find(
+            (pickListOption) => pickListOption.value === selectedValue
+        );
+        console.log('selectedSearchResult' + JSON.stringify(this.selectedSearchResult));
+        this.getPMDetail();
+        this.clearSearchResults();
+    }
+
+    clearSearchResults() {
+        this.searchResults = null;
+    }
+
+    showPickListOptions() {
+        if (!this.searchResults) {
+            this.searchResults = this.pickListOrdered;
+        }
+    }
+
+
+
+    // @track sortIcons = {
+    //     bookingNo: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
+    //     bookingStatus: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
+    //     registrationDate: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
+    //     UnitName: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' },
+    //     fileType: { icon: 'utility:arrowdown', text: 'ASC', variant: 'success', size: 'small' }
+    // };
+
     handleProjectChange(event) {
         this.projectId = event.target.value;
-        //alert(this.projectId);
+        alert(this.projectId);
     }
 
     handleTowerChange(event) {
         this.towerId = event.target.value;
-        //alert(this.towerId);
+        alert(this.towerId);
+        this.getBooking();
+
+    }
+
+    handleMilestone(event){
+        this.pmId = event.target.value;
+        console.log(this.pmId);
+        //this.getMilestone();
+    
+    }
+
+    @track startDate = '';
+    @track endDate = '';
+
+    handleStartDate(event){
+        this.startDate = event.target.value;
+        console.log(this.startDate);
+
+    }
+
+    handleEndDate(event){
+        this.endDate = event.target.value;
+        console.log(this.endDate);
+    }
+
+
+
+
+    handleBulkApproved() {
+        console.log('FinalMainList: ', JSON.stringify(this.mainList));
+
+        let approvedList = [];
+        let alreadyApprovedList = [];
+
+        if (!this.mainList || this.mainList.length === 0) {
+            this.showToast('Warning', 'Please select a record to approve', 'warning');
+            return;
+        }
+
+        for (let i = 0; i < this.regData.length; i++) {
+            const record = this.regData[i];
+            const value = record.demand.Id;
+
+            if (this.mainList.includes(value) && record.isSelected) {
+                if (record.approvalStatus === 'Approved') {
+                    alreadyApprovedList.push(`• ${record.demand.Name}`);
+
+                } else {
+                    approvedList.push(`• ${record.demand.Name}`);
+                    record.approvalStatus = 'Approved';
+                }
+            }
+        }
+
+        // Show toast for newly approved records
+        if (approvedList.length > 0) {
+            //  const approvedMessage = approvedList.join('\n');
+            this.showModalWithRecords('Approved Demands', approvedList, true);
+
+            //this.showToast('Approved Demands', approvedList.join('\n'), 'success');
+        }
+
+        // Show toast for already approved records
+        if (alreadyApprovedList.length > 0) {
+            // const alreadyApprovedMessage = alreadyApprovedList.join('\n');
+            //this.showToast('Already Approved', alreadyApprovedList.join('\n'), 'info');
+            this.showModalWithRecords('Already Approved Demands', alreadyApprovedList, true);
+
+        }
+    }
+
+    handleBulkRejected() {
+        console.log('FinalMainList: ', JSON.stringify(this.mainList));
+
+        if (!this.mainList || this.mainList.length === 0) {
+            this.showToast('Warning', 'Please select a record to Reject', 'warning');
+            return;
+        }
+
+        let rejectedList = [];
+        let alreadyRejectedList = [];
+
+        for (let i = 0; i < this.regData.length; i++) {
+            const record = this.regData[i];
+            const value = record.demand.Id;
+
+            if (this.mainList.includes(value) && record.isSelected) {
+                if (record.approvalStatus === 'Rejected') {
+                    alreadyRejectedList.push(`• ${record.demand.Name}`);
+                } else {
+                    rejectedList.push(`• ${record.demand.Name}`);
+                    record.approvalStatus = 'Rejected';
+                }
+            }
+        }
+
+        // Show toast for newly rejected records
+        if (rejectedList.length > 0) {
+            //const rejectedMessage = rejectedList.join('\n');
+            this.showModalWithRecords('Rejected Demands', rejectedList, true);
+        }
+
+        // Show toast for already rejected records
+        if (alreadyRejectedList.length > 0) {
+            // const alreadyRejectedMessage = alreadyRejectedList.join('\n');
+            this.showModalWithRecords('Already Rejected', alreadyRejectedList, true);
+        }
     }
 
 
@@ -174,7 +549,7 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
         };
     }
 
-    
+
     openBooking(event) {
         var value = event.target.dataset.id;
         //console.log(value);
@@ -182,7 +557,7 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
     }
 
 
-    
+
     handleAllSelected(event) {
         const checkboxes = this.template.querySelectorAll('[data-id^="checkbox-button"]');
         //console.log('checkboxes: ' + JSON.stringify(checkboxes));
@@ -212,33 +587,23 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
             if (this.selectAllcheckBox == true) {
                 for (var i = this.pageSize * this.currentPage - this.pageSize; i < this.pageSize * this.currentPage; i++) {
                     for (var i = 0; i < this.currentPageData.length; i++) {
-                        const value = this.currentPageData[i].regId;
+                        const value = this.currentPageData[i].demand.Id;
                         this.currentPageData[i].isSelected = true;
                         if (!this.mainList.includes(value)) {
                             this.mainList.push(value);
-                            if (!this.url.includes(this.currentPageData[i].contentDocumentId)) {
-                                this.url.push(this.currentPageData[i].contentDocumentId);
-                            }
                         }
                     }
                     break;
                 }
             } else {
-                //console.log('inside else ');
                 for (var i = this.pageSize * this.currentPage - this.pageSize; i < this.pageSize * this.currentPage; i++) {
                     for (var j = 0; j < this.currentPageData.length; j++) {
-                        const value = this.currentPageData[j].regId;
+                        const value = this.currentPageData[j].demand.Id;
                         this.currentPageData[j].isSelected = false;
                         if (this.mainList.includes(value)) {
                             const index = this.mainList.indexOf(value);
                             if (index !== -1) {
                                 this.mainList.splice(index, 1);
-                            }
-                        }
-                        if (this.url.includes(this.currentPageData[j].contentDocumentId)) {
-                            const index = this.url.indexOf(this.currentPageData[j].contentDocumentId);
-                            if (index !== -1) {
-                                this.url.splice(index, 1);
                             }
                         }
                     }
@@ -247,35 +612,33 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
             }
         } else {
             for (var i = 0; i < this.selectedList.length; i++) {
-                const value = this.selectedList[i].regId;
-                if (!this.selectedList[i].isDownloaded) {
-                    if (value == this.regId) {
-                        if (valueset == true) {
-                            this.mainList.push(value);
-                            this.url.push(Name);
-                        } else {
-                            this.mainList = this.mainList.filter(finalItem => finalItem !== this.regId);
-                            this.url = this.url.filter(finalItem => finalItem !== Name);
-                        }
+                const value = this.selectedList[i].demand.Id;
+                // if (!this.selectedList[i].isDownloaded) {
+                if (value == this.regId) {
+                    if (valueset == true) {
+                        this.mainList.push(value);
+                        // this.url.push(Name);
+                    } else {
+                        this.mainList = this.mainList.filter(finalItem => finalItem !== this.regId);
+                        // this.url = this.url.filter(finalItem => finalItem !== Name);
                     }
                 }
+                // }
             }
             for (var i = 0; i < this.currentPageData.length; i++) {
-                if (this.currentPageData[i].regId == this.regId) {
+                if (this.currentPageData[i].demand.Id == this.regId) {
                     this.currentPageData[i].isSelected = valueset;
                     break;
                 }
             }
+            const allSelected = this.currentPageData.every(record => record.isSelected);
+            console.log('allSelected : ' + allSelected);
+            this.selectAllcheckBox = allSelected;
         }
-        //console.log('currentPageData: ' + JSON.stringify(this.currentPageData));
+        console.log('currentPageDataUpdated: ' + JSON.stringify(this.currentPageData));
         console.log('FinalMainList: ' + JSON.stringify(this.mainList));
-        //console.log('url ' + JSON.stringify(this.url));
-
-       // this.updateFinalUrl();
 
     }
-
-
 
     handlePreviousPage() {
         this.isSpinner = true;
@@ -308,6 +671,7 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
         this.selectAllcheckBox = allSelected;
     }
 
+
     handleReset() {
         setTimeout(() => {
             location.reload();
@@ -323,5 +687,26 @@ export default class Ex_BulkDemandApprovalDownload extends NavigationMixin(Light
         this.dispatchEvent(event);
     }
 
-    
+     // Show modal and start auto-close timer
+     showModalWithRecords(title, records, showmodal) {
+        this.modalTitle = title;
+        this.modalRecords = records;
+        this.showModal = showmodal;
+
+        // Clear any previous timers
+        clearTimeout(this.autoCloseTimeout);
+
+        // Auto close after 5 seconds
+        this.autoCloseTimeout = setTimeout(() => {
+            this.closeModal();
+        }, 5000);
+    }
+
+    // Manual close method
+    closeModal() {
+        this.showModal = false;
+        clearTimeout(this.autoCloseTimeout);
+    }
+
+
 }

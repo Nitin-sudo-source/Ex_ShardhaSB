@@ -2,7 +2,7 @@
   @description       : 
   @author            : nitinSFDC@exceller.SFDoc
   @group             : 
-  @last modified on  : 07-04-2025
+  @last modified on  : 08-04-2025
   @last modified by  : nitinSFDC@exceller.SFDoc
 -->
 <template>
@@ -55,15 +55,61 @@
             </div>
 
             <!-- Document Type Buttons -->
-            <!-- <div class="slds-col slds-size_1-of-4">
+            <div class="slds-col slds-size_1-of-4">
 
-                <lightning-combobox aria-label="Document Type" label="Document Type" title={docTitle}
-                    value={documentType} placeholder="Select Document Type" variant="standard" required
-                    class="user-input-box" icon-position="left" options={documentOptions} onchange={handleDocumentType}>
-                </lightning-combobox>
+                <div class="slds-form-element">
+
+                    <div class="slds-form-element__control">
+                        <lightning-input label="Bookings" class="user-input-box" placeholder="Search Booking"
+                            onchange={search} onfocus={showPickListOptions} type="search" value={selectedValue}>
+                        </lightning-input>
+
+                        <div if:true={searchResults} class="slds-dropdown 
+                        slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <template for:each={searchResults} for:item="searchResult">
+                                    <li key={searchResult.value} data-qid={searchResult.qid}
+                                        data-value={searchResult.value} role="presentation" onclick={selectSearchResult}
+                                        class="slds-listbox__item">
+                                        <div class="slds-media slds-listbox__option 
+                                        slds-listbox__option_plain slds-media_small" role="option">
+                                            <span class="slds-media__body">
+                                                <span class="slds-truncate" title={searchResult.label}>
+                                                    {searchResult.label}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
             </div>
-        </div> -->
+
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-combobox aria-label="Payment Milestone Type" label="Payment Milestone Type"
+                    title="Payment Milestone" variant="standard" value={pmId} class="user-input-box"
+                    placeholder="Select Milestone" required options={pm} onchange={handleMilestone}>
+                </lightning-combobox>
+            </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_medium">
+
+
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-input type="date" class="user-input-box" name="Start Date" placeholder="Enter a Start Date"
+                    onchange={handleStartDate} value={startDate} label="Enter a Start Date"></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-input type="date" class="user-input-box" name="End Date" placeholder="Enter a End Date"
+                    onchange={handleEndDate} value={startEnd} label="Enter a Start Date"></lightning-input>
+            </div>
+            </div>
+
+        <!-- </div> -->
+
 
         <!-- Action Buttons -->
         <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_medium">
@@ -71,7 +117,7 @@
                 <button class="search-button" onclick={fetchDocumentRecords}>
                     <lightning-icon icon-name="utility:search" size="small" title="Search Button to Fetch Files"
                         alternative-text="Search"></lightning-icon>
-                    <span class="slds-m-left_x-small">Fetch Files</span>
+                    <span class="slds-m-left_x-small">Fetch Demands</span>
                 </button>
 
                 <template if:true={showTable}>
@@ -85,16 +131,34 @@
             </div>
 
             <div class="slds-col slds-size_1-of-3 slds-text-align_center">
-                <template if:true={showTable}>
-                    <template if:true={finalurl}>
-                        <button class="search-button" onclick={handleBulkDownload}>
-                            <lightning-icon icon-name="utility:download" size="small" title="Download All Files in Bulk"
-                                alternative-text="Download All"></lightning-icon>
-                            <span class="slds-m-left_x-small">Download All</span>
-                        </button>
-                    </template>
-                </template>
+                <!-- <template if:true={showTable}>
+                        <template if:true={finalurl}> -->
+                <button class="search-button" onclick={handleBulkApproved}>
+                    <!-- <lightning-icon icon-name='action:approval' alternative-text='approval' size='large' title='approval'></lightning-icon> -->
+
+                    <lightning-icon icon-name="action:approval" size="xx-small" title="Approved in Bulk"
+                        alternative-text="Approved All"></lightning-icon>
+                    <span class="slds-m-left_x-small">Approved All</span>
+                </button>
+                &nbsp;
+
+                <button class="search-button" onclick={handleBulkRejected}>
+                    <!-- <lightning-icon icon-name='action:approval' alternative-text='approval' size='large' title='approval'></lightning-icon> -->
+
+                    <lightning-icon icon-name="action:reject" size="xx-small" title="Reject in Bulk"
+                        alternative-text="Rejected All"></lightning-icon>
+                    <span class="slds-m-left_x-small">Rejected All</span>
+                </button>
+                &nbsp;
+
+
+                <!-- </template>
+                    </template> -->
             </div>
+
+
+
+
 
 
 
@@ -117,7 +181,185 @@
                 </template>
             </div>
         </div>
+        <p class="slds-m-left_x-small"> View Selection Count</p>
+        <p> <a class="slds-m-left_x-small" data-name="Pending for approval" onclick={handleBulkPending}>Pending For
+                Approval <span style="color:red;font: size 12px;">
+                    ({recordSelected})
+                </span> </a><br />
+            <a class="slds-m-left_x-small" data-name="Approved" onclick={handleBulkPending}> Approved <span
+                    style="color:red;font: size 12px;">
+                    ({recordSelectedApproved})
+                </span> </a> <br />
+            <a class="slds-m-left_x-small" data-name="Rejected" onclick={handleBulkPending}> Rejected <span
+                    style="color:red;font: size 12px;">
+                    ({recordSelectedRejected})
+                </span> </a>
 
-        </div>
-        </lightning-card>
+
+        </p>
+
+
+
+        <!-- <div class="slds-grid slds-grid_vertical slds-grid_align-justify">Count - {getCount}</div> -->
+
+
+        <template if:true={showModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal Header -->
+                    <header class="slds-modal__header">
+                        <h2 class="slds-text-heading_medium">{modalTitle}</h2>
+                        <button class="slds-button slds-button_icon slds-modal__close" title="Close"
+                            onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close"
+                                size="small"></lightning-icon>
+                        </button>
+                    </header>
+
+                    <!-- Modal Body -->
+                    <template if:true={modalRecords}>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <template for:each={modalRecords} for:item="record">
+                                <div key={record} style="color: rgb(15, 18, 15);">{record}</div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template if:false={modalRecords}>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <p style="color: red;">No records found</p>
+                        </div>
+                    </template>
+
+
+
+                    <!-- Modal Footer (Optional) -->
+                    <footer class="slds-modal__footer slds-text-align_right">
+                        <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
+
+
+        <template if:true={showTable}>
+            <template if:true={currentPageData}>
+                <table>
+                    <tr>
+                        <th>
+                            <lightning-input onchange={handleAllSelected} data-key="allCheckbox"
+                                title="Checkbox Selection for File Download" message-toggle-active="Selected Checkbox"
+                                message-toggle-inactive="Please Select Checkbox" type="checkbox-button"
+                                data-id="checkbox-button" checked={selectAllcheckBox} name="SelectAll"
+                                class="custom-checkbox">
+                            </lightning-input>
+                        </th>
+                        <th>Serial No</th>
+                        <th>Demand Name</th>
+                        <th>Booking Name</th>
+                        <th>Unit Name</th>
+                        <th>Customer Name</th>
+                        <th>Milestone Name</th>
+                        <th>Due Date</th>
+                        <th>Invoice Date</th>
+                        <th>AV Demanded</th>
+                        <th>AV Remaning</th>
+                        <th>TDS Demanded</th>
+                        <th>TDS Remaning</th>
+                        <th>Amount Demanded</th>
+                        <th>Amount Remaning</th>
+                        <th>Approval Status</th>
+
+
+
+                    </tr>
+                    <template for:each={currentPageData} for:item="rec" for:index="index">
+                        <tr key={rec.Id}>
+                            <td style="text-align:center !important;">
+                                <lightning-input type="checkbox-button" data-key={rec.demand.Id}
+                                    data-name={rec.demand.Id} onchange={handleChange} class="custom-checkbox"
+                                    data-id="checkbox" name="headerCheckbox" variant="label-hidden"
+                                    checked={rec.isSelected}>
+                                </lightning-input>
+                            </td>
+                            <td>{rec.serialNumber}</td>
+                            <td>
+                                <div class="clickable-link">
+                                    <lightning-formatted-text title="click here to view Demand" value={rec.demand.Name}
+                                        data-id={rec.demand.Id} onclick={openBooking}>
+                                    </lightning-formatted-text>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="clickable-link">
+                                    <lightning-formatted-text title="click here to view Booking"
+                                        value={rec.demand.Booking__r.Name} data-id={rec.demand.Booking__c}
+                                        onclick={openBooking}>
+                                    </lightning-formatted-text>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="clickable-link">
+                                    <lightning-formatted-text title="click here to view Unit"
+                                        value={rec.demand.Booking__r.Unit__r.Name}
+                                        data-id={rec.demand.Booking__r.Unit__c} onclick={openBooking}>
+                                    </lightning-formatted-text>
+                                </div>
+                            </td>
+                            <td>{rec.customerName}</td>
+                            <td>{rec.demand.Milestone_Name__c}</td>
+                            <td>
+                                <lightning-formatted-date-time value={rec.demand.Due_Date__c} day="2-digit"
+                                    month="2-digit" year="2-digit" weekday="long">
+                                </lightning-formatted-date-time>
+                            </td>
+                            <td>
+                                <lightning-formatted-date-time value={rec.demand.Invoice_Date__c} day="2-digit"
+                                    month="2-digit" year="2-digit" weekday="long">
+                                </lightning-formatted-date-time>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.Agreement_Value_Demanded__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.Agreement_Value_Paid__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.TDS_Value_Demanded__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.TDS_Value_Remaining__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.Total_Amount_Demanded__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={rec.demand.Total_Amount_Remaining__c}
+                                    format-style="currency" currency-code="INR"
+                                    currency-display-as="symbol"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-text value={rec.approvalStatus}></lightning-formatted-text>
+                            </td>
+                        </tr>
+                    </template>
+
+                </table>
+            </template>
+        </template>
+
+
+    </lightning-card>
 </template>

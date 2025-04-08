@@ -3,7 +3,7 @@ public with sharing class Ex_BookingVerificationController {
     
     @AuraEnabled(cacheable=true)
    public static List<Booking__c> getBookings(String recordId){
-       List<Booking__c> checkList = [select Id,Create_Booking_Verification_CheckList__c, Booking_Date__c, Quotation__c,Booking_Type__c, Opportunity__c,
+       List<Booking__c> checkList = [select Id, Name,Create_Booking_Verification_CheckList__c, Booking_Date__c, Quotation__c,Booking_Type__c, Opportunity__c,
                                      Opportunity__r.Name,Tenant_Account__c,Tenant_Account__r.Name, Project__r.Name from Booking__c 
                                      where Id=:recordId];
        return checkList; 
@@ -66,7 +66,7 @@ public with sharing class Ex_BookingVerificationController {
        try {
            List<Booking_Verification_Checklist__c> VerificationChecklistDetails = new List<Booking_Verification_Checklist__c>();
            VerificationChecklistDetails = [SELECT Id, Booking__c, Category__c, Values__c, Decision__c, Accepted__c,Sequence_Number__c FROM Booking_Verification_Checklist__c 
-                                           WHERE Booking__c = :bId ORDER BY Sequence_Number__c ASC];
+                                           WHERE Booking__c = :bId AND (Decision__c = '' OR Decision__c = 'Rejected') ORDER BY Sequence_Number__c ASC];
            return VerificationChecklistDetails;
        } catch (Exception e) {
            throw new AuraHandledException('Error retrieving Welcome Call Details: ' + e.getMessage());

@@ -72,7 +72,7 @@ public class Ex_BlockingDetailsController {
         if (String.isNotBlank(unitName)) {
             Unit__c unit = [SELECT Id, Name, Sale_Status__c, Last_Unit_Blocking_Date__c FROM Unit__c WHERE Id = :unitName LIMIT 1];
             if (unit != null) {
-                unit.Sale_Status__c = blockByToken ? 'Sale Hold with Money' : 'Sale Hold without Money';
+                unit.Sale_Status__c = 'Blocked	';
                 unit.Last_Unit_Blocking_Date__c = System.now();
                 if (String.isNotBlank(oppId)) {
                     unit.Opportunity__c = oppId;  

@@ -78,7 +78,7 @@ export default class Ex_BlockingDetailPage extends NavigationMixin(LightningElem
   }
   @wire(getBlockDetails, { uniId: '$uniValue' })
   blockdetail({ data, error }) {
-    alert('called');
+    // alert('called');
     if (data != null) {
         console.log('data: '+JSON.stringify(data));
         this.blockData = data;
@@ -158,6 +158,7 @@ export default class Ex_BlockingDetailPage extends NavigationMixin(LightningElem
               link.href = url;
               link.target = '_self';
               link.click();
+              location.reload();
               // window.location.href = '/apex/Ex_InventoryMatrixVF?recordId=' + this.oppvalue;
               console.log("BlockingDetailResult: ", result);
             getRecordNotifyChange([{ recordId: this.recordId }])
@@ -200,7 +201,7 @@ export default class Ex_BlockingDetailPage extends NavigationMixin(LightningElem
             link.href = url;
             link.target = '_self';
             link.click();
-            // location.reload();
+             location.reload();
 
             // window.location.href = '/apex/Ex_InventoryMatrixVF?recordId=' + this.oppvalue;
           }

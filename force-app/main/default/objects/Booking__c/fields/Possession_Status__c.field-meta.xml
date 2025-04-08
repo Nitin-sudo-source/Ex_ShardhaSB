@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Possession_Status__c</fullName>
+    <label>Possession Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Under construction</fullName>
+                <default>false</default>
+                <label>Under construction</label>
+            </value>
+            <value>
+                <fullName>Sent for CRM approval</fullName>
+                <default>false</default>
+                <label>Sent for CRM approval</label>
+            </value>
+            <value>
+                <fullName>Rejected by CRM</fullName>
+                <default>false</default>
+                <label>Rejected by CRM</label>
+            </value>
+            <value>
+                <fullName>Sent for FM approval</fullName>
+                <default>false</default>
+                <label>Sent for FM approval</label>
+            </value>
+            <value>
+                <fullName>Rejected by FM</fullName>
+                <default>false</default>
+                <label>Rejected by FM</label>
+            </value>
+            <value>
+                <fullName>Sent for Customer approval</fullName>
+                <default>false</default>
+                <label>Sent for Customer approval</label>
+            </value>
+            <value>
+                <fullName>Rejected by Customer</fullName>
+                <default>false</default>
+                <label>Rejected by Customer</label>
+            </value>
+            <value>
+                <fullName>Physical handover pending</fullName>
+                <default>false</default>
+                <label>Physical handover pending</label>
+            </value>
+            <value>
+                <fullName>Possession Completed</fullName>
+                <default>false</default>
+                <label>Possession Completed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

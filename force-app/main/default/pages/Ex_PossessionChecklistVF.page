@@ -1,0 +1,41 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />
+    <div id="LightningComponentid"></div>
+    
+    <script>
+    // Function to navigate to a specific URL
+    function navigateToList(url) {
+        // Check if in Salesforce Lightning Experience or Salesforce1 Mobile App
+        if (typeof sforce !== 'undefined' && sforce && sforce.one) {
+            sforce.one.navigateToURL(url);  // Salesforce1/Lightning Experience
+        } else {
+            window.location.href = url;  // Classic environment or non-Salesforce
+        }
+    }
+    
+    // Function to handle the cancel action
+    function handleCancel(recordId) {
+        if (recordId) {
+            navigateToList('/' + recordId);
+        } else {
+            console.error('Record ID is not defined');
+        }
+    }
+    
+    // Load the Lightning application and create the Lightning component
+    $Lightning.use("c:Ex_PossessionChecklistApp", function() {
+        // Create the Lightning component with the recordId from the VF page URL
+        $Lightning.createComponent(
+            "c:ex_PossessionChecklist", 
+            { 
+                recordId: '{!$CurrentPage.parameters.recordId}',
+                navigateToList: navigateToList
+            },
+            "LightningComponentid",
+            function(cmp) {
+                console.log('LWC Component added in VF page: ' + cmp);
+            }
+        );
+    });
+    </script>
+</apex:page>

@@ -7,7 +7,36 @@
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
+        <controllingField>Booking_Source__c</controllingField>
         <restricted>true</restricted>
         <valueSetName>Lead_Sub_source</valueSetName>
+        <valueSettings>
+            <controllingFieldValue>Channel Partner</controllingFieldValue>
+            <valueName>Channel Partner</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>Google Search</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>Google Display</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>YouTube</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>Discovery Ads</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>Lead Gen Form</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Google</controllingFieldValue>
+            <valueName>Instagram</valueName>
+        </valueSettings>
     </valueSet>
 </CustomField>

@@ -270,6 +270,16 @@
         <default>false</default>
         <label>MCube</label>
     </customValue>
+    <customValue>
+        <fullName>Self Walk-in</fullName>
+        <default>false</default>
+        <label>Self Walk-in</label>
+    </customValue>
+    <customValue>
+        <fullName>Passing By</fullName>
+        <default>false</default>
+        <label>Passing By</label>
+    </customValue>
     <masterLabel>Lead Sub-source</masterLabel>
     <sorted>false</sorted>
 </GlobalValueSet>

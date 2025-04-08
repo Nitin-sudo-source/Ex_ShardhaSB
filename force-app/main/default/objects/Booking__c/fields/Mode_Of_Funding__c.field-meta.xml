@@ -23,6 +23,7 @@
             <value>
                 <fullName>Partial Funding</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Partial Funding</label>
             </value>
         </valueSetDefinition>

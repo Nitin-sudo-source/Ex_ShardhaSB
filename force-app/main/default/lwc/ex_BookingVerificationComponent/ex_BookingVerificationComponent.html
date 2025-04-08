@@ -47,7 +47,7 @@
                 </div>
                 <template if:true={showDetails}>
                     <div style="float:left;padding:5px;">
-                        <span><b>Project/Booking Reference Number:&nbsp;</b>{projectName}</span><br/>
+                        <span><b>Project/Booking Reference Number:&nbsp;</b>{projectName}/{bookingName}</span><br/>
                         <span><b>Client Name:&nbsp;</b>{customerName}</span><br/>
                         <span><b>Date:&nbsp;</b>{bookingDate}</span><br/>
                     </div><br/>
@@ -73,16 +73,16 @@
                             <td style="text-align:center;">{category.Sequence_Number__c}</td>
                             <td style="text-align:left;">{category.Category__c}</td>
                             <td style="text-align:center;">
-                                <template if:true={category.Accepted__c}>
+                                <!-- <template if:true={category.Accepted__c}>
                                     <lightning-combobox disabled placeholder="Accepted">
                                     </lightning-combobox>
-                                </template>
-                                <template if:false={category.Accepted__c}>
+                                </template> -->
+                                <!-- <template if:false={category.Accepted__c}> -->
                                     <lightning-combobox data-key={index} value={selectedval}
                                         placeholder="Select an Option" options={options}
                                         onchange={handleOptions}>
                                     </lightning-combobox>
-                                </template>
+                                <!-- </template> -->
                             </td>
                           </tr>
                         </template>

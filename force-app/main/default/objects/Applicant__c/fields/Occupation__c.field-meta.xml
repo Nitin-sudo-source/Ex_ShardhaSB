@@ -46,9 +46,19 @@
                 <label>Freelancer</label>
             </value>
             <value>
-                <fullName>Employed in Pvt. company</fullName>
+                <fullName>Self Employed</fullName>
                 <default>false</default>
-                <label>Employed in Pvt. company</label>
+                <label>Self Employed</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Salaried</fullName>
+                <default>false</default>
+                <label>Salaried</label>
             </value>
         </valueSetDefinition>
     </valueSet>

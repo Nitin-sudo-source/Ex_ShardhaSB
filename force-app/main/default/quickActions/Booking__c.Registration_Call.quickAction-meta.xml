@@ -28,7 +28,9 @@
         </quickActionLayoutColumns>
         <quickActionLayoutColumns/>
     </quickActionLayout>
+    <successMessage>Registration Call Created Successfully</successMessage>
     <targetObject>Task</targetObject>
     <targetParentField>What</targetParentField>
-    <type>LogACall</type>
+    <targetRecordType>Task.Registration_Call</targetRecordType>
+    <type>Create</type>
 </QuickAction>
